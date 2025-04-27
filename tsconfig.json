@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"module": "commonjs",
+		"outDir": "./build/",
+		"resolveJsonModule": true,
+		"rootDir": "./source/",
+		"strict": true,
+		"target": "esnext"
+	},
+	"include": [],
+	"references": [
+		{
+			"path": "./source/api/"
+		},
+		{
+			"path": "./source/client/"
+		},
+		{
+			"path": "./source/email/"
+		},
+		{
+			"path": "./source/lib/"
+		},
+		{
+			"path": "./source/server/"
+		},
+		{
+			"path": "./source/shared/"
+		}
+	]
+}

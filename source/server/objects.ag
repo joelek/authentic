@@ -1,0 +1,15 @@
+guard UserProperties: {
+	email: string,
+	passdata: string,
+	username?: string
+};
+
+guard SessionProperties: ../api/State & {
+	expires_utc: integer,
+	username?: string,
+	email?: string,
+	token_hash?: string,
+	passdata?: string,
+	user_id?: string,
+	ticket_hash?: string
+};

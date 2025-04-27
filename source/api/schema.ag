@@ -1,0 +1,233 @@
+guard RegisterCommand: {
+	type: "REGISTER"
+};
+
+guard RegisterUsernameCommand: {
+	type: "REGISTER_USERNAME",
+	username: string
+};
+
+guard RegisterEmailCommand: {
+	type: "REGISTER_EMAIL",
+	email: string
+};
+
+guard RegisterTokenCommand: {
+	type: "REGISTER_TOKEN",
+	token: string
+};
+
+guard RegisterPassphraseCommand: {
+	type: "REGISTER_PASSPHRASE",
+	passphrase: string
+};
+
+guard RegisterCommands:
+	RegisterCommand |
+	RegisterUsernameCommand |
+	RegisterEmailCommand |
+	RegisterTokenCommand |
+	RegisterPassphraseCommand;
+
+# =============================================================================
+
+guard WaitingForRegisterUsernameState: {
+	type: "WAITING_FOR_REGISTER_USERNAME",
+	reason: "USERNAME_REQUIRED" | "USERNAME_NOT_ACCEPTED" | "USERNAME_NOT_AVAILABLE"
+};
+
+guard WaitingForRegisterEmailState: {
+	type: "WAITING_FOR_REGISTER_EMAIL",
+	reason: "EMAIL_REQUIRED" | "EMAIL_NOT_ACCEPTED" | "EMAIL_NOT_AVAILABLE"
+};
+
+guard WaitingForRegisterTokenState: {
+	type: "WAITING_FOR_REGISTER_TOKEN",
+	reason: "TOKEN_REQUIRED" | "TOKEN_NOT_ACCEPTED"
+};
+
+guard WaitingForRegisterPassphraseState: {
+	type: "WAITING_FOR_REGISTER_PASSPHRASE",
+	reason: "PASSPHRASE_REQUIRED" | "PASSPHRASE_NOT_ACCEPTED"
+};
+
+guard RegisteredState: {
+	type: "REGISTERED",
+	reason: "REGISTRATION_COMPLETED"
+};
+
+guard RegisterStates:
+	WaitingForRegisterUsernameState |
+	WaitingForRegisterEmailState |
+	WaitingForRegisterTokenState |
+	WaitingForRegisterPassphraseState |
+	RegisteredState;
+
+# =============================================================================
+
+guard AuthenticateCommand: {
+	type: "AUTHENTICATE"
+};
+
+guard AuthenticateUsernameCommand: {
+	type: "AUTHENTICATE_USERNAME",
+	username: string
+};
+
+guard AuthenticateEmailCommand: {
+	type: "AUTHENTICATE_EMAIL",
+	email: string
+};
+
+guard AuthenticateTokenCommand: {
+	type: "AUTHENTICATE_TOKEN",
+	token: string
+};
+
+guard AuthenticatePassphraseCommand: {
+	type: "AUTHENTICATE_PASSPHRASE",
+	passphrase: string
+};
+
+guard AuthenticateCommands:
+	AuthenticateCommand |
+	AuthenticateUsernameCommand |
+	AuthenticateEmailCommand |
+	AuthenticateTokenCommand |
+	AuthenticatePassphraseCommand;
+
+# =============================================================================
+
+guard WaitingForAuthenticateUsernameState: {
+	type: "WAITING_FOR_AUTHENTICATE_USERNAME",
+	reason: "USERNAME_REQUIRED" | "USERNAME_NOT_ACCEPTED" | "USERNAME_NOT_AVAILABLE"
+};
+
+guard WaitingForAuthenticateEmailState: {
+	type: "WAITING_FOR_AUTHENTICATE_EMAIL",
+	reason: "EMAIL_REQUIRED" | "EMAIL_NOT_ACCEPTED" | "EMAIL_NOT_AVAILABLE"
+};
+
+guard WaitingForAuthenticateTokenState: {
+	type: "WAITING_FOR_AUTHENTICATE_TOKEN",
+	reason: "TOKEN_REQUIRED" | "TOKEN_NOT_ACCEPTED"
+};
+
+guard WaitingForAuthenticatePassphraseState: {
+	type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE",
+	reason: "PASSPHRASE_REQUIRED" | "PASSPHRASE_NOT_ACCEPTED"
+};
+
+guard AuthenticatedState: {
+	type: "AUTHENTICATED",
+	reason: "AUTHENTICATION_COMPLETED"
+};
+
+guard AuthenticateStates:
+	WaitingForAuthenticateUsernameState |
+	WaitingForAuthenticateEmailState |
+	WaitingForAuthenticateTokenState |
+	WaitingForAuthenticatePassphraseState |
+	AuthenticatedState;
+
+# =============================================================================
+
+guard RecoverCommand: {
+	type: "RECOVER"
+};
+
+guard RecoverUsernameCommand: {
+	type: "RECOVER_USERNAME",
+	username: string
+};
+
+guard RecoverEmailCommand: {
+	type: "RECOVER_EMAIL",
+	email: string
+};
+
+guard RecoverTokenCommand: {
+	type: "RECOVER_TOKEN",
+	token: string
+};
+
+guard RecoverPassphraseCommand: {
+	type: "RECOVER_PASSPHRASE",
+	passphrase: string
+};
+
+guard RecoverCommands:
+	RecoverCommand |
+	RecoverUsernameCommand |
+	RecoverEmailCommand |
+	RecoverTokenCommand |
+	RecoverPassphraseCommand;
+
+# =============================================================================
+
+guard WaitingForRecoverUsernameState: {
+	type: "WAITING_FOR_RECOVER_USERNAME",
+	reason: "USERNAME_REQUIRED" | "USERNAME_NOT_ACCEPTED" | "USERNAME_NOT_AVAILABLE"
+};
+
+guard WaitingForRecoverEmailState: {
+	type: "WAITING_FOR_RECOVER_EMAIL",
+	reason: "EMAIL_REQUIRED" | "EMAIL_NOT_ACCEPTED" | "EMAIL_NOT_AVAILABLE"
+};
+
+guard WaitingForRecoverTokenState: {
+	type: "WAITING_FOR_RECOVER_TOKEN",
+	reason: "TOKEN_REQUIRED" | "TOKEN_NOT_ACCEPTED"
+};
+
+guard WaitingForRecoverPassphraseState: {
+	type: "WAITING_FOR_RECOVER_PASSPHRASE",
+	reason: "PASSPHRASE_REQUIRED" | "PASSPHRASE_NOT_ACCEPTED"
+};
+
+guard RecoveredState: {
+	type: "RECOVERED",
+	reason: "RECOVERY_COMPLETED"
+};
+
+guard RecoverStates:
+	WaitingForRecoverUsernameState |
+	WaitingForRecoverEmailState |
+	WaitingForRecoverTokenState |
+	WaitingForRecoverPassphraseState |
+	RecoveredState;
+
+# =============================================================================
+
+guard ResetStateCommand: {
+	type: "RESET_STATE"
+};
+
+guard Command:
+	ResetStateCommand |
+	RegisterCommands |
+	AuthenticateCommands |
+	RecoverCommands;
+
+guard WaitingForCommandState: {
+	type: "WAITING_FOR_COMMAND",
+	reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND"
+};
+
+guard State:
+	WaitingForCommandState |
+	RegisterStates |
+	AuthenticateStates |
+	RecoverStates;
+
+# =============================================================================
+
+route readState(): GET:/ => {
+	state: State
+};
+
+route sendCommand(): POST:/ <= {
+	command: Command
+} => {
+	state: State
+};

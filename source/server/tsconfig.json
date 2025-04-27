@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"lib": [
+			"esnext",
+		]
+	},
+	"extends": "../../tsconfig.json",
+	"include": [
+		"./"
+	],
+	"references": [
+		{
+			"path": "../api/"
+		},
+		{
+			"path": "../email/"
+		},
+		{
+			"path": "../shared/"
+		}
+	]
+}
