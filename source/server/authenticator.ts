@@ -246,8 +246,10 @@ export class Authenticator {
 			} else {
 				let users = await this.users.lookupObjects("username", "=", session.username);
 				if (users.length > 0) {
+					let username_attempts = (session.username_attempts ?? 0) + 1;
 					return {
 						...session,
+						username_attempts: username_attempts,
 						type: "WAITING_FOR_REGISTER_USERNAME",
 						reason: "USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -267,8 +269,10 @@ export class Authenticator {
 		}
 		let users = await this.users.lookupObjects("email", "=", session.email);
 		if (users.length > 0) {
+			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
+				email_attempts: email_attempts,
 				type: "WAITING_FOR_REGISTER_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -320,8 +324,10 @@ export class Authenticator {
 			if (session.username != null) {
 				let users = await this.users.lookupObjects("username", "=", session.username);
 				if (users.length === 0) {
+					let username_attempts = (session.username_attempts ?? 0) + 1;
 					return {
 						...session,
+						username_attempts: username_attempts,
 						type: "WAITING_FOR_AUTHENTICATE_USERNAME",
 						reason: "USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -341,8 +347,10 @@ export class Authenticator {
 		}
 		let users = await this.users.lookupObjects("email", "=", session.email);
 		if (users.length === 0) {
+			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
+				email_attempts: email_attempts,
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -393,8 +401,10 @@ export class Authenticator {
 		if (session.username != null) {
 			let users = await this.users.lookupObjects("username", "=", session.username);
 			if (users.length === 0) {
+				let username_attempts = (session.username_attempts ?? 0) + 1;
 				return {
 					...session,
+					username_attempts: username_attempts,
 					type: "WAITING_FOR_RECOVER_USERNAME",
 					reason: "USERNAME_NOT_AVAILABLE",
 					expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -413,8 +423,10 @@ export class Authenticator {
 		}
 		let users = await this.users.lookupObjects("email", "=", session.email);
 		if (users.length === 0) {
+			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
+				email_attempts: email_attempts,
 				type: "WAITING_FOR_RECOVER_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -523,8 +535,10 @@ export class Authenticator {
 			if (api.RegisterTokenCommand.is(command)) {
 				let token_hash = this.computeHash(command.token);
 				if (session.token_hash == null || session.token_hash !== token_hash) {
+					let token_hash_attempts = (session.token_hash_attempts ?? 0) + 1;
 					return {
 						...session,
+						token_hash_attempts: token_hash_attempts,
 						type: "WAITING_FOR_REGISTER_TOKEN",
 						reason: "TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -588,8 +602,10 @@ export class Authenticator {
 			if (api.AuthenticateTokenCommand.is(command)) {
 				let token_hash = this.computeHash(command.token);
 				if (session.token_hash == null || session.token_hash !== token_hash) {
+					let token_hash_attempts = (session.token_hash_attempts ?? 0) + 1;
 					return {
 						...session,
+						token_hash_attempts: token_hash_attempts,
 						type: "WAITING_FOR_AUTHENTICATE_TOKEN",
 						reason: "TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -603,8 +619,10 @@ export class Authenticator {
 		} else if (api.WaitingForAuthenticatePassphraseState.is(session)) {
 			if (api.AuthenticatePassphraseCommand.is(command)) {
 				if (session.passdata == null || !Validator.fromChunk(session.passdata).verify(command.passphrase)) {
+					let passdata_attempts = (session.passdata_attempts ?? 0) + 1;
 					return {
 						...session,
+						passdata_attempts: passdata_attempts,
 						type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE",
 						reason: "PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
@@ -652,8 +670,10 @@ export class Authenticator {
 			if (api.RecoverTokenCommand.is(command)) {
 				let token_hash = this.computeHash(command.token);
 				if (session.token_hash == null || session.token_hash !== token_hash) {
+					let token_hash_attempts = (session.token_hash_attempts ?? 0) + 1;
 					return {
 						...session,
+						token_hash_attempts: token_hash_attempts,
 						type: "WAITING_FOR_RECOVER_TOKEN",
 						reason: "TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),

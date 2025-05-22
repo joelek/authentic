@@ -8,9 +8,13 @@ guard SessionProperties: ../api/State & {
 	expires_utc: integer,
 	wait_until_utc: integer,
 	username?: string,
+	username_attempts?: integer,
 	email?: string,
+	email_attempts?: integer,
 	token_hash?: string,
+	token_hash_attempts?: integer,
 	passdata?: string,
+	passdata_attempts?: integer,
 	user_id?: string,
 	ticket_hash?: string
 };

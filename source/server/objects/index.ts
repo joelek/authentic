@@ -24,9 +24,13 @@ export const SessionProperties: autoguard.serialization.MessageGuard<SessionProp
 		"wait_until_utc": autoguard.guards.Integer
 	}, {
 		"username": autoguard.guards.String,
+		"username_attempts": autoguard.guards.Integer,
 		"email": autoguard.guards.String,
+		"email_attempts": autoguard.guards.Integer,
 		"token_hash": autoguard.guards.String,
+		"token_hash_attempts": autoguard.guards.Integer,
 		"passdata": autoguard.guards.String,
+		"passdata_attempts": autoguard.guards.Integer,
 		"user_id": autoguard.guards.String,
 		"ticket_hash": autoguard.guards.String
 	})
@@ -39,9 +43,13 @@ export type SessionProperties = autoguard.guards.Intersection<[
 		"wait_until_utc": autoguard.guards.Integer
 	}, {
 		"username": autoguard.guards.String,
+		"username_attempts": autoguard.guards.Integer,
 		"email": autoguard.guards.String,
+		"email_attempts": autoguard.guards.Integer,
 		"token_hash": autoguard.guards.String,
+		"token_hash_attempts": autoguard.guards.Integer,
 		"passdata": autoguard.guards.String,
+		"passdata_attempts": autoguard.guards.Integer,
 		"user_id": autoguard.guards.String,
 		"ticket_hash": autoguard.guards.String
 	}>
