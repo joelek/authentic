@@ -223,11 +223,13 @@ guard State:
 # =============================================================================
 
 route readState(): GET:/ => {
-	state: State
+	state: State,
+	wait_until_utc: integer
 };
 
 route sendCommand(): POST:/ <= {
 	command: Command
 } => {
-	state: State
+	state: State,
+	wait_until_utc: integer
 };

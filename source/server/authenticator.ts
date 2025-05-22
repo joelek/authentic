@@ -686,7 +686,8 @@ export class Authenticator {
 		});
 		return this.finalizeResponse({
 			payload: {
-				state
+				state,
+				wait_until_utc: origin.wait_until_utc
 			}
 		}, session, ticket);
 	};
@@ -708,7 +709,8 @@ export class Authenticator {
 		});
 		return this.finalizeResponse({
 			payload: {
-				state
+				state,
+				wait_until_utc: origin.wait_until_utc
 			}
 		}, session, ticket);
 	};

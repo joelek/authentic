@@ -609,7 +609,8 @@ export namespace Autoguard {
 	export const Responses = {
 		"readState": autoguard.guards.Object.of({
 			"payload": autoguard.guards.Object.of({
-				"state": autoguard.guards.Reference.of(() => State)
+				"state": autoguard.guards.Reference.of(() => State),
+				"wait_until_utc": autoguard.guards.Integer
 			}, {})
 		}, {
 			"status": autoguard.guards.Integer,
@@ -620,7 +621,8 @@ export namespace Autoguard {
 		}),
 		"sendCommand": autoguard.guards.Object.of({
 			"payload": autoguard.guards.Object.of({
-				"state": autoguard.guards.Reference.of(() => State)
+				"state": autoguard.guards.Reference.of(() => State),
+				"wait_until_utc": autoguard.guards.Integer
 			}, {})
 		}, {
 			"status": autoguard.guards.Integer,
