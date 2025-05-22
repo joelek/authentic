@@ -6,6 +6,7 @@ guard UserProperties: {
 
 guard SessionProperties: ../api/State & {
 	expires_utc: integer,
+	wait_until_utc: integer,
 	username?: string,
 	email?: string,
 	token_hash?: string,

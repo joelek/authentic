@@ -20,7 +20,8 @@ export type UserProperties = autoguard.guards.Object<{
 export const SessionProperties: autoguard.serialization.MessageGuard<SessionProperties> = autoguard.guards.Intersection.of(
 	autoguard.guards.Reference.of(() => State),
 	autoguard.guards.Object.of({
-		"expires_utc": autoguard.guards.Integer
+		"expires_utc": autoguard.guards.Integer,
+		"wait_until_utc": autoguard.guards.Integer
 	}, {
 		"username": autoguard.guards.String,
 		"email": autoguard.guards.String,
@@ -34,7 +35,8 @@ export const SessionProperties: autoguard.serialization.MessageGuard<SessionProp
 export type SessionProperties = autoguard.guards.Intersection<[
 	autoguard.guards.Reference<State>,
 	autoguard.guards.Object<{
-		"expires_utc": autoguard.guards.Integer
+		"expires_utc": autoguard.guards.Integer,
+		"wait_until_utc": autoguard.guards.Integer
 	}, {
 		"username": autoguard.guards.String,
 		"email": autoguard.guards.String,
