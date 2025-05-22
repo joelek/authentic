@@ -7,6 +7,7 @@ import { Command } from "../api/server";
 import { Mailer, TestMailer } from "../email";
 import * as shared from "../shared";
 import { ExpectedUnreachableCodeError } from "../shared";
+import { Origin, OriginStore, VolatileOriginStore } from "./stores/origins";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
 import { UserStore, VolatileUserStore } from "./stores/user";
 import { Validator } from "./validator";
@@ -18,6 +19,7 @@ type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.
 export type Options = {
 	users?: UserStore;
 	sessions?: SessionStore;
+	origins?: OriginStore;
 	namespace?: string;
 	cookie?: string;
 	trusted_proxies?: Array<string>;
@@ -49,6 +51,7 @@ export type CookieData = ReturnType<typeof CookieData["as"]>;
 export class Authenticator {
 	protected users: UserStore;
 	protected sessions: SessionStore;
+	protected origins: OriginStore;
 	protected namespace: string;
 	protected cookie: string;
 	protected trusted_proxies: Array<string>;
@@ -121,6 +124,10 @@ export class Authenticator {
 		return Date.now() + valid_for_minutes * 60 * 1000;
 	}
 
+	protected getExpiresInSeconds(valid_for_seconds: number): number {
+		return Date.now() + valid_for_seconds * 1000;
+	}
+
 	protected getHeaders(all_headers: Record<string, autoguard.api.JSON> | undefined, name: string): Array<string> {
 		if (all_headers == null) {
 			return [];
@@ -179,6 +186,33 @@ export class Authenticator {
 			}
 		}
 		throw 400;
+	}
+
+	protected async getOrigin(address: string): Promise<Origin> {
+		let origins = await this.origins.lookupObjects("address", "=", address);
+		if (origins.length > 0) {
+			let origin = origins.pop();
+			if (origin == null) {
+				throw new ExpectedUnreachableCodeError();
+			}
+			return origin;
+		}
+		return this.origins.createObject({
+			address: address,
+			wait_until_utc: this.getExpiresInSeconds(0)
+		});
+	}
+
+	protected async getOriginAndApplyRateLimit(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Origin> {
+		let address = this.getRemoteAddress(request);
+		let origin = await this.getOrigin(address);
+		if (Date.now() < origin.wait_until_utc) {
+			throw 429;
+		}
+		return await this.origins.updateObject({
+			...origin,
+			wait_until_utc: this.getExpiresInSeconds(1)
+		});
 	}
 
 	protected async getSession(session_id: string | undefined): Promise<Session> {
@@ -643,6 +677,7 @@ export class Authenticator {
 	}
 
 	protected readState: Parameters<typeof api.makeServer>[0]["readState"] = async (request) => {
+		let origin = await this.getOriginAndApplyRateLimit(request);
 		let { session_id, ticket } = this.getCookieData(request) ?? {};
 		let session = await this.getSession(session_id);
 		let state: api.State = api.State.as({
@@ -657,6 +692,7 @@ export class Authenticator {
 	};
 
 	protected sendCommand: Parameters<typeof api.makeServer>[0]["sendCommand"] = async (request) => {
+		let origin = await this.getOriginAndApplyRateLimit(request);
 		let { session_id, ticket } = this.getCookieData(request) ?? {};
 		let session = await this.getSession(session_id);
 		let payload = await request.payload(1024);
@@ -680,6 +716,7 @@ export class Authenticator {
 	constructor(options?: Options) {
 		this.users = options?.users ?? new VolatileUserStore();
 		this.sessions = options?.sessions ?? new VolatileSessionStore();
+		this.origins = options?.origins ?? new VolatileOriginStore();
 		this.namespace = options?.namespace ?? "auth";
 		this.cookie = options?.cookie ?? "session";
 		this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];

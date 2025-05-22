@@ -45,10 +45,21 @@ export type SessionProperties = autoguard.guards.Intersection<[
 	}>
 ]>;
 
+export const OriginProperties: autoguard.serialization.MessageGuard<OriginProperties> = autoguard.guards.Object.of({
+	"address": autoguard.guards.String,
+	"wait_until_utc": autoguard.guards.Integer
+}, {});
+
+export type OriginProperties = autoguard.guards.Object<{
+	"address": autoguard.guards.String,
+	"wait_until_utc": autoguard.guards.Integer
+}, {}>;
+
 export namespace Autoguard {
 	export const Guards = {
 		"UserProperties": autoguard.guards.Reference.of(() => UserProperties),
-		"SessionProperties": autoguard.guards.Reference.of(() => SessionProperties)
+		"SessionProperties": autoguard.guards.Reference.of(() => SessionProperties),
+		"OriginProperties": autoguard.guards.Reference.of(() => OriginProperties)
 	};
 
 	export type Guards = { [A in keyof typeof Guards]: ReturnType<typeof Guards[A]["as"]>; };

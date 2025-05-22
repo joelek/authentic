@@ -13,3 +13,8 @@ guard SessionProperties: ../api/State & {
 	user_id?: string,
 	ticket_hash?: string
 };
+
+guard OriginProperties: {
+	address: string,
+	wait_until_utc: integer
+};
