@@ -610,7 +610,7 @@ export namespace Autoguard {
 		"readState": autoguard.guards.Object.of({
 			"payload": autoguard.guards.Object.of({
 				"state": autoguard.guards.Reference.of(() => State),
-				"wait_until_utc": autoguard.guards.Integer
+				"wait_ms": autoguard.guards.Integer
 			}, {})
 		}, {
 			"status": autoguard.guards.Integer,
@@ -622,7 +622,7 @@ export namespace Autoguard {
 		"sendCommand": autoguard.guards.Object.of({
 			"payload": autoguard.guards.Object.of({
 				"state": autoguard.guards.Reference.of(() => State),
-				"wait_until_utc": autoguard.guards.Integer
+				"wait_ms": autoguard.guards.Integer
 			}, {})
 		}, {
 			"status": autoguard.guards.Integer,

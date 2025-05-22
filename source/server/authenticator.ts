@@ -689,7 +689,7 @@ export class Authenticator {
 		return this.finalizeResponse({
 			payload: {
 				state,
-				wait_until_utc: origin.wait_until_utc
+				wait_ms: origin.wait_until_utc - Date.now()
 			}
 		}, session, ticket);
 	};
@@ -712,7 +712,7 @@ export class Authenticator {
 		return this.finalizeResponse({
 			payload: {
 				state,
-				wait_until_utc: origin.wait_until_utc
+				wait_ms: origin.wait_until_utc - Date.now()
 			}
 		}, session, ticket);
 	};
