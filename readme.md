@@ -26,6 +26,5 @@ const AUTHENTIC = client.createClient();
 * Add automatic cleaning of stores used by Authentictor class.
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Add roles.
-* Tweak the duration during which session is valid.
 * Improve CookieData format.
 * Increase wait duration when token or password validation fails.
