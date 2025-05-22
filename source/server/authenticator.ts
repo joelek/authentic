@@ -724,7 +724,7 @@ export class Authenticator {
 		this.namespace = options?.namespace ?? "auth";
 		this.cookie = options?.cookie ?? "session";
 		this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];
-		this.validity_minutes = options?.validity_minutes ?? 5;
+		this.validity_minutes = options?.validity_minutes ?? 20;
 		this.validity_days = options?.validity_days ?? 14;
 		this.mailer = options?.mailer ?? new TestMailer();
 		this.require_username = options?.require_username ?? false;
