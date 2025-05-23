@@ -23,6 +23,5 @@ const AUTHENTIC = client.createClient();
 
 ## Roadmap
 
-* Add automatic cleaning of stores used by Authentictor class.
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Add roles.
