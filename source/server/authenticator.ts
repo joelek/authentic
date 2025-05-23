@@ -29,6 +29,10 @@ export type Options = {
 	require_username?: boolean;
 	require_passphrase?: boolean;
 	require_token?: boolean;
+	tolerable_username_attempts?: number;
+	tolerable_email_attempts?: number;
+	tolerable_token_hash_attempts?: number;
+	tolerable_passdata_attempts?: number;
 };
 
 export type UserData = {
@@ -62,6 +66,10 @@ export class Authenticator {
 	protected require_username: boolean;
 	protected require_passphrase: boolean;
 	protected require_token: boolean;
+	protected tolerable_username_attempts: number;
+	protected tolerable_email_attempts: number;
+	protected tolerable_token_hash_attempts: number;
+	protected tolerable_passdata_attempts: number;
 
 	protected clearSessionState(session: Session & api.WaitingForCommandState): Session {
 		return {
@@ -253,7 +261,7 @@ export class Authenticator {
 						type: "WAITING_FOR_REGISTER_USERNAME",
 						reason: "USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - 2))
+						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 					};
 				}
 			}
@@ -276,7 +284,7 @@ export class Authenticator {
 				type: "WAITING_FOR_REGISTER_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - 2))
+				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
 		if (this.require_token || !this.require_passphrase) {
@@ -331,7 +339,7 @@ export class Authenticator {
 						type: "WAITING_FOR_AUTHENTICATE_USERNAME",
 						reason: "USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - 2))
+						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 					};
 				}
 			}
@@ -354,7 +362,7 @@ export class Authenticator {
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - 2))
+				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
 		let user = users.pop();
@@ -408,7 +416,7 @@ export class Authenticator {
 					type: "WAITING_FOR_RECOVER_USERNAME",
 					reason: "USERNAME_NOT_AVAILABLE",
 					expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - 2))
+					wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 				};
 			}
 		}
@@ -430,7 +438,7 @@ export class Authenticator {
 				type: "WAITING_FOR_RECOVER_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - 2))
+				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
 		let user = users.pop();
@@ -542,7 +550,7 @@ export class Authenticator {
 						type: "WAITING_FOR_REGISTER_TOKEN",
 						reason: "TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - 2))
+						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
 				}
 				return this.getNextRegisterSession({
@@ -609,7 +617,7 @@ export class Authenticator {
 						type: "WAITING_FOR_AUTHENTICATE_TOKEN",
 						reason: "TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - 2))
+						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
 				}
 				return this.getNextAuthenticateSession({
@@ -626,7 +634,7 @@ export class Authenticator {
 						type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE",
 						reason: "PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, passdata_attempts - 2))
+						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, passdata_attempts - this.tolerable_passdata_attempts))
 					};
 				}
 				return this.getNextAuthenticateSession({
@@ -677,7 +685,7 @@ export class Authenticator {
 						type: "WAITING_FOR_RECOVER_TOKEN",
 						reason: "TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - 2))
+						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
 				}
 				return this.getNextRecoverSession({
@@ -792,6 +800,10 @@ export class Authenticator {
 		this.require_username = options?.require_username ?? false;
 		this.require_passphrase = options?.require_passphrase ?? false;
 		this.require_token = options?.require_token ?? true;
+		this.tolerable_username_attempts = options?.tolerable_username_attempts ?? 5;
+		this.tolerable_email_attempts = options?.tolerable_email_attempts ?? 5;
+		this.tolerable_token_hash_attempts = options?.tolerable_token_hash_attempts ?? 1;
+		this.tolerable_passdata_attempts = options?.tolerable_passdata_attempts ?? 1;
 	}
 
 	wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B> {
