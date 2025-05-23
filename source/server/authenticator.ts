@@ -33,6 +33,7 @@ export type Options = {
 	tolerable_email_attempts?: number;
 	tolerable_token_hash_attempts?: number;
 	tolerable_passdata_attempts?: number;
+	clean_expired_interval_ms?: number;
 };
 
 export type UserData = {
@@ -70,6 +71,7 @@ export class Authenticator {
 	protected tolerable_email_attempts: number;
 	protected tolerable_token_hash_attempts: number;
 	protected tolerable_passdata_attempts: number;
+	protected clean_expired_interval_ms: number;
 
 	protected clearSessionState(session: Session & api.WaitingForCommandState): Session {
 		return {
@@ -804,6 +806,14 @@ export class Authenticator {
 		this.tolerable_email_attempts = options?.tolerable_email_attempts ?? 5;
 		this.tolerable_token_hash_attempts = options?.tolerable_token_hash_attempts ?? 1;
 		this.tolerable_passdata_attempts = options?.tolerable_passdata_attempts ?? 1;
+		this.clean_expired_interval_ms = options?.clean_expired_interval_ms ?? 1000 * 60;
+		setInterval(async () => {
+			let now = Date.now();
+			let sessions = await this.sessions.lookupObjects("expires_utc", "<=", now);
+			for (let session of sessions) {
+				await this.sessions.deleteObject(session.id).catch(() => undefined);
+			}
+		}, this.clean_expired_interval_ms);
 	}
 
 	wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B> {
