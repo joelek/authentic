@@ -818,6 +818,10 @@ export class Authenticator {
 			for (let session of sessions) {
 				await this.sessions.deleteObject(session.id).catch(() => undefined);
 			}
+			let origins = await this.origins.lookupObjects("expires_utc", "<=", now);
+			for (let origin of origins) {
+				await this.origins.deleteObject(origin.id).catch(() => undefined);
+			}
 		}, this.clean_expired_interval_minutes * 1000 * 60);
 	}
 
