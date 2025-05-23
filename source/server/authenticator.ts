@@ -69,7 +69,7 @@ export class Authenticator {
 			type: session.type,
 			reason: session.reason,
 			expires_utc: session.expires_utc,
-			wait_until_utc: this.getExpiresInSeconds(0)
+			wait_until_utc: this.getExpiresInSeconds(1)
 		};
 	}
 
