@@ -57,11 +57,13 @@ export type SessionProperties = autoguard.guards.Intersection<[
 
 export const OriginProperties: autoguard.serialization.MessageGuard<OriginProperties> = autoguard.guards.Object.of({
 	"address": autoguard.guards.String,
+	"expires_utc": autoguard.guards.Integer,
 	"wait_until_utc": autoguard.guards.Integer
 }, {});
 
 export type OriginProperties = autoguard.guards.Object<{
 	"address": autoguard.guards.String,
+	"expires_utc": autoguard.guards.Integer,
 	"wait_until_utc": autoguard.guards.Integer
 }, {}>;
 

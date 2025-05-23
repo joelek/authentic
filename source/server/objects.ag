@@ -21,5 +21,6 @@ guard SessionProperties: ../api/State & {
 
 guard OriginProperties: {
 	address: string,
+	expires_utc: integer,
 	wait_until_utc: integer
 };
