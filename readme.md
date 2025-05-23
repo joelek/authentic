@@ -26,4 +26,3 @@ const AUTHENTIC = client.createClient();
 * Add automatic cleaning of stores used by Authentictor class.
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Add roles.
-* Increase wait duration when token or password validation fails.
