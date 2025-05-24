@@ -286,6 +286,8 @@ export class Authenticator {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
+				token_hash: undefined,
+				token_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_REGISTER_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
@@ -364,6 +366,8 @@ export class Authenticator {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
+				token_hash: undefined,
+				token_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
@@ -440,6 +444,8 @@ export class Authenticator {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
+				token_hash: undefined,
+				token_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_RECOVER_EMAIL",
 				reason: "EMAIL_NOT_AVAILABLE",
