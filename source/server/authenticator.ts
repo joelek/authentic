@@ -75,16 +75,6 @@ export class Authenticator {
 	protected tolerable_passdata_attempts: number;
 	protected clean_expired_interval_minutes: number;
 
-	protected clearSessionState(session: Session & api.WaitingForCommandState): Session {
-		return {
-			id: session.id,
-			type: session.type,
-			reason: session.reason,
-			expires_utc: session.expires_utc,
-			wait_until_utc: this.getExpiresInSeconds(1)
-		};
-	}
-
 	protected computeHash(string: string): string {
 		return libcrypto.createHash("sha256").update(string).digest("hex");
 	}
@@ -511,13 +501,13 @@ export class Authenticator {
 		}
 		if (api.WaitingForCommandState.is(session)) {
 			if (api.RegisterCommand.is(command)) {
-				return this.getNextRegisterSession(this.clearSessionState(session), request);
+				return this.getNextRegisterSession(session, request);
 			}
 			if (api.AuthenticateCommand.is(command)) {
-				return this.getNextAuthenticateSession(this.clearSessionState(session), request);
+				return this.getNextAuthenticateSession(session, request);
 			}
 			if (api.RecoverCommand.is(command)) {
-				return this.getNextRecoverSession(this.clearSessionState(session), request);
+				return this.getNextRecoverSession(session, request);
 			}
 		} else if (api.WaitingForRegisterUsernameState.is(session)) {
 			if (api.RegisterUsernameCommand.is(command)) {
