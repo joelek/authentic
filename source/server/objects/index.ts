@@ -17,6 +17,16 @@ export type UserProperties = autoguard.guards.Object<{
 	"username": autoguard.guards.String
 }>;
 
+export const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties> = autoguard.guards.Object.of({
+	"user_id": autoguard.guards.String,
+	"name": autoguard.guards.String
+}, {});
+
+export type RoleProperties = autoguard.guards.Object<{
+	"user_id": autoguard.guards.String,
+	"name": autoguard.guards.String
+}, {}>;
+
 export const SessionProperties: autoguard.serialization.MessageGuard<SessionProperties> = autoguard.guards.Intersection.of(
 	autoguard.guards.Reference.of(() => State),
 	autoguard.guards.Object.of({
@@ -70,6 +80,7 @@ export type OriginProperties = autoguard.guards.Object<{
 export namespace Autoguard {
 	export const Guards = {
 		"UserProperties": autoguard.guards.Reference.of(() => UserProperties),
+		"RoleProperties": autoguard.guards.Reference.of(() => RoleProperties),
 		"SessionProperties": autoguard.guards.Reference.of(() => SessionProperties),
 		"OriginProperties": autoguard.guards.Reference.of(() => OriginProperties)
 	};

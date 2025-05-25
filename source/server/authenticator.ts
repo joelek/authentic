@@ -8,6 +8,7 @@ import { Mailer, TestMailer } from "../email";
 import * as shared from "../shared";
 import { ExpectedUnreachableCodeError } from "../shared";
 import { Origin, OriginStore, VolatileOriginStore } from "./stores/origins";
+import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
 import { UserStore, VolatileUserStore } from "./stores/user";
 import { Validator } from "./validator";
@@ -20,6 +21,7 @@ export type Options = {
 	users?: UserStore;
 	sessions?: SessionStore;
 	origins?: OriginStore;
+	roles?: RoleStore;
 	namespace?: string;
 	cookie?: string;
 	trusted_proxies?: Array<string>;
@@ -39,6 +41,7 @@ export type Options = {
 
 export type UserData = {
 	id: string;
+	roles: Array<string>;
 };
 
 export type AuthenticatedRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>, user_data: UserData) => Promise<B>;
@@ -59,6 +62,7 @@ export class Authenticator {
 	protected users: UserStore;
 	protected sessions: SessionStore;
 	protected origins: OriginStore;
+	protected roles: RoleStore;
 	protected namespace: string;
 	protected cookie: string;
 	protected trusted_proxies: Array<string>;
@@ -793,6 +797,7 @@ export class Authenticator {
 		this.users = options?.users ?? new VolatileUserStore();
 		this.sessions = options?.sessions ?? new VolatileSessionStore();
 		this.origins = options?.origins ?? new VolatileOriginStore();
+		this.roles = options?.roles ?? new VolatileRoleStore();
 		this.namespace = options?.namespace ?? "auth";
 		this.cookie = options?.cookie ?? "session";
 		this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];
@@ -851,8 +856,10 @@ export class Authenticator {
 			session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
 			await this.sessions.updateObject(session);
 			let user = await this.users.lookupObject(session.user_id);
+			let roles = await this.roles.lookupObjects("user_id", "=", user.id);
 			let user_data: UserData = {
-				id: user.id
+				id: user.id,
+				roles: roles.map((role) => role.name)
 			};
 			let response = await route(request, user_data);
 			return this.finalizeResponse(response, session, ticket);

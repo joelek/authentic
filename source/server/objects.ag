@@ -4,6 +4,11 @@ guard UserProperties: {
 	username?: string
 };
 
+guard RoleProperties: {
+	user_id: string,
+	name: string
+};
+
 guard SessionProperties: ../api/State & {
 	expires_utc: integer,
 	wait_until_utc: integer,
