@@ -24,4 +24,3 @@ const AUTHENTIC = client.createClient();
 ## Roadmap
 
 * Use AVL-tree for indices in VolatileObjectStore class.
-* Add roles.
