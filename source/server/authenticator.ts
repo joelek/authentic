@@ -840,7 +840,6 @@ export class Authenticator {
 				throw 401;
 			}
 			if (session.expires_utc <= Date.now()) {
-				await this.sessions.deleteObject(session_id);
 				throw 401;
 			}
 			if (session.user_id == null) {
