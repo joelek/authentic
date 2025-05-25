@@ -845,7 +845,7 @@ export class Authenticator {
 			if (session.user_id == null) {
 				throw 401;
 			}
-			if (session.token_hash == null) {
+			if (session.ticket_hash == null) {
 				throw 401;
 			}
 			let ticket_hash = this.computeHash(ticket);
