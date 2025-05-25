@@ -39,12 +39,29 @@ export type Options = {
 	clean_expired_interval_minutes?: number;
 };
 
-export type UserData = {
-	id: string;
-	roles: Array<string>;
+export class AccessHandler {
+	protected authenticated_user_id: string | undefined;
+	protected roles: Array<string>;
+
+	constructor(authenticated_user_id: string | undefined, roles: Array<string>) {
+		this.authenticated_user_id = authenticated_user_id;
+		this.roles = roles;
+	}
+
+	requireAuthorization(...roles: Array<string>): string {
+		if (this.authenticated_user_id == null) {
+			throw 401;
+		}
+		for (let role of roles) {
+			if (!this.roles.includes(role)) {
+				throw 401;
+			}
+		}
+		return this.authenticated_user_id;
+	}
 };
 
-export type AuthenticatedRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>, user_data: UserData) => Promise<B>;
+export type AuthenticatedRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>, access_handler: AccessHandler) => Promise<B>;
 
 export type AuthenticatedRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = {
 	[C in keyof A & keyof B]: AuthenticatedRoute<A[C], B[C]>;
@@ -87,6 +104,15 @@ export class Authenticator {
 		return Validator.fromPassphrase(passphrase).toChunk();
 	}
 
+	protected async createAccessHandler(authenticated_user_id: string | undefined): Promise<AccessHandler> {
+		if (authenticated_user_id == null) {
+			return new AccessHandler(authenticated_user_id, []);
+		} else {
+			let roles = await this.roles.lookupObjects("user_id", "=", authenticated_user_id);
+			return new AccessHandler(authenticated_user_id, roles.map((role) => role.name));
+		}
+	}
+
 	protected createSetCookieValues(session: Session, ticket: string | undefined): Array<string> {
 		let cookie_data: CookieData = {
 			session_id: session.id,
@@ -123,6 +149,28 @@ export class Authenticator {
 
 	protected generateToken(): string {
 		return libcrypto.randomBytes(16).toString("hex");
+	}
+
+	protected async getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined> {
+		if (ticket == null) {
+			return;
+		}
+		if (session.expires_utc <= Date.now()) {
+			return;
+		}
+		if (session.user_id == null) {
+			return;
+		}
+		if (session.ticket_hash == null) {
+			return;
+		}
+		let ticket_hash = this.computeHash(ticket);
+		if (session.ticket_hash !== ticket_hash) {
+			return;
+		}
+		session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
+		await this.sessions.updateObject(session);
+		return session.user_id;
 	}
 
 	protected getExpiresInDays(valid_for_days: number): number {
@@ -829,38 +877,10 @@ export class Authenticator {
 	wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B> {
 		return async (request) => {
 			let { session_id, ticket } = this.getCookieData(request) ?? {};
-			if (session_id == null) {
-				throw 401;
-			};
-			if (ticket == null) {
-				throw 401;
-			}
-			let session = await this.sessions.lookupObject(session_id).catch(() => undefined);
-			if (session == null) {
-				throw 401;
-			}
-			if (session.expires_utc <= Date.now()) {
-				throw 401;
-			}
-			if (session.user_id == null) {
-				throw 401;
-			}
-			if (session.ticket_hash == null) {
-				throw 401;
-			}
-			let ticket_hash = this.computeHash(ticket);
-			if (session.ticket_hash !== ticket_hash) {
-				throw 401;
-			}
-			session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
-			await this.sessions.updateObject(session);
-			let user = await this.users.lookupObject(session.user_id);
-			let roles = await this.roles.lookupObjects("user_id", "=", user.id);
-			let user_data: UserData = {
-				id: user.id,
-				roles: roles.map((role) => role.name)
-			};
-			let response = await route(request, user_data);
+			let session = await this.getSession(session_id);
+			let authenticated_user_id = await this.getAuthenticatedUserId(session, ticket);
+			let access_handler = await this.createAccessHandler(authenticated_user_id);
+			let response = await route(request, access_handler);
 			return this.finalizeResponse(response, session, ticket);
 		};
 	}
