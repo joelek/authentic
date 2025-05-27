@@ -9,5 +9,12 @@
 	"include": [
 		"./"
 	],
-	"references": []
+	"references": [
+		{
+			"path": "../api/"
+		},
+		{
+			"path": "../client/"
+		}
+	]
 }
