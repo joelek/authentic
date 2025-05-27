@@ -214,8 +214,14 @@ guard WaitingForCommandState: {
 	reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND"
 };
 
+guard UnknownState: {
+	type: "UNKNOWN_STATE",
+	reason: "STATE_NOT_READ"
+};
+
 guard State:
 	WaitingForCommandState |
+	UnknownState |
 	RegisterStates |
 	AuthenticateStates |
 	RecoverStates;
