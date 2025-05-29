@@ -261,12 +261,22 @@ export class Authenticator {
 		});
 	}
 
+	protected checkRateLimit(wait_until_utc: number): void {
+		let wait_ms = wait_until_utc - Date.now();
+		if (wait_ms > 0) {
+			throw new autoguard.api.EndpointError({
+				status: 429,
+				headers: [
+					["retry-after", String(Math.ceil(wait_ms / 1000))]
+				]
+			});
+		}
+	}
+
 	protected async getOriginAndApplyRateLimit(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Origin> {
 		let address = this.getRemoteAddress(request);
 		let origin = await this.getOrigin(address);
-		if (Date.now() < origin.wait_until_utc) {
-			throw 429;
-		}
+		this.checkRateLimit(origin.wait_until_utc);
 		return await this.origins.updateObject({
 			...origin,
 			expires_utc: this.getExpiresInMinutes(this.origin_validity_minutes),
@@ -800,9 +810,7 @@ export class Authenticator {
 		let origin = await this.getOriginAndApplyRateLimit(request);
 		let { session_id, ticket } = this.getCookieData(request) ?? {};
 		let session = await this.getSession(session_id);
-		if (Date.now() < session.wait_until_utc) {
-			throw 429;
-		}
+		this.checkRateLimit(session.wait_until_utc);
 		let state: api.State = api.State.as({
 			type: session.type,
 			reason: session.reason
@@ -819,9 +827,7 @@ export class Authenticator {
 		let origin = await this.getOriginAndApplyRateLimit(request);
 		let { session_id, ticket } = this.getCookieData(request) ?? {};
 		let session = await this.getSession(session_id);
-		if (Date.now() < session.wait_until_utc) {
-			throw 429;
-		}
+		this.checkRateLimit(session.wait_until_utc);
 		let payload = await request.payload(1024);
 		session = await this.getNextSession(session, payload.command, request);
 		if (api.AuthenticatedState.is(session) || api.RegisteredState.is(session) || api.RecoveredState.is(session)) {
