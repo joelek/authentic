@@ -817,8 +817,10 @@ export class Authenticator {
 		});
 		return this.finalizeResponse({
 			payload: {
-				state,
-				wait_ms: Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
+				state
+			},
+			headers: {
+				"retry-after": Math.ceil(Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now()) / 1000)
 			}
 		}, session, ticket);
 	};
@@ -841,8 +843,10 @@ export class Authenticator {
 		});
 		return this.finalizeResponse({
 			payload: {
-				state,
-				wait_ms: Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
+				state
+			},
+			headers: {
+				"retry-after": Math.ceil(Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now()) / 1000)
 			}
 		}, session, ticket);
 	};

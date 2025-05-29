@@ -228,14 +228,16 @@ guard State:
 
 # =============================================================================
 
-route readState(): GET:/ => {
-	state: State,
-	wait_ms: integer
+route readState(): GET:/ => [
+	"retry-after": integer
+] {
+	state: State
 };
 
 route sendCommand(): POST:/ <= {
 	command: Command
-} => {
-	state: State,
-	wait_ms: integer
+} => [
+	"retry-after": integer
+] {
+	state: State
 };

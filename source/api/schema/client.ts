@@ -25,6 +25,7 @@ export const makeClient = (clientOptions?: autoguard.api.ClientOptions): Client 
 		{
 			let status = raw.status;
 			let headers: Record<string, autoguard.api.JSON> = {};
+			headers["retry-after"] = autoguard.api.decodeHeaderValue(raw.headers, "retry-after", false);
 			headers = { ...headers, ...autoguard.api.decodeUndeclaredHeaders(raw.headers, Object.keys(headers)) };
 			let payload = await autoguard.api.deserializePayload(raw.payload);
 			let guard = autoguard.api.wrapMessageGuard(shared.Autoguard.Responses["readState"], clientOptions?.debugMode);
@@ -51,6 +52,7 @@ export const makeClient = (clientOptions?: autoguard.api.ClientOptions): Client 
 		{
 			let status = raw.status;
 			let headers: Record<string, autoguard.api.JSON> = {};
+			headers["retry-after"] = autoguard.api.decodeHeaderValue(raw.headers, "retry-after", false);
 			headers = { ...headers, ...autoguard.api.decodeUndeclaredHeaders(raw.headers, Object.keys(headers)) };
 			let payload = await autoguard.api.deserializePayload(raw.payload);
 			let guard = autoguard.api.wrapMessageGuard(shared.Autoguard.Responses["sendCommand"], clientOptions?.debugMode);

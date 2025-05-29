@@ -621,28 +621,30 @@ export namespace Autoguard {
 
 	export const Responses = {
 		"readState": autoguard.guards.Object.of({
+			"headers": autoguard.guards.Intersection.of(
+				autoguard.guards.Object.of({
+					"retry-after": autoguard.guards.Integer
+				}, {}),
+				autoguard.api.Headers
+			),
 			"payload": autoguard.guards.Object.of({
-				"state": autoguard.guards.Reference.of(() => State),
-				"wait_ms": autoguard.guards.Integer
+				"state": autoguard.guards.Reference.of(() => State)
 			}, {})
 		}, {
-			"status": autoguard.guards.Integer,
-			"headers": autoguard.guards.Intersection.of(
-				autoguard.guards.Object.of({}, {}),
-				autoguard.api.Headers
-			)
+			"status": autoguard.guards.Integer
 		}),
 		"sendCommand": autoguard.guards.Object.of({
+			"headers": autoguard.guards.Intersection.of(
+				autoguard.guards.Object.of({
+					"retry-after": autoguard.guards.Integer
+				}, {}),
+				autoguard.api.Headers
+			),
 			"payload": autoguard.guards.Object.of({
-				"state": autoguard.guards.Reference.of(() => State),
-				"wait_ms": autoguard.guards.Integer
+				"state": autoguard.guards.Reference.of(() => State)
 			}, {})
 		}, {
-			"status": autoguard.guards.Integer,
-			"headers": autoguard.guards.Intersection.of(
-				autoguard.guards.Object.of({}, {}),
-				autoguard.api.Headers
-			)
+			"status": autoguard.guards.Integer
 		})
 	};
 
