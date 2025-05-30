@@ -8,6 +8,6 @@ export type Options = {
 export function createClient(options?: Options): api.Client {
 	let urlPrefix = shared.getUrlPrefix(options?.namespace);
 	return api.makeClient({
-		urlPrefix,
+		urlPrefix
 	});
 };
