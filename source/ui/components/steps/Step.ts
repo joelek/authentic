@@ -1,4 +1,5 @@
-import { Children, html, State, stateify } from "@joelek/bonsai";
+import { Children, html, State } from "@joelek/bonsai";
+import * as api from "../../../api";
 import { Managers } from "../../managers/Managers";
 
 document.head.appendChild(html.style({}, `\
@@ -15,17 +16,22 @@ document.head.appendChild(html.style({}, `\
 	}
 `));
 
-export type Step = {
-	visible: State<boolean>;
+export type Step<A extends api.State> = {
+	type: State<A["type"] | undefined>;
+	reason: State<A["reason"] | undefined>;
 };
 
-export function Step(managers: Managers, attributes: Step, ...children: Children) {
-	let visible = stateify(attributes.visible);
+export function Step<A extends api.State>(managers: Managers, attributes: Step<A>, ...children: Children) {
+	let type = attributes.type;
+	let reason = attributes.reason;
+	let visible = type.compute((type) => type != null);
 	return (
 		html.div({
 			class: ["step", visible.compute((visible) => visible ? "step--visible" : "step--hidden")]
 		},
-			...children
+			...children,
+			html.p({}, managers.translation.getTranslation(type)),
+			html.p({}, managers.translation.getTranslation(reason))
 		)
 	);
 };
