@@ -56,6 +56,8 @@ export class BackendManager implements api.Client {
 		try {
 			let response = await this.client.readState(...args);
 			this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+			let payload = await response.payload();
+			this.state.update(payload.state);
 			return response;
 		} finally {
 			this.pending.update(false);
@@ -68,6 +70,8 @@ export class BackendManager implements api.Client {
 		try {
 			let response = await this.client.sendCommand(...args);
 			this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+			let payload = await response.payload();
+			this.state.update(payload.state);
 			return response;
 		} finally {
 			this.pending.update(false);
