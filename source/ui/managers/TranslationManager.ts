@@ -307,11 +307,42 @@ const STATES = {
 	...UNKNOWN_STATE
 };
 
+type States = typeof STATES;
+type StatesKey = keyof States;
+
 const TRANSLATIONS = {
-	...STATES
+	"REGISTER_BUTTON": {
+		en: "Register account",
+		sv: "Registrera konto"
+	},
+	"AUTHENTICATE_BUTTON": {
+		en: "Authorize account",
+		sv: "Auktorisera konto"
+	},
+	"RECOVER_BUTTON": {
+		en: "Recover account",
+		sv: "Återställ konto"
+	},
+	"CONTINUE_BUTTON": {
+		en: "Continue",
+		sv: "Fortsätt"
+	},
+	"AUTHENTICATED_TEXT": {
+		en: "Your account has been authorized.",
+		sv: "Ditt konto har auktoriserats."
+	},
+	"RECOVERED_TEXT": {
+		en: "Your account has been recovered.",
+		sv: "Ditt konto har återställts."
+	},
+	"REGISTERED_TEXT": {
+		en: "Your account has been registered.",
+		sv: "Ditt konto has registrerats."
+	}
 };
 
-type TranslationKey = keyof typeof TRANSLATIONS;
+type Translations = typeof TRANSLATIONS;
+type TranslationsKey = keyof Translations;
 
 export class TranslationManager {
 	protected language: State<Language>;
@@ -334,13 +365,23 @@ export class TranslationManager {
 		this.updateLanguage();
 	}
 
-	getTranslation(attribute: Attribute<TranslationKey | undefined>): State<string> {
+	getTranslation(attribute: Attribute<TranslationsKey | undefined>): State<string> {
 		let key = stateify(attribute);
 		return computed([key, this.language], (key, language) => {
 			if (key == null) {
 				return "";
 			}
 			return TRANSLATIONS[key][language];
+		});
+	}
+
+	getStateTranslation(attribute: Attribute<StatesKey | undefined>): State<string> {
+		let key = stateify(attribute);
+		return computed([key, this.language], (key, language) => {
+			if (key == null) {
+				return "";
+			}
+			return STATES[key][language];
 		});
 	}
 };

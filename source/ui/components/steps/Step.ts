@@ -30,8 +30,8 @@ export function Step<A extends api.State>(managers: Managers, attributes: Step<A
 			class: ["step", visible.compute((visible) => visible ? "step--visible" : "step--hidden")]
 		},
 			...children,
-			html.p({}, managers.translation.getTranslation(type)),
-			html.p({}, managers.translation.getTranslation(reason))
+			html.p({}, managers.translation.getStateTranslation(type)),
+			html.p({}, managers.translation.getStateTranslation(reason))
 		)
 	);
 };
