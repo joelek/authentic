@@ -820,7 +820,7 @@ export class Authenticator {
 				state
 			},
 			headers: {
-				"retry-after": Math.ceil(Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now()) / 1000)
+				"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
 			}
 		}, session, ticket);
 	};
@@ -846,7 +846,7 @@ export class Authenticator {
 				state
 			},
 			headers: {
-				"retry-after": Math.ceil(Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now()) / 1000)
+				"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
 			}
 		}, session, ticket);
 	};

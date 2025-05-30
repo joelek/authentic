@@ -31,14 +31,14 @@ export class BackendManager implements api.Client {
 	async readState(...args: Parameters<api.Client["readState"]>): ReturnType<api.Client["readState"]> {
 		await this.wait();
 		let response = await this.client.readState(...args);
-		this.wait_until_utc = Date.now() + response.headers()["retry-after"] * 1000;
+		this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
 		return response;
 	}
 
 	async sendCommand(...args: Parameters<api.Client["sendCommand"]>): ReturnType<api.Client["sendCommand"]> {
 		await this.wait();
 		let response = await this.client.sendCommand(...args);
-		this.wait_until_utc = Date.now() + response.headers()["retry-after"] * 1000;
+		this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
 		return response;
 	}
 

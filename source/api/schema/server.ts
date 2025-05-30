@@ -31,7 +31,7 @@ export const makeServer = (routes: autoguard.api.Server<shared.Autoguard.Request
 								guard.as(response, "response");
 								let status = response.status ?? 200;
 								let headers = new Array<[string, string]>();
-								headers.push(...autoguard.api.encodeHeaderPairs("retry-after", [response.headers?.["retry-after"]], false));
+								headers.push(...autoguard.api.encodeHeaderPairs("x-wait-ms", [response.headers?.["x-wait-ms"]], false));
 								headers.push(...autoguard.api.encodeUndeclaredHeaderPairs(response.headers ?? {}, headers.map((header) => header[0])));
 								let payload = autoguard.api.serializePayload(response.payload);
 								let defaultHeaders = serverOptions?.defaultHeaders?.slice() ?? [];
@@ -68,7 +68,7 @@ export const makeServer = (routes: autoguard.api.Server<shared.Autoguard.Request
 								guard.as(response, "response");
 								let status = response.status ?? 200;
 								let headers = new Array<[string, string]>();
-								headers.push(...autoguard.api.encodeHeaderPairs("retry-after", [response.headers?.["retry-after"]], false));
+								headers.push(...autoguard.api.encodeHeaderPairs("x-wait-ms", [response.headers?.["x-wait-ms"]], false));
 								headers.push(...autoguard.api.encodeUndeclaredHeaderPairs(response.headers ?? {}, headers.map((header) => header[0])));
 								let payload = autoguard.api.serializePayload(response.payload);
 								let defaultHeaders = serverOptions?.defaultHeaders?.slice() ?? [];
