@@ -305,7 +305,7 @@ export class Authenticator {
 				return {
 					...session,
 					type: "WAITING_FOR_REGISTER_USERNAME",
-					reason: "USERNAME_REQUIRED",
+					reason: "REGISTER_USERNAME_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInSeconds(1)
 				};
@@ -317,7 +317,7 @@ export class Authenticator {
 						...session,
 						username_attempts: username_attempts,
 						type: "WAITING_FOR_REGISTER_USERNAME",
-						reason: "USERNAME_NOT_AVAILABLE",
+						reason: "REGISTER_USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 					};
@@ -328,7 +328,7 @@ export class Authenticator {
 			return {
 				...session,
 				type: "WAITING_FOR_REGISTER_EMAIL",
-				reason: "EMAIL_REQUIRED",
+				reason: "REGISTER_EMAIL_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInSeconds(1)
 			};
@@ -342,7 +342,7 @@ export class Authenticator {
 				token_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_REGISTER_EMAIL",
-				reason: "EMAIL_NOT_AVAILABLE",
+				reason: "REGISTER_EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
@@ -355,7 +355,7 @@ export class Authenticator {
 					...session,
 					token_hash: this.computeHash(token),
 					type: "WAITING_FOR_REGISTER_TOKEN",
-					reason: "TOKEN_REQUIRED",
+					reason: "REGISTER_TOKEN_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInSeconds(1)
 				};
@@ -366,7 +366,7 @@ export class Authenticator {
 				return {
 					...session,
 					type: "WAITING_FOR_REGISTER_PASSPHRASE",
-					reason: "PASSPHRASE_REQUIRED",
+					reason: "REGISTER_PASSPHRASE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInSeconds(1)
 				};
@@ -397,7 +397,7 @@ export class Authenticator {
 						...session,
 						username_attempts: username_attempts,
 						type: "WAITING_FOR_AUTHENTICATE_USERNAME",
-						reason: "USERNAME_NOT_AVAILABLE",
+						reason: "AUTHENTICATE_USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 					};
@@ -408,7 +408,7 @@ export class Authenticator {
 			return {
 				...session,
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
-				reason: "EMAIL_REQUIRED",
+				reason: "AUTHENTICATE_EMAIL_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInSeconds(1)
 			};
@@ -422,7 +422,7 @@ export class Authenticator {
 				token_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
-				reason: "EMAIL_NOT_AVAILABLE",
+				reason: "AUTHENTICATE_EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
@@ -439,7 +439,7 @@ export class Authenticator {
 					...session,
 					token_hash: this.computeHash(token),
 					type: "WAITING_FOR_AUTHENTICATE_TOKEN",
-					reason: "TOKEN_REQUIRED",
+					reason: "AUTHENTICATE_TOKEN_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInSeconds(1)
 				};
@@ -451,7 +451,7 @@ export class Authenticator {
 					...session,
 					passdata: user.passdata,
 					type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE",
-					reason: "PASSPHRASE_REQUIRED",
+					reason: "AUTHENTICATE_PASSPHRASE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInSeconds(1)
 				};
@@ -476,7 +476,7 @@ export class Authenticator {
 					...session,
 					username_attempts: username_attempts,
 					type: "WAITING_FOR_RECOVER_USERNAME",
-					reason: "USERNAME_NOT_AVAILABLE",
+					reason: "RECOVER_USERNAME_NOT_AVAILABLE",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 				};
@@ -486,7 +486,7 @@ export class Authenticator {
 			return {
 				...session,
 				type: "WAITING_FOR_RECOVER_EMAIL",
-				reason: "EMAIL_REQUIRED",
+				reason: "RECOVER_EMAIL_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInSeconds(1)
 			};
@@ -500,7 +500,7 @@ export class Authenticator {
 				token_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_RECOVER_EMAIL",
-				reason: "EMAIL_NOT_AVAILABLE",
+				reason: "RECOVER_EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
@@ -516,7 +516,7 @@ export class Authenticator {
 				...session,
 				token_hash: this.computeHash(token),
 				type: "WAITING_FOR_RECOVER_TOKEN",
-				reason: "TOKEN_REQUIRED",
+				reason: "RECOVER_TOKEN_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInSeconds(1)
 			};
@@ -526,7 +526,7 @@ export class Authenticator {
 				return {
 					...session,
 					type: "WAITING_FOR_RECOVER_PASSPHRASE",
-					reason: "PASSPHRASE_REQUIRED",
+					reason: "RECOVER_PASSPHRASE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInSeconds(1)
 				};
@@ -577,7 +577,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_REGISTER_USERNAME",
-						reason: "USERNAME_NOT_ACCEPTED",
+						reason: "REGISTER_USERNAME_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};
@@ -593,7 +593,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_REGISTER_EMAIL",
-						reason: "EMAIL_NOT_ACCEPTED",
+						reason: "REGISTER_EMAIL_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};
@@ -612,7 +612,7 @@ export class Authenticator {
 						...session,
 						token_hash_attempts: token_hash_attempts,
 						type: "WAITING_FOR_REGISTER_TOKEN",
-						reason: "TOKEN_NOT_ACCEPTED",
+						reason: "REGISTER_TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
@@ -627,7 +627,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_REGISTER_PASSPHRASE",
-						reason: "PASSPHRASE_NOT_ACCEPTED",
+						reason: "REGISTER_PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};
@@ -644,7 +644,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_AUTHENTICATE_USERNAME",
-						reason: "USERNAME_NOT_ACCEPTED",
+						reason: "AUTHENTICATE_USERNAME_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};
@@ -660,7 +660,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_AUTHENTICATE_EMAIL",
-						reason: "EMAIL_NOT_ACCEPTED",
+						reason: "AUTHENTICATE_EMAIL_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};
@@ -679,7 +679,7 @@ export class Authenticator {
 						...session,
 						token_hash_attempts: token_hash_attempts,
 						type: "WAITING_FOR_AUTHENTICATE_TOKEN",
-						reason: "TOKEN_NOT_ACCEPTED",
+						reason: "AUTHENTICATE_TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
@@ -696,7 +696,7 @@ export class Authenticator {
 						...session,
 						passdata_attempts: passdata_attempts,
 						type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE",
-						reason: "PASSPHRASE_NOT_ACCEPTED",
+						reason: "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, passdata_attempts - this.tolerable_passdata_attempts))
 					};
@@ -712,7 +712,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_RECOVER_USERNAME",
-						reason: "USERNAME_NOT_ACCEPTED",
+						reason: "RECOVER_USERNAME_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};
@@ -728,7 +728,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_RECOVER_EMAIL",
-						reason: "EMAIL_NOT_ACCEPTED",
+						reason: "RECOVER_EMAIL_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};
@@ -747,7 +747,7 @@ export class Authenticator {
 						...session,
 						token_hash_attempts: token_hash_attempts,
 						type: "WAITING_FOR_RECOVER_TOKEN",
-						reason: "TOKEN_NOT_ACCEPTED",
+						reason: "RECOVER_TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
@@ -762,7 +762,7 @@ export class Authenticator {
 					return {
 						...session,
 						type: "WAITING_FOR_RECOVER_PASSPHRASE",
-						reason: "PASSPHRASE_NOT_ACCEPTED",
+						reason: "RECOVER_PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 						wait_until_utc: this.getExpiresInSeconds(1)
 					};

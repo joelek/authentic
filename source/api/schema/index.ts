@@ -69,68 +69,68 @@ export type RegisterCommands = autoguard.guards.Union<[
 export const WaitingForRegisterUsernameState: autoguard.serialization.MessageGuard<WaitingForRegisterUsernameState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_REGISTER_USERNAME"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("USERNAME_REQUIRED"),
-		autoguard.guards.StringLiteral.of("USERNAME_NOT_ACCEPTED"),
-		autoguard.guards.StringLiteral.of("USERNAME_NOT_AVAILABLE")
+		autoguard.guards.StringLiteral.of("REGISTER_USERNAME_REQUIRED"),
+		autoguard.guards.StringLiteral.of("REGISTER_USERNAME_NOT_ACCEPTED"),
+		autoguard.guards.StringLiteral.of("REGISTER_USERNAME_NOT_AVAILABLE")
 	)
 }, {});
 
 export type WaitingForRegisterUsernameState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_REGISTER_USERNAME">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"USERNAME_REQUIRED">,
-		autoguard.guards.StringLiteral<"USERNAME_NOT_ACCEPTED">,
-		autoguard.guards.StringLiteral<"USERNAME_NOT_AVAILABLE">
+		autoguard.guards.StringLiteral<"REGISTER_USERNAME_REQUIRED">,
+		autoguard.guards.StringLiteral<"REGISTER_USERNAME_NOT_ACCEPTED">,
+		autoguard.guards.StringLiteral<"REGISTER_USERNAME_NOT_AVAILABLE">
 	]>
 }, {}>;
 
 export const WaitingForRegisterEmailState: autoguard.serialization.MessageGuard<WaitingForRegisterEmailState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_REGISTER_EMAIL"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("EMAIL_REQUIRED"),
-		autoguard.guards.StringLiteral.of("EMAIL_NOT_ACCEPTED"),
-		autoguard.guards.StringLiteral.of("EMAIL_NOT_AVAILABLE")
+		autoguard.guards.StringLiteral.of("REGISTER_EMAIL_REQUIRED"),
+		autoguard.guards.StringLiteral.of("REGISTER_EMAIL_NOT_ACCEPTED"),
+		autoguard.guards.StringLiteral.of("REGISTER_EMAIL_NOT_AVAILABLE")
 	)
 }, {});
 
 export type WaitingForRegisterEmailState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_REGISTER_EMAIL">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"EMAIL_REQUIRED">,
-		autoguard.guards.StringLiteral<"EMAIL_NOT_ACCEPTED">,
-		autoguard.guards.StringLiteral<"EMAIL_NOT_AVAILABLE">
+		autoguard.guards.StringLiteral<"REGISTER_EMAIL_REQUIRED">,
+		autoguard.guards.StringLiteral<"REGISTER_EMAIL_NOT_ACCEPTED">,
+		autoguard.guards.StringLiteral<"REGISTER_EMAIL_NOT_AVAILABLE">
 	]>
 }, {}>;
 
 export const WaitingForRegisterTokenState: autoguard.serialization.MessageGuard<WaitingForRegisterTokenState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_REGISTER_TOKEN"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("TOKEN_REQUIRED"),
-		autoguard.guards.StringLiteral.of("TOKEN_NOT_ACCEPTED")
+		autoguard.guards.StringLiteral.of("REGISTER_TOKEN_REQUIRED"),
+		autoguard.guards.StringLiteral.of("REGISTER_TOKEN_NOT_ACCEPTED")
 	)
 }, {});
 
 export type WaitingForRegisterTokenState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_REGISTER_TOKEN">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"TOKEN_REQUIRED">,
-		autoguard.guards.StringLiteral<"TOKEN_NOT_ACCEPTED">
+		autoguard.guards.StringLiteral<"REGISTER_TOKEN_REQUIRED">,
+		autoguard.guards.StringLiteral<"REGISTER_TOKEN_NOT_ACCEPTED">
 	]>
 }, {}>;
 
 export const WaitingForRegisterPassphraseState: autoguard.serialization.MessageGuard<WaitingForRegisterPassphraseState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_REGISTER_PASSPHRASE"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("PASSPHRASE_REQUIRED"),
-		autoguard.guards.StringLiteral.of("PASSPHRASE_NOT_ACCEPTED")
+		autoguard.guards.StringLiteral.of("REGISTER_PASSPHRASE_REQUIRED"),
+		autoguard.guards.StringLiteral.of("REGISTER_PASSPHRASE_NOT_ACCEPTED")
 	)
 }, {});
 
 export type WaitingForRegisterPassphraseState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_REGISTER_PASSPHRASE">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"PASSPHRASE_REQUIRED">,
-		autoguard.guards.StringLiteral<"PASSPHRASE_NOT_ACCEPTED">
+		autoguard.guards.StringLiteral<"REGISTER_PASSPHRASE_REQUIRED">,
+		autoguard.guards.StringLiteral<"REGISTER_PASSPHRASE_NOT_ACCEPTED">
 	]>
 }, {}>;
 
@@ -227,68 +227,68 @@ export type AuthenticateCommands = autoguard.guards.Union<[
 export const WaitingForAuthenticateUsernameState: autoguard.serialization.MessageGuard<WaitingForAuthenticateUsernameState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_AUTHENTICATE_USERNAME"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("USERNAME_REQUIRED"),
-		autoguard.guards.StringLiteral.of("USERNAME_NOT_ACCEPTED"),
-		autoguard.guards.StringLiteral.of("USERNAME_NOT_AVAILABLE")
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_USERNAME_REQUIRED"),
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_USERNAME_NOT_ACCEPTED"),
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_USERNAME_NOT_AVAILABLE")
 	)
 }, {});
 
 export type WaitingForAuthenticateUsernameState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_AUTHENTICATE_USERNAME">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"USERNAME_REQUIRED">,
-		autoguard.guards.StringLiteral<"USERNAME_NOT_ACCEPTED">,
-		autoguard.guards.StringLiteral<"USERNAME_NOT_AVAILABLE">
+		autoguard.guards.StringLiteral<"AUTHENTICATE_USERNAME_REQUIRED">,
+		autoguard.guards.StringLiteral<"AUTHENTICATE_USERNAME_NOT_ACCEPTED">,
+		autoguard.guards.StringLiteral<"AUTHENTICATE_USERNAME_NOT_AVAILABLE">
 	]>
 }, {}>;
 
 export const WaitingForAuthenticateEmailState: autoguard.serialization.MessageGuard<WaitingForAuthenticateEmailState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_AUTHENTICATE_EMAIL"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("EMAIL_REQUIRED"),
-		autoguard.guards.StringLiteral.of("EMAIL_NOT_ACCEPTED"),
-		autoguard.guards.StringLiteral.of("EMAIL_NOT_AVAILABLE")
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_EMAIL_REQUIRED"),
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_EMAIL_NOT_ACCEPTED"),
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_EMAIL_NOT_AVAILABLE")
 	)
 }, {});
 
 export type WaitingForAuthenticateEmailState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_AUTHENTICATE_EMAIL">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"EMAIL_REQUIRED">,
-		autoguard.guards.StringLiteral<"EMAIL_NOT_ACCEPTED">,
-		autoguard.guards.StringLiteral<"EMAIL_NOT_AVAILABLE">
+		autoguard.guards.StringLiteral<"AUTHENTICATE_EMAIL_REQUIRED">,
+		autoguard.guards.StringLiteral<"AUTHENTICATE_EMAIL_NOT_ACCEPTED">,
+		autoguard.guards.StringLiteral<"AUTHENTICATE_EMAIL_NOT_AVAILABLE">
 	]>
 }, {}>;
 
 export const WaitingForAuthenticateTokenState: autoguard.serialization.MessageGuard<WaitingForAuthenticateTokenState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_AUTHENTICATE_TOKEN"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("TOKEN_REQUIRED"),
-		autoguard.guards.StringLiteral.of("TOKEN_NOT_ACCEPTED")
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_TOKEN_REQUIRED"),
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_TOKEN_NOT_ACCEPTED")
 	)
 }, {});
 
 export type WaitingForAuthenticateTokenState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_AUTHENTICATE_TOKEN">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"TOKEN_REQUIRED">,
-		autoguard.guards.StringLiteral<"TOKEN_NOT_ACCEPTED">
+		autoguard.guards.StringLiteral<"AUTHENTICATE_TOKEN_REQUIRED">,
+		autoguard.guards.StringLiteral<"AUTHENTICATE_TOKEN_NOT_ACCEPTED">
 	]>
 }, {}>;
 
 export const WaitingForAuthenticatePassphraseState: autoguard.serialization.MessageGuard<WaitingForAuthenticatePassphraseState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_AUTHENTICATE_PASSPHRASE"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("PASSPHRASE_REQUIRED"),
-		autoguard.guards.StringLiteral.of("PASSPHRASE_NOT_ACCEPTED")
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_PASSPHRASE_REQUIRED"),
+		autoguard.guards.StringLiteral.of("AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED")
 	)
 }, {});
 
 export type WaitingForAuthenticatePassphraseState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_AUTHENTICATE_PASSPHRASE">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"PASSPHRASE_REQUIRED">,
-		autoguard.guards.StringLiteral<"PASSPHRASE_NOT_ACCEPTED">
+		autoguard.guards.StringLiteral<"AUTHENTICATE_PASSPHRASE_REQUIRED">,
+		autoguard.guards.StringLiteral<"AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED">
 	]>
 }, {}>;
 
@@ -385,68 +385,68 @@ export type RecoverCommands = autoguard.guards.Union<[
 export const WaitingForRecoverUsernameState: autoguard.serialization.MessageGuard<WaitingForRecoverUsernameState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_RECOVER_USERNAME"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("USERNAME_REQUIRED"),
-		autoguard.guards.StringLiteral.of("USERNAME_NOT_ACCEPTED"),
-		autoguard.guards.StringLiteral.of("USERNAME_NOT_AVAILABLE")
+		autoguard.guards.StringLiteral.of("RECOVER_USERNAME_REQUIRED"),
+		autoguard.guards.StringLiteral.of("RECOVER_USERNAME_NOT_ACCEPTED"),
+		autoguard.guards.StringLiteral.of("RECOVER_USERNAME_NOT_AVAILABLE")
 	)
 }, {});
 
 export type WaitingForRecoverUsernameState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_RECOVER_USERNAME">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"USERNAME_REQUIRED">,
-		autoguard.guards.StringLiteral<"USERNAME_NOT_ACCEPTED">,
-		autoguard.guards.StringLiteral<"USERNAME_NOT_AVAILABLE">
+		autoguard.guards.StringLiteral<"RECOVER_USERNAME_REQUIRED">,
+		autoguard.guards.StringLiteral<"RECOVER_USERNAME_NOT_ACCEPTED">,
+		autoguard.guards.StringLiteral<"RECOVER_USERNAME_NOT_AVAILABLE">
 	]>
 }, {}>;
 
 export const WaitingForRecoverEmailState: autoguard.serialization.MessageGuard<WaitingForRecoverEmailState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_RECOVER_EMAIL"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("EMAIL_REQUIRED"),
-		autoguard.guards.StringLiteral.of("EMAIL_NOT_ACCEPTED"),
-		autoguard.guards.StringLiteral.of("EMAIL_NOT_AVAILABLE")
+		autoguard.guards.StringLiteral.of("RECOVER_EMAIL_REQUIRED"),
+		autoguard.guards.StringLiteral.of("RECOVER_EMAIL_NOT_ACCEPTED"),
+		autoguard.guards.StringLiteral.of("RECOVER_EMAIL_NOT_AVAILABLE")
 	)
 }, {});
 
 export type WaitingForRecoverEmailState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_RECOVER_EMAIL">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"EMAIL_REQUIRED">,
-		autoguard.guards.StringLiteral<"EMAIL_NOT_ACCEPTED">,
-		autoguard.guards.StringLiteral<"EMAIL_NOT_AVAILABLE">
+		autoguard.guards.StringLiteral<"RECOVER_EMAIL_REQUIRED">,
+		autoguard.guards.StringLiteral<"RECOVER_EMAIL_NOT_ACCEPTED">,
+		autoguard.guards.StringLiteral<"RECOVER_EMAIL_NOT_AVAILABLE">
 	]>
 }, {}>;
 
 export const WaitingForRecoverTokenState: autoguard.serialization.MessageGuard<WaitingForRecoverTokenState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_RECOVER_TOKEN"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("TOKEN_REQUIRED"),
-		autoguard.guards.StringLiteral.of("TOKEN_NOT_ACCEPTED")
+		autoguard.guards.StringLiteral.of("RECOVER_TOKEN_REQUIRED"),
+		autoguard.guards.StringLiteral.of("RECOVER_TOKEN_NOT_ACCEPTED")
 	)
 }, {});
 
 export type WaitingForRecoverTokenState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_RECOVER_TOKEN">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"TOKEN_REQUIRED">,
-		autoguard.guards.StringLiteral<"TOKEN_NOT_ACCEPTED">
+		autoguard.guards.StringLiteral<"RECOVER_TOKEN_REQUIRED">,
+		autoguard.guards.StringLiteral<"RECOVER_TOKEN_NOT_ACCEPTED">
 	]>
 }, {}>;
 
 export const WaitingForRecoverPassphraseState: autoguard.serialization.MessageGuard<WaitingForRecoverPassphraseState> = autoguard.guards.Object.of({
 	"type": autoguard.guards.StringLiteral.of("WAITING_FOR_RECOVER_PASSPHRASE"),
 	"reason": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("PASSPHRASE_REQUIRED"),
-		autoguard.guards.StringLiteral.of("PASSPHRASE_NOT_ACCEPTED")
+		autoguard.guards.StringLiteral.of("RECOVER_PASSPHRASE_REQUIRED"),
+		autoguard.guards.StringLiteral.of("RECOVER_PASSPHRASE_NOT_ACCEPTED")
 	)
 }, {});
 
 export type WaitingForRecoverPassphraseState = autoguard.guards.Object<{
 	"type": autoguard.guards.StringLiteral<"WAITING_FOR_RECOVER_PASSPHRASE">,
 	"reason": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"PASSPHRASE_REQUIRED">,
-		autoguard.guards.StringLiteral<"PASSPHRASE_NOT_ACCEPTED">
+		autoguard.guards.StringLiteral<"RECOVER_PASSPHRASE_REQUIRED">,
+		autoguard.guards.StringLiteral<"RECOVER_PASSPHRASE_NOT_ACCEPTED">
 	]>
 }, {}>;
 
