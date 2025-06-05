@@ -22,7 +22,6 @@ export type ServerOptions = {
 	sessions?: SessionStore;
 	origins?: OriginStore;
 	roles?: RoleStore;
-	namespace?: string;
 	cookie?: string;
 	trusted_proxies?: Array<string>;
 	session_validity_minutes?: number;
@@ -80,7 +79,6 @@ export class Server {
 	protected sessions: SessionStore;
 	protected origins: OriginStore;
 	protected roles: RoleStore;
-	protected namespace: string;
 	protected cookie: string;
 	protected trusted_proxies: Array<string>;
 	protected session_validity_minutes: number;
@@ -856,7 +854,6 @@ export class Server {
 		this.sessions = options?.sessions ?? new VolatileSessionStore();
 		this.origins = options?.origins ?? new VolatileOriginStore();
 		this.roles = options?.roles ?? new VolatileRoleStore();
-		this.namespace = options?.namespace ?? "auth";
 		this.cookie = options?.cookie ?? "session";
 		this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];
 		this.session_validity_minutes = options?.session_validity_minutes ?? 20;
