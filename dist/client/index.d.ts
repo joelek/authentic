@@ -1,6 +1,6 @@
 import * as api from "../api/client";
-export type Options = {
+export type ClientOptions = {
     namespace?: string;
 };
 export type Client = api.Client;
-export declare function createClient(options?: Options): api.Client;
+export declare function createClient(options?: ClientOptions): api.Client;

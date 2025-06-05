@@ -10,7 +10,7 @@ import { Session, SessionStore } from "./stores/session";
 import { UserStore } from "./stores/user";
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
 type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
-export type Options = {
+export type ServerOptions = {
     users?: UserStore;
     sessions?: SessionStore;
     origins?: OriginStore;
@@ -47,7 +47,7 @@ export declare const CookieData: autoguard.guards.ObjectGuard<{
     ticket: string;
 }>;
 export type CookieData = ReturnType<typeof CookieData["as"]>;
-export declare class Authenticator {
+export declare class Server {
     protected users: UserStore;
     protected sessions: SessionStore;
     protected origins: OriginStore;
@@ -94,7 +94,7 @@ export declare class Authenticator {
     protected validateUsernameFormat(username: string): boolean;
     protected readState: Parameters<typeof api.makeServer>[0]["readState"];
     protected sendCommand: Parameters<typeof api.makeServer>[0]["sendCommand"];
-    constructor(options?: Options);
+    constructor(options?: ServerOptions);
     wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B>;
     wrapRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>>(routes: AuthenticatedRoutes<A, B>): AutoguardRoutes<A, B>;
     createRequestListener(): libhttp.RequestListener;

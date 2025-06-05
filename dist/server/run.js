@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const libhttp = require("http");
 const server = require("./");
-const AUTHENTICATOR = new server.Authenticator();
-const REQUEST_LISTENER = AUTHENTICATOR.createRequestListener();
+const SERVER = new server.Server();
+const REQUEST_LISTENER = SERVER.createRequestListener();
 const HTTP_SERVER = libhttp.createServer({}, REQUEST_LISTENER);
 const HTTP_HOSTNAME = "localhost";
 const HTTP_PORT = 8080;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Authenticator = exports.CookieData = exports.AccessHandler = void 0;
+exports.Server = exports.CookieData = exports.AccessHandler = void 0;
 const autoguard = require("@joelek/autoguard/dist/lib-server");
 const libcrypto = require("crypto");
 const libnet = require("net");
@@ -39,7 +39,7 @@ exports.CookieData = autoguard.guards.Object.of({
 }, {
     ticket: autoguard.guards.String
 });
-class Authenticator {
+class Server {
     users;
     sessions;
     origins;
@@ -875,5 +875,5 @@ class Authenticator {
         };
     }
 }
-exports.Authenticator = Authenticator;
+exports.Server = Server;
 ;
