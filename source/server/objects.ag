@@ -9,7 +9,7 @@ guard RoleProperties: {
 	name: string
 };
 
-guard SessionProperties: ../api/State & {
+guard SessionProperties: ../api/server/State & {
 	expires_utc: integer,
 	wait_until_utc: integer,
 	username?: string,

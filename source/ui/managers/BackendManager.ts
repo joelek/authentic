@@ -1,5 +1,5 @@
 import { State, stateify } from "@joelek/bonsai";
-import * as api from "../../api";
+import * as api from "../../api/client";
 
 export class BackendManager implements api.Client {
 	protected client: api.Client;

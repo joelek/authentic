@@ -1,4 +1,4 @@
-import * as api from "../../api";
+import * as api from "../../api/client";
 import { BackendManager } from "./BackendManager";
 import { TranslationManager } from "./TranslationManager";
 
