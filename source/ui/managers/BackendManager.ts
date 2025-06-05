@@ -76,10 +76,10 @@ export class BackendManager implements api.Client {
 	}
 
 	getPending(): State<boolean> {
-		return this.pending.shadow();
+		return this.pending;
 	}
 
 	getState(): State<api.State | undefined> {
-		return this.state.shadow();
+		return this.state;
 	}
 };
