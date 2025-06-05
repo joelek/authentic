@@ -904,7 +904,7 @@ export class Server {
 	}
 
 	createRequestListener(): libhttp.RequestListener {
-		let urlPrefix = shared.getUrlPrefix(this.namespace);
+		let urlPrefix = shared.getUrlPrefix();
 		return api.makeServer({
 			readState: this.readState,
 			sendCommand: this.sendCommand,
@@ -917,7 +917,7 @@ export class Server {
 		let authenticRequestListener = this.createRequestListener();
 		return (request, response) => {
 			let url = request.url ?? "/";
-			let urlPrefix = shared.getUrlPrefix(this.namespace);
+			let urlPrefix = shared.getUrlPrefix();
 			if (url.startsWith(`${urlPrefix}/`)) {
 				return authenticRequestListener(request, response);
 			} else {

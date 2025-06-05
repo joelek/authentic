@@ -1,5 +1,5 @@
-export function getUrlPrefix(namespace: string | undefined): string {
-	return namespace ? `/${encodeURIComponent(namespace)}` : "";
+export function getUrlPrefix(): string {
+	return `/auth`;
 };
 
 export class ExpectedUnreachableCodeError extends Error {
