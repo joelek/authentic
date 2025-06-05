@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpectedUnreachableCodeError = exports.getUrlPrefix = void 0;
-function getUrlPrefix(namespace) {
-    return namespace ? `/${encodeURIComponent(namespace)}` : "";
+function getUrlPrefix() {
+    return `/auth`;
 }
 exports.getUrlPrefix = getUrlPrefix;
 ;
