@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitingForRecoverTokenStep = void 0;
 const bonsai_1 = require("@joelek/bonsai");
-const api = require("../../../api");
+const api = require("../../../api/client");
 const Step_1 = require("./Step");
 function WaitingForRecoverTokenStep(managers, attributes) {
     let state = managers.backend.getState();

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitingForRegisterTokenStep = void 0;
 const bonsai_1 = require("@joelek/bonsai");
-const api = require("../../../api");
+const api = require("../../../api/client");
 const Step_1 = require("./Step");
 function WaitingForRegisterTokenStep(managers, attributes) {
     let state = managers.backend.getState();

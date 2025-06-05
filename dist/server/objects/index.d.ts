@@ -1,5 +1,5 @@
 import * as autoguard from "@joelek/autoguard/dist/lib-shared";
-import { State } from "../../api";
+import { State } from "../../api/server";
 export declare const UserProperties: autoguard.serialization.MessageGuard<UserProperties>;
 export type UserProperties = autoguard.guards.Object<{
     "email": autoguard.guards.String;

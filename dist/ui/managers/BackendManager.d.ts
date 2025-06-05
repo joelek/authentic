@@ -1,5 +1,5 @@
 import { State } from "@joelek/bonsai";
-import * as api from "../../api";
+import * as api from "../../api/client";
 export declare class BackendManager implements api.Client {
     protected client: api.Client;
     protected state: State<api.State | undefined>;

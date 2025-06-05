@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Autoguard = exports.OriginProperties = exports.SessionProperties = exports.RoleProperties = exports.UserProperties = void 0;
 const autoguard = require("@joelek/autoguard/dist/lib-shared");
-const api_1 = require("../../api");
+const server_1 = require("../../api/server");
 exports.UserProperties = autoguard.guards.Object.of({
     "email": autoguard.guards.String,
     "passdata": autoguard.guards.String
@@ -14,7 +14,7 @@ exports.RoleProperties = autoguard.guards.Object.of({
     "user_id": autoguard.guards.String,
     "name": autoguard.guards.String
 }, {});
-exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => api_1.State), autoguard.guards.Object.of({
+exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => server_1.State), autoguard.guards.Object.of({
     "expires_utc": autoguard.guards.Integer,
     "wait_until_utc": autoguard.guards.Integer
 }, {
