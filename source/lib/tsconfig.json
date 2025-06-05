@@ -10,10 +10,19 @@
 	],
 	"references": [
 		{
+			"path": "../api/"
+		},
+		{
 			"path": "../client/"
 		},
 		{
+			"path": "../email/"
+		},
+		{
 			"path": "../server/"
+		},
+		{
+			"path": "../shared/"
 		},
 		{
 			"path": "../ui/"
