@@ -3,7 +3,7 @@ import * as api from "../../api";
 
 export class BackendManager implements api.Client {
 	protected client: api.Client;
-	protected state: State<api.State>;
+	protected state: State<api.State | undefined>;
 	protected wait_until_utc: number;
 	protected pending: State<boolean>;
 
@@ -36,10 +36,7 @@ export class BackendManager implements api.Client {
 
 	constructor(client: api.Client) {
 		this.client = client;
-		this.state = stateify({
-			type: "UNKNOWN_STATE",
-			reason: "STATE_NOT_READ"
-		});
+		this.state = stateify(undefined);
 		this.wait_until_utc = Date.now();
 		this.pending = stateify(false);
 		this.readState({}).catch(() => undefined).then(async (response) => {
@@ -82,7 +79,7 @@ export class BackendManager implements api.Client {
 		return this.pending.shadow();
 	}
 
-	getState(): State<api.State> {
+	getState(): State<api.State | undefined> {
 		return this.state.shadow();
 	}
 };

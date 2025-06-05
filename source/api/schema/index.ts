@@ -516,19 +516,8 @@ export type WaitingForCommandState = autoguard.guards.Object<{
 	]>
 }, {}>;
 
-export const UnknownState: autoguard.serialization.MessageGuard<UnknownState> = autoguard.guards.Object.of({
-	"type": autoguard.guards.StringLiteral.of("UNKNOWN_STATE"),
-	"reason": autoguard.guards.StringLiteral.of("STATE_NOT_READ")
-}, {});
-
-export type UnknownState = autoguard.guards.Object<{
-	"type": autoguard.guards.StringLiteral<"UNKNOWN_STATE">,
-	"reason": autoguard.guards.StringLiteral<"STATE_NOT_READ">
-}, {}>;
-
 export const State: autoguard.serialization.MessageGuard<State> = autoguard.guards.Union.of(
 	autoguard.guards.Reference.of(() => WaitingForCommandState),
-	autoguard.guards.Reference.of(() => UnknownState),
 	autoguard.guards.Reference.of(() => RegisterStates),
 	autoguard.guards.Reference.of(() => AuthenticateStates),
 	autoguard.guards.Reference.of(() => RecoverStates)
@@ -536,7 +525,6 @@ export const State: autoguard.serialization.MessageGuard<State> = autoguard.guar
 
 export type State = autoguard.guards.Union<[
 	autoguard.guards.Reference<WaitingForCommandState>,
-	autoguard.guards.Reference<UnknownState>,
 	autoguard.guards.Reference<RegisterStates>,
 	autoguard.guards.Reference<AuthenticateStates>,
 	autoguard.guards.Reference<RecoverStates>
@@ -583,7 +571,6 @@ export namespace Autoguard {
 		"ResetStateCommand": autoguard.guards.Reference.of(() => ResetStateCommand),
 		"Command": autoguard.guards.Reference.of(() => Command),
 		"WaitingForCommandState": autoguard.guards.Reference.of(() => WaitingForCommandState),
-		"UnknownState": autoguard.guards.Reference.of(() => UnknownState),
 		"State": autoguard.guards.Reference.of(() => State)
 	};
 

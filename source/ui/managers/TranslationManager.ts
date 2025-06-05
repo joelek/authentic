@@ -288,23 +288,11 @@ const WAITING_FOR_COMMAND = {
 	}
 };
 
-const UNKNOWN_STATE = {
-	"UNKNOWN_STATE": {
-		en: "Unknown state.",
-		sv: "Okänt tillstånd."
-	},
-	"STATE_NOT_READ": {
-		en: "State not read.",
-		sv: "Tillstånd ej läst."
-	}
-};
-
 const STATES = {
 	...REGISTER_STATES,
 	...AUTHENTICATE_STATES,
 	...RECOVER_STATES,
-	...WAITING_FOR_COMMAND,
-	...UNKNOWN_STATE
+	...WAITING_FOR_COMMAND
 };
 
 type States = typeof STATES;
