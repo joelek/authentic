@@ -909,17 +909,4 @@ export class Server {
 			urlPrefix
 		});
 	}
-
-	createRoutedRequestListener(requestListener: libhttp.RequestListener): libhttp.RequestListener {
-		let authenticRequestListener = this.createRequestListener();
-		return (request, response) => {
-			let url = request.url ?? "/";
-			let urlPrefix = shared.getUrlPrefix();
-			if (url.startsWith(`${urlPrefix}/`)) {
-				return authenticRequestListener(request, response);
-			} else {
-				return requestListener(request, response);
-			}
-		};
-	}
 };
