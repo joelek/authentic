@@ -256,15 +256,9 @@ export type WaitingForCommandState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"INVALID_COMMAND">
     ]>;
 }, {}>;
-export declare const UnknownState: autoguard.serialization.MessageGuard<UnknownState>;
-export type UnknownState = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"UNKNOWN_STATE">;
-    "reason": autoguard.guards.StringLiteral<"STATE_NOT_READ">;
-}, {}>;
 export declare const State: autoguard.serialization.MessageGuard<State>;
 export type State = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForCommandState>,
-    autoguard.guards.Reference<UnknownState>,
     autoguard.guards.Reference<RegisterStates>,
     autoguard.guards.Reference<AuthenticateStates>,
     autoguard.guards.Reference<RecoverStates>
@@ -533,10 +527,6 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_COMMAND";
             reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
         }>;
-        UnknownState: autoguard.guards.ReferenceGuard<{
-            type: "UNKNOWN_STATE";
-            reason: "STATE_NOT_READ";
-        }>;
         State: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_REGISTER_USERNAME";
             reason: "REGISTER_USERNAME_REQUIRED" | "REGISTER_USERNAME_NOT_ACCEPTED" | "REGISTER_USERNAME_NOT_AVAILABLE";
@@ -585,9 +575,6 @@ export declare namespace Autoguard {
         } | {
             type: "WAITING_FOR_COMMAND";
             reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
-        } | {
-            type: "UNKNOWN_STATE";
-            reason: "STATE_NOT_READ";
         }>;
     };
     type Guards = {
@@ -718,9 +705,6 @@ export declare namespace Autoguard {
                 } | {
                     type: "WAITING_FOR_COMMAND";
                     reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
-                } | {
-                    type: "UNKNOWN_STATE";
-                    reason: "STATE_NOT_READ";
                 };
             };
         }, {
@@ -780,9 +764,6 @@ export declare namespace Autoguard {
                 } | {
                     type: "WAITING_FOR_COMMAND";
                     reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
-                } | {
-                    type: "UNKNOWN_STATE";
-                    reason: "STATE_NOT_READ";
                 };
             };
         }, {

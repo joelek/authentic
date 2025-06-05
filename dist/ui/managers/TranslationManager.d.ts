@@ -3,14 +3,6 @@ import { Attribute, State } from "@joelek/bonsai";
 declare const Language: guards.UnionGuard<["en", "sv"]>;
 type Language = ReturnType<typeof Language["as"]>;
 declare const STATES: {
-    UNKNOWN_STATE: {
-        en: string;
-        sv: string;
-    };
-    STATE_NOT_READ: {
-        en: string;
-        sv: string;
-    };
     WAITING_FOR_COMMAND: {
         en: string;
         sv: string;

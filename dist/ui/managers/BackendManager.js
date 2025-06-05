@@ -34,10 +34,7 @@ class BackendManager {
     }
     constructor(client) {
         this.client = client;
-        this.state = (0, bonsai_1.stateify)({
-            type: "UNKNOWN_STATE",
-            reason: "STATE_NOT_READ"
-        });
+        this.state = (0, bonsai_1.stateify)(undefined);
         this.wait_until_utc = Date.now();
         this.pending = (0, bonsai_1.stateify)(false);
         this.readState({}).catch(() => undefined).then(async (response) => {
