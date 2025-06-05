@@ -7,7 +7,7 @@ export type WaitingForRegisterUsernameStep = {};
 
 export function WaitingForRegisterUsernameStep(managers: Managers, attributes: WaitingForRegisterUsernameStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : {} as Partial<api.WaitingForCommandState>);
+	let { type, reason } = state.compute((state) => api.WaitingForRegisterUsernameState.is(state) ? state : {} as Partial<api.WaitingForRegisterUsernameState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	let value = stateify("");
 	return (

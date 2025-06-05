@@ -7,7 +7,7 @@ export type AuthenticatedStep = {};
 
 export function AuthenticatedStep(managers: Managers, attributes: AuthenticatedStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : {} as Partial<api.WaitingForCommandState>);
+	let { type, reason } = state.compute((state) => api.AuthenticatedState.is(state) ? state : {} as Partial<api.AuthenticatedState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	return (
 		Step(managers, {

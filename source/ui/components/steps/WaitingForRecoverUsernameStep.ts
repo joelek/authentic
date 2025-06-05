@@ -7,7 +7,7 @@ export type WaitingForRecoverUsernameStep = {};
 
 export function WaitingForRecoverUsernameStep(managers: Managers, attributes: WaitingForRecoverUsernameStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : {} as Partial<api.WaitingForCommandState>);
+	let { type, reason } = state.compute((state) => api.WaitingForRecoverUsernameState.is(state) ? state : {} as Partial<api.WaitingForRecoverUsernameState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	let value = stateify("");
 	return (
