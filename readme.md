@@ -2,10 +2,10 @@
 
 ```ts
 import * as libhttp from "http";
-import * as server from "@joelek/authentic/dist/lib/server";
+import * as authentic from "@joelek/authentic/dist/lib/node";
 
-const AUTHENTICATOR = new server.Authenticator();
-const REQUEST_LISTENER = AUTHENTICATOR.createRequestListener();
+const SERVER = new authentic.server.Server();
+const REQUEST_LISTENER = SERVER.createRequestListener();
 const HTTP_SERVER = libhttp.createServer({}, REQUEST_LISTENER);
 const HTTP_HOSTNAME = "localhost";
 const HTTP_PORT = 8080;
@@ -16,9 +16,11 @@ HTTP_SERVER.listen(HTTP_PORT, HTTP_HOSTNAME, () => {
 ```
 
 ```ts
-import * as client from "@joelek/authentic/dist/lib/client";
+import * as authentic from "@joelek/authentic/dist/lib/browser";
 
-const AUTHENTIC = client.createClient();
+authentic.ui.injectUserInterface({
+	client: authentic.client.createClient()
+});
 ```
 
 ## Roadmap
