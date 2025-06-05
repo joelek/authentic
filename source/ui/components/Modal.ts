@@ -13,7 +13,7 @@ document.head.appendChild(html.style({}, `\
 	}
 
 	.modal--hidden {
-
+		display: none;
 	}
 `));
 

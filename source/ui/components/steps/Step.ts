@@ -12,7 +12,7 @@ document.head.appendChild(html.style({}, `\
 	}
 
 	.step--hidden {
-
+		display: none;
 	}
 `));
 
