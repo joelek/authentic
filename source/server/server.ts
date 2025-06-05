@@ -5,7 +5,6 @@ import * as libnet from "net";
 import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer, TestMailer } from "../email";
-import * as shared from "../shared";
 import { ExpectedUnreachableCodeError } from "../shared";
 import { Origin, OriginStore, VolatileOriginStore } from "./stores/origins";
 import { RoleStore, VolatileRoleStore } from "./stores/role";
@@ -900,13 +899,10 @@ export class Server {
 		return wrapped_routes;
 	}
 
-	createRequestListener(): libhttp.RequestListener {
-		let urlPrefix = shared.getUrlPrefix();
+	createRequestListener(options?: autoguard.api.ServerOptions): autoguard.api.RequestListener {
 		return api.makeServer({
 			readState: this.readState,
 			sendCommand: this.sendCommand,
-		}, {
-			urlPrefix
-		});
+		}, options);
 	}
 };

@@ -1,7 +1,3 @@
-export function getUrlPrefix(): string {
-	return `/auth`;
-};
-
 export class ExpectedUnreachableCodeError extends Error {
 	constructor() {
 		super();

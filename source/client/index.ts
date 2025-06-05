@@ -1,13 +1,10 @@
+import * as autoguard from "@joelek/autoguard/dist/lib-client";
 import * as api from "../api/client";
-import * as shared from "../shared";
 
-export type ClientOptions = {};
+export type ClientOptions = autoguard.api.ClientOptions;
 
 export type Client = api.Client;
 
-export function createClient(options?: ClientOptions): api.Client {
-	let urlPrefix = shared.getUrlPrefix();
-	return api.makeClient({
-		urlPrefix
-	});
+export function createClient(options?: ClientOptions): Client {
+	return api.makeClient(options);
 };
