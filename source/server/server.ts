@@ -17,7 +17,7 @@ type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard
 
 type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
 
-export type Options = {
+export type ServerOptions = {
 	users?: UserStore;
 	sessions?: SessionStore;
 	origins?: OriginStore;
@@ -75,7 +75,7 @@ export const CookieData = autoguard.guards.Object.of({
 
 export type CookieData = ReturnType<typeof CookieData["as"]>;
 
-export class Authenticator {
+export class Server {
 	protected users: UserStore;
 	protected sessions: SessionStore;
 	protected origins: OriginStore;
@@ -851,7 +851,7 @@ export class Authenticator {
 		}, session, ticket);
 	};
 
-	constructor(options?: Options) {
+	constructor(options?: ServerOptions) {
 		this.users = options?.users ?? new VolatileUserStore();
 		this.sessions = options?.sessions ?? new VolatileSessionStore();
 		this.origins = options?.origins ?? new VolatileOriginStore();

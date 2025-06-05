@@ -3,7 +3,7 @@ import { Client, createClient } from "../client";
 import { Modal } from "./components";
 import { Managers } from "./managers";
 
-export type Options = {
+export type UIOptions = {
 	client?: Client;
 };
 
@@ -11,7 +11,7 @@ export interface Interface {
 	toggle(): void;
 };
 
-export function injectUserInterface(options?: Options): Interface {
+export function injectUserInterface(options?: UIOptions): Interface {
 	let client = options?.client ?? createClient();
 	let managers = Managers.create(client);
 	let visible = stateify(false as boolean);

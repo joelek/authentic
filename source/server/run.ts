@@ -1,8 +1,8 @@
 import * as libhttp from "http";
 import * as server from "./";
 
-const AUTHENTICATOR = new server.Authenticator();
-const REQUEST_LISTENER = AUTHENTICATOR.createRequestListener();
+const SERVER = new server.Server();
+const REQUEST_LISTENER = SERVER.createRequestListener();
 const HTTP_SERVER = libhttp.createServer({}, REQUEST_LISTENER);
 const HTTP_HOSTNAME = "localhost";
 const HTTP_PORT = 8080;

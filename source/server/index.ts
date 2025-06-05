@@ -1,1 +1,1 @@
-export { Authenticator } from "./authenticator";
+export { Server } from "./server";
