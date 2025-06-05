@@ -6,7 +6,10 @@ const api = require("../../../api/client");
 const Step_1 = require("./Step");
 function WaitingForCommandStep(managers, attributes) {
     let state = managers.backend.getState();
-    let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : {});
+    state.compute(console.log);
+    let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : { type: undefined, reason: undefined });
+    type.compute(console.log);
+    reason.compute(console.log);
     let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
     return ((0, Step_1.Step)(managers, {
         type,

@@ -12,7 +12,7 @@ document.head.appendChild(bonsai_1.html.style({}, `\
 	}
 
 	.step--hidden {
-
+		display: none;
 	}
 `));
 function Step(managers, attributes, ...children) {

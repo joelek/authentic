@@ -73,10 +73,10 @@ class BackendManager {
         }
     }
     getPending() {
-        return this.pending.shadow();
+        return this.pending;
     }
     getState() {
-        return this.state.shadow();
+        return this.state;
     }
 }
 exports.BackendManager = BackendManager;

@@ -298,7 +298,7 @@ const TRANSLATIONS = {
     },
     "REGISTERED_TEXT": {
         en: "Your account has been registered.",
-        sv: "Ditt konto has registrerats."
+        sv: "Ditt konto har registrerats."
     }
 };
 class TranslationManager {

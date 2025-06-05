@@ -14,7 +14,7 @@ document.head.appendChild(bonsai_1.html.style({}, `\
 	}
 
 	.modal--hidden {
-
+		display: none;
 	}
 `));
 function Modal(managers, attributes) {
