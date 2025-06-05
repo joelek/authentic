@@ -1,6 +1,4 @@
-/// <reference types="node" />
 import * as autoguard from "@joelek/autoguard/dist/lib-server";
-import * as libhttp from "http";
 import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer } from "../email";
@@ -15,7 +13,6 @@ export type ServerOptions = {
     sessions?: SessionStore;
     origins?: OriginStore;
     roles?: RoleStore;
-    namespace?: string;
     cookie?: string;
     trusted_proxies?: Array<string>;
     session_validity_minutes?: number;
@@ -52,7 +49,6 @@ export declare class Server {
     protected sessions: SessionStore;
     protected origins: OriginStore;
     protected roles: RoleStore;
-    protected namespace: string;
     protected cookie: string;
     protected trusted_proxies: Array<string>;
     protected session_validity_minutes: number;
@@ -97,7 +93,6 @@ export declare class Server {
     constructor(options?: ServerOptions);
     wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B>;
     wrapRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>>(routes: AuthenticatedRoutes<A, B>): AutoguardRoutes<A, B>;
-    createRequestListener(): libhttp.RequestListener;
-    createRoutedRequestListener(requestListener: libhttp.RequestListener): libhttp.RequestListener;
+    createRequestListener(options?: autoguard.api.ServerOptions): autoguard.api.RequestListener;
 }
 export {};

@@ -6,7 +6,6 @@ const libcrypto = require("crypto");
 const libnet = require("net");
 const api = require("../api/server");
 const email_1 = require("../email");
-const shared = require("../shared");
 const shared_1 = require("../shared");
 const origins_1 = require("./stores/origins");
 const role_1 = require("./stores/role");
@@ -44,7 +43,6 @@ class Server {
     sessions;
     origins;
     roles;
-    namespace;
     cookie;
     trusted_proxies;
     session_validity_minutes;
@@ -808,7 +806,6 @@ class Server {
         this.sessions = options?.sessions ?? new session_1.VolatileSessionStore();
         this.origins = options?.origins ?? new origins_1.VolatileOriginStore();
         this.roles = options?.roles ?? new role_1.VolatileRoleStore();
-        this.namespace = options?.namespace ?? "auth";
         this.cookie = options?.cookie ?? "session";
         this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];
         this.session_validity_minutes = options?.session_validity_minutes ?? 20;
@@ -852,27 +849,11 @@ class Server {
         }
         return wrapped_routes;
     }
-    createRequestListener() {
-        let urlPrefix = shared.getUrlPrefix();
+    createRequestListener(options) {
         return api.makeServer({
             readState: this.readState,
             sendCommand: this.sendCommand,
-        }, {
-            urlPrefix
-        });
-    }
-    createRoutedRequestListener(requestListener) {
-        let authenticRequestListener = this.createRequestListener();
-        return (request, response) => {
-            let url = request.url ?? "/";
-            let urlPrefix = shared.getUrlPrefix();
-            if (url.startsWith(`${urlPrefix}/`)) {
-                return authenticRequestListener(request, response);
-            }
-            else {
-                return requestListener(request, response);
-            }
-        };
+        }, options);
     }
 }
 exports.Server = Server;

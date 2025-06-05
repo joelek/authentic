@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExpectedUnreachableCodeError = exports.getUrlPrefix = void 0;
-function getUrlPrefix() {
-    return `/auth`;
-}
-exports.getUrlPrefix = getUrlPrefix;
-;
+exports.ExpectedUnreachableCodeError = void 0;
 class ExpectedUnreachableCodeError extends Error {
     constructor() {
         super();
