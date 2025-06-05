@@ -1,0 +1,103 @@
+/// <reference types="node" />
+import * as autoguard from "@joelek/autoguard/dist/lib-server";
+import * as libhttp from "http";
+import * as api from "../api/server";
+import { Command } from "../api/server";
+import { Mailer } from "../email";
+import { Origin, OriginStore } from "./stores/origins";
+import { RoleStore } from "./stores/role";
+import { Session, SessionStore } from "./stores/session";
+import { UserStore } from "./stores/user";
+type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
+type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
+export type Options = {
+    users?: UserStore;
+    sessions?: SessionStore;
+    origins?: OriginStore;
+    roles?: RoleStore;
+    namespace?: string;
+    cookie?: string;
+    trusted_proxies?: Array<string>;
+    session_validity_minutes?: number;
+    authenticated_session_validity_days?: number;
+    origin_validity_minutes?: number;
+    mailer?: Mailer;
+    require_username?: boolean;
+    require_passphrase?: boolean;
+    require_token?: boolean;
+    tolerable_username_attempts?: number;
+    tolerable_email_attempts?: number;
+    tolerable_token_hash_attempts?: number;
+    tolerable_passdata_attempts?: number;
+    clean_expired_interval_minutes?: number;
+};
+export declare class AccessHandler {
+    protected authenticated_user_id: string | undefined;
+    protected roles: Array<string>;
+    constructor(authenticated_user_id: string | undefined, roles: Array<string>);
+    requireAuthorization(...roles: Array<string>): string;
+}
+export type AuthenticatedRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>, access_handler: AccessHandler) => Promise<B>;
+export type AuthenticatedRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = {
+    [C in keyof A & keyof B]: AuthenticatedRoute<A[C], B[C]>;
+};
+export declare const CookieData: autoguard.guards.ObjectGuard<{
+    session_id: string;
+}, {
+    ticket: string;
+}>;
+export type CookieData = ReturnType<typeof CookieData["as"]>;
+export declare class Authenticator {
+    protected users: UserStore;
+    protected sessions: SessionStore;
+    protected origins: OriginStore;
+    protected roles: RoleStore;
+    protected namespace: string;
+    protected cookie: string;
+    protected trusted_proxies: Array<string>;
+    protected session_validity_minutes: number;
+    protected authenticated_session_validity_days: number;
+    protected origin_validity_minutes: number;
+    protected mailer: Mailer;
+    protected require_username: boolean;
+    protected require_passphrase: boolean;
+    protected require_token: boolean;
+    protected tolerable_username_attempts: number;
+    protected tolerable_email_attempts: number;
+    protected tolerable_token_hash_attempts: number;
+    protected tolerable_passdata_attempts: number;
+    protected clean_expired_interval_minutes: number;
+    protected computeHash(string: string): string;
+    protected computePassdata(passphrase: string): string;
+    protected createAccessHandler(authenticated_user_id: string | undefined): Promise<AccessHandler>;
+    protected createSetCookieValues(session: Session, ticket: string | undefined): Array<string>;
+    protected finalizeResponse<A extends autoguard.api.EndpointResponse>(response: A, session: Session, ticket: string | undefined): A;
+    protected generateToken(): string;
+    protected getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined>;
+    protected getExpiresInDays(valid_for_days: number): number;
+    protected getExpiresInMinutes(valid_for_minutes: number): number;
+    protected getExpiresInSeconds(valid_for_seconds: number): number;
+    protected getHeaders(all_headers: Record<string, autoguard.api.JSON> | undefined, name: string): Array<string>;
+    protected getCookieData(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): CookieData | undefined;
+    protected getRemoteAddress(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): string;
+    protected getOrigin(address: string): Promise<Origin>;
+    protected checkRateLimit(wait_until_utc: number): void;
+    protected getOriginAndApplyRateLimit(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Origin>;
+    protected getSession(session_id: string | undefined): Promise<Session>;
+    protected getNextRegisterSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
+    protected getNextAuthenticateSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
+    protected getNextRecoverSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
+    protected getNextSession(session: Session, command: Command, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
+    protected sendEmail(to_address: string, message: string, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<void>;
+    protected validateEmailFormat(email: string): boolean;
+    protected validatePassphraseFormat(passphrase: string): boolean;
+    protected validateUsernameFormat(username: string): boolean;
+    protected readState: Parameters<typeof api.makeServer>[0]["readState"];
+    protected sendCommand: Parameters<typeof api.makeServer>[0]["sendCommand"];
+    constructor(options?: Options);
+    wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B>;
+    wrapRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>>(routes: AuthenticatedRoutes<A, B>): AutoguardRoutes<A, B>;
+    createRequestListener(): libhttp.RequestListener;
+    createRoutedRequestListener(requestListener: libhttp.RequestListener): libhttp.RequestListener;
+}
+export {};
