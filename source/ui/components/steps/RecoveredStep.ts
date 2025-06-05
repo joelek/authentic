@@ -7,7 +7,7 @@ export type RecoveredStep = {};
 
 export function RecoveredStep(managers: Managers, attributes: RecoveredStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.RecoveredState.is(state) ? state : {} as Partial<api.RecoveredState>);
+	let { type, reason } = state.compute((state) => api.RecoveredState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.RecoveredState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	return (
 		Step(managers, {

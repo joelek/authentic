@@ -7,7 +7,7 @@ export type WaitingForAuthenticateTokenStep = {};
 
 export function WaitingForAuthenticateTokenStep(managers: Managers, attributes: WaitingForAuthenticateTokenStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForAuthenticateTokenState.is(state) ? state : {} as Partial<api.WaitingForAuthenticateTokenState>);
+	let { type, reason } = state.compute((state) => api.WaitingForAuthenticateTokenState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForAuthenticateTokenState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	let value = stateify("");
 	return (

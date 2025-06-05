@@ -7,7 +7,7 @@ export type WaitingForRegisterTokenStep = {};
 
 export function WaitingForRegisterTokenStep(managers: Managers, attributes: WaitingForRegisterTokenStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForRegisterTokenState.is(state) ? state : {} as Partial<api.WaitingForRegisterTokenState>);
+	let { type, reason } = state.compute((state) => api.WaitingForRegisterTokenState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForRegisterTokenState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	let value = stateify("");
 	return (

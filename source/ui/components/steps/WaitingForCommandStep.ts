@@ -7,7 +7,10 @@ export type WaitingForCommandStep = {};
 
 export function WaitingForCommandStep(managers: Managers, attributes: WaitingForCommandStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : {} as Partial<api.WaitingForCommandState>);
+	state.compute(console.log);
+	let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForCommandState>);
+	type.compute(console.log);
+	reason.compute(console.log);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	return (
 		Step(managers, {

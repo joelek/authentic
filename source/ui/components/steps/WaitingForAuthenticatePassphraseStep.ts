@@ -7,7 +7,7 @@ export type WaitingForAuthenticatePassphraseStep = {};
 
 export function WaitingForAuthenticatePassphraseStep(managers: Managers, attributes: WaitingForAuthenticatePassphraseStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForAuthenticatePassphraseState.is(state) ? state : {} as Partial<api.WaitingForAuthenticatePassphraseState>);
+	let { type, reason } = state.compute((state) => api.WaitingForAuthenticatePassphraseState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForAuthenticatePassphraseState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	let value = stateify("");
 	return (

@@ -7,7 +7,7 @@ export type WaitingForRecoverEmailStep = {};
 
 export function WaitingForRecoverEmailStep(managers: Managers, attributes: WaitingForRecoverEmailStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForRecoverEmailState.is(state) ? state : {} as Partial<api.WaitingForRecoverEmailState>);
+	let { type, reason } = state.compute((state) => api.WaitingForRecoverEmailState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForRecoverEmailState>);
 	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
 	let value = stateify("");
 	return (
