@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitingForRecoverTokenStep = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const api = require("../../../api/client");
+const titles_1 = require("../titles");
 const Step_1 = require("./Step");
 function WaitingForRecoverTokenStep(managers, attributes) {
     let state = managers.backend.getState();
@@ -17,7 +18,7 @@ function WaitingForRecoverTokenStep(managers, attributes) {
     return ((0, Step_1.Step)(managers, {
         type,
         reason
-    }, input, bonsai_1.html.button({
+    }, (0, titles_1.StepTitle)(managers, {}, managers.translation.getTranslation("RECOVER_BUTTON")), input, bonsai_1.html.button({
         disabled: submittable,
         onclick: async () => {
             await managers.backend.sendCommand({
