@@ -1,6 +1,7 @@
 import { Children, html, State } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
+import { ResetStateButton } from "../buttons/ResetStateButton";
 
 document.head.appendChild(html.style({}, `\
 	.step {
@@ -31,7 +32,8 @@ export function Step<A extends api.State>(managers: Managers, attributes: Step<A
 		},
 			...children,
 			html.p({}, managers.translation.getStateTranslation(type)),
-			html.p({}, managers.translation.getStateTranslation(reason))
+			html.p({}, managers.translation.getStateTranslation(reason)),
+			ResetStateButton(managers, {})
 		)
 	);
 };
