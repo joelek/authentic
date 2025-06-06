@@ -1,6 +1,7 @@
 import { html } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
+import { StepTitle } from "../titles";
 import { Step } from "./Step";
 
 export type RegisteredStep = {};
@@ -15,6 +16,9 @@ export function RegisteredStep(managers: Managers, attributes: RegisteredStep) {
 			type,
 			reason
 		},
+			StepTitle(managers, {},
+				managers.translation.getTranslation("REGISTER_BUTTON")
+			),
 			html.p({}, managers.translation.getTranslation("REGISTERED_TEXT"))
 		)
 	);

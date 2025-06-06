@@ -1,6 +1,7 @@
 import { html, stateify } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
+import { StepTitle } from "../titles";
 import { Step } from "./Step";
 
 export type WaitingForRecoverUsernameStep = {};
@@ -20,6 +21,9 @@ export function WaitingForRecoverUsernameStep(managers: Managers, attributes: Wa
 			type,
 			reason
 		},
+			StepTitle(managers, {},
+				managers.translation.getTranslation("RECOVER_BUTTON")
+			),
 			input,
 			html.button({
 				disabled: submittable,

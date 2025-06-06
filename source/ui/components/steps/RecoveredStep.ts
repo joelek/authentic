@@ -1,6 +1,7 @@
 import { html } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
+import { StepTitle } from "../titles";
 import { Step } from "./Step";
 
 export type RecoveredStep = {};
@@ -15,6 +16,9 @@ export function RecoveredStep(managers: Managers, attributes: RecoveredStep) {
 			type,
 			reason
 		},
+			StepTitle(managers, {},
+				managers.translation.getTranslation("RECOVER_BUTTON")
+			),
 			html.p({}, managers.translation.getTranslation("RECOVERED_TEXT"))
 		)
 	);

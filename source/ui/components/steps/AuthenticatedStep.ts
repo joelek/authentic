@@ -1,6 +1,7 @@
 import { html } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
+import { StepTitle } from "../titles";
 import { Step } from "./Step";
 
 export type AuthenticatedStep = {};
@@ -15,6 +16,9 @@ export function AuthenticatedStep(managers: Managers, attributes: AuthenticatedS
 			type,
 			reason
 		},
+			StepTitle(managers, {},
+				managers.translation.getTranslation("AUTHENTICATE_BUTTON")
+			),
 			html.p({}, managers.translation.getTranslation("AUTHENTICATED_TEXT"))
 		)
 	);
