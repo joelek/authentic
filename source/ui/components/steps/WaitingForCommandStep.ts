@@ -7,10 +7,7 @@ export type WaitingForCommandStep = {};
 
 export function WaitingForCommandStep(managers: Managers, attributes: WaitingForCommandStep) {
 	let state = managers.backend.getState();
-	state.compute(console.log);
 	let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForCommandState>);
-	type.compute(console.log);
-	reason.compute(console.log);
 	let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
 	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	return (
