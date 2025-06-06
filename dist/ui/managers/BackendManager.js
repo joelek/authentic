@@ -5,75 +5,80 @@ const bonsai_1 = require("@joelek/bonsai");
 class BackendManager {
     client;
     state;
-    wait_until_utc;
-    pending;
-    waitForPending() {
+    lock;
+    editable;
+    submittable;
+    waitForBackend(wait_until_utc) {
         return new Promise((resolve, reject) => {
-            if (!this.pending.value()) {
-                resolve();
-            }
-            else {
-                let subscription = this.pending.observe("update", () => {
-                    if (!this.pending.value()) {
-                        subscription();
-                        resolve();
-                    }
-                });
-            }
-        });
-    }
-    waitForBackend() {
-        return new Promise((resolve, reject) => {
-            let ms = Math.max(0, this.wait_until_utc - Date.now());
+            let ms = Math.max(0, wait_until_utc - Date.now());
             setTimeout(resolve, ms);
         });
-    }
-    async wait() {
-        await this.waitForPending();
-        await this.waitForBackend();
     }
     constructor(client) {
         this.client = client;
         this.state = (0, bonsai_1.stateify)(undefined);
-        this.wait_until_utc = Date.now();
-        this.pending = (0, bonsai_1.stateify)(false);
-        this.readState({}).catch(() => undefined).then(async (response) => {
-            if (response != null) {
-                let payload = await response.payload();
-                this.state.update(payload.state);
-            }
-        });
+        this.lock = Promise.resolve();
+        this.editable = (0, bonsai_1.stateify)(true);
+        this.submittable = (0, bonsai_1.stateify)(true);
+        this.readState({});
     }
     async readState(...args) {
-        await this.wait();
-        this.pending.update(true);
-        try {
-            let response = await this.client.readState(...args);
-            this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+        this.editable.update(false);
+        this.submittable.update(false);
+        await this.lock;
+        let response = this.client.readState(...args);
+        this.lock = this.lock
+            .then(() => response)
+            .then((response) => {
+            let wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+            return this.waitForBackend(wait_until_utc);
+        })
+            .catch(() => undefined)
+            .finally(() => {
+            this.submittable.update(true);
+        });
+        response = response
+            .then(async (response) => {
             let payload = await response.payload();
             this.state.update(payload.state);
             return response;
-        }
-        finally {
-            this.pending.update(false);
-        }
+        })
+            .finally(() => {
+            this.editable.update(true);
+        });
+        return response;
     }
     async sendCommand(...args) {
-        await this.wait();
-        this.pending.update(true);
-        try {
-            let response = await this.client.sendCommand(...args);
-            this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+        this.editable.update(false);
+        this.submittable.update(false);
+        await this.lock;
+        let response = this.client.sendCommand(...args);
+        this.lock = this.lock
+            .then(() => response)
+            .then((response) => {
+            let wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+            return this.waitForBackend(wait_until_utc);
+        })
+            .catch(() => undefined)
+            .finally(() => {
+            this.submittable.update(true);
+        });
+        response = response
+            .then(async (response) => {
             let payload = await response.payload();
             this.state.update(payload.state);
             return response;
-        }
-        finally {
-            this.pending.update(false);
-        }
+        })
+            .finally(() => {
+            this.editable.update(true);
+        });
+        return response;
     }
-    getPending() {
-        return this.pending;
+    getEditable() {
+        return this.editable;
+    }
+    getSubmittable() {
+        return this.submittable;
     }
     getState() {
         return this.state;

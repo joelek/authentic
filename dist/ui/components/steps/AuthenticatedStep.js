@@ -7,7 +7,8 @@ const Step_1 = require("./Step");
 function AuthenticatedStep(managers, attributes) {
     let state = managers.backend.getState();
     let { type, reason } = state.compute((state) => api.AuthenticatedState.is(state) ? state : { type: undefined, reason: undefined });
-    let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
+    let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
+    let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
     return ((0, Step_1.Step)(managers, {
         type,
         reason

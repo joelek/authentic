@@ -7,16 +7,17 @@ const Step_1 = require("./Step");
 function WaitingForRecoverEmailStep(managers, attributes) {
     let state = managers.backend.getState();
     let { type, reason } = state.compute((state) => api.WaitingForRecoverEmailState.is(state) ? state : { type: undefined, reason: undefined });
-    let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
+    let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
+    let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
     let value = (0, bonsai_1.stateify)("");
     return ((0, Step_1.Step)(managers, {
         type,
         reason
     }, bonsai_1.html.input({
-        disabled,
+        disabled: editable,
         value
     }), bonsai_1.html.button({
-        disabled,
+        disabled: submittable,
         onclick: async () => {
             await managers.backend.sendCommand({
                 payload: {
