@@ -8,7 +8,8 @@ export type WaitingForAuthenticateUsernameStep = {};
 export function WaitingForAuthenticateUsernameStep(managers: Managers, attributes: WaitingForAuthenticateUsernameStep) {
 	let state = managers.backend.getState();
 	let { type, reason } = state.compute((state) => api.WaitingForAuthenticateUsernameState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForAuthenticateUsernameState>);
-	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
+	let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
+	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	let value = stateify("");
 	return (
 		Step(managers, {
@@ -16,11 +17,11 @@ export function WaitingForAuthenticateUsernameStep(managers: Managers, attribute
 			reason
 		},
 			html.input({
-				disabled,
+				disabled: editable,
 				value
 			}),
 			html.button({
-				disabled,
+				disabled: submittable,
 				onclick: async () => {
 					await managers.backend.sendCommand({
 						payload: {

@@ -11,14 +11,15 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 	let { type, reason } = state.compute((state) => api.WaitingForCommandState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForCommandState>);
 	type.compute(console.log);
 	reason.compute(console.log);
-	let disabled = managers.backend.getPending().compute((pending) => pending ? "" : undefined);
+	let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
+	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	return (
 		Step(managers, {
 			type,
 			reason
 		},
 			html.button({
-				disabled,
+				disabled: submittable,
 				onclick: async () => {
 					await managers.backend.sendCommand({
 						payload: {
@@ -32,7 +33,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 				html.p({}, managers.translation.getTranslation("REGISTER_BUTTON"))
 			),
 			html.button({
-				disabled,
+				disabled: submittable,
 				onclick: async () => {
 					await managers.backend.sendCommand({
 						payload: {
@@ -46,7 +47,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 				html.p({}, managers.translation.getTranslation("AUTHENTICATE_BUTTON"))
 			),
 			html.button({
-				disabled,
+				disabled: submittable,
 				onclick: async () => {
 					await managers.backend.sendCommand({
 						payload: {

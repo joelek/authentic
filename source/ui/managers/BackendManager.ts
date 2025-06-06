@@ -4,74 +4,86 @@ import * as api from "../../api/client";
 export class BackendManager implements api.Client {
 	protected client: api.Client;
 	protected state: State<api.State | undefined>;
-	protected wait_until_utc: number;
-	protected pending: State<boolean>;
+	protected lock: Promise<any>;
+	protected editable: State<boolean>;
+	protected submittable: State<boolean>;
 
-	protected waitForPending(): Promise<void> {
+	protected waitForBackend(wait_until_utc: number): Promise<void> {
 		return new Promise((resolve, reject) => {
-			if (!this.pending.value()) {
-				resolve();
-			} else {
-				let subscription = this.pending.observe("update", () => {
-					if (!this.pending.value()) {
-						subscription();
-						resolve();
-					}
-				});
-			}
-		});
-	}
-
-	protected waitForBackend(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			let ms = Math.max(0, this.wait_until_utc - Date.now());
+			let ms = Math.max(0, wait_until_utc - Date.now());
 			setTimeout(resolve, ms);
 		});
-	}
-
-	protected async wait(): Promise<void> {
-		await this.waitForPending();
-		await this.waitForBackend();
 	}
 
 	constructor(client: api.Client) {
 		this.client = client;
 		this.state = stateify(undefined);
-		this.wait_until_utc = Date.now();
-		this.pending = stateify(false);
+		this.lock = Promise.resolve();
+		this.editable = stateify(true);
+		this.submittable = stateify(true);
 		this.readState({});
 	}
 
 	async readState(...args: Parameters<api.Client["readState"]>): ReturnType<api.Client["readState"]> {
-		await this.wait();
-		this.pending.update(true);
-		try {
-			let response = await this.client.readState(...args);
-			this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
-			let payload = await response.payload();
-			this.state.update(payload.state);
-			return response;
-		} finally {
-			this.pending.update(false);
-		}
+		this.editable.update(false);
+		this.submittable.update(false);
+		await this.lock;
+		let response = this.client.readState(...args);
+		this.lock = this.lock
+			.then(() => response)
+			.then((response) => {
+				let wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+				return this.waitForBackend(wait_until_utc);
+			})
+			.catch(() => undefined)
+			.finally(() => {
+				this.submittable.update(true);
+			});
+		response = response
+			.then(async (response) => {
+				let payload = await response.payload();
+				this.state.update(payload.state);
+				return response;
+			})
+			.finally(() => {
+				this.editable.update(true);
+			})
+		return response;
 	}
 
 	async sendCommand(...args: Parameters<api.Client["sendCommand"]>): ReturnType<api.Client["sendCommand"]> {
-		await this.wait();
-		this.pending.update(true);
-		try {
-			let response = await this.client.sendCommand(...args);
-			this.wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
-			let payload = await response.payload();
-			this.state.update(payload.state);
-			return response;
-		} finally {
-			this.pending.update(false);
-		}
+		this.editable.update(false);
+		this.submittable.update(false);
+		await this.lock;
+		let response = this.client.sendCommand(...args);
+		this.lock = this.lock
+			.then(() => response)
+			.then((response) => {
+				let wait_until_utc = Date.now() + response.headers()["x-wait-ms"];
+				return this.waitForBackend(wait_until_utc);
+			})
+			.catch(() => undefined)
+			.finally(() => {
+				this.submittable.update(true);
+			});
+		response = response
+			.then(async (response) => {
+				let payload = await response.payload();
+				this.state.update(payload.state);
+				return response;
+			})
+			.finally(() => {
+				this.editable.update(true);
+			})
+		return response;
 	}
 
-	getPending(): State<boolean> {
-		return this.pending;
+	getEditable(): State<boolean> {
+		return this.editable;
+	}
+
+	getSubmittable(): State<boolean> {
+		return this.submittable;
 	}
 
 	getState(): State<api.State | undefined> {
