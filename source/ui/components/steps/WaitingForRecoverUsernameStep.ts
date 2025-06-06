@@ -11,15 +11,16 @@ export function WaitingForRecoverUsernameStep(managers: Managers, attributes: Wa
 	let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
 	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	let value = stateify("");
+	let input = html.input({
+		disabled: editable,
+		value
+	});
 	return (
 		Step(managers, {
 			type,
 			reason
 		},
-			html.input({
-				disabled: editable,
-				value
-			}),
+			input,
 			html.button({
 				disabled: submittable,
 				onclick: async () => {
@@ -31,6 +32,9 @@ export function WaitingForRecoverUsernameStep(managers: Managers, attributes: Wa
 							}
 						}
 					});
+					if (type.value() != null) {
+						input.focus();
+					}
 				}
 			},
 				html.p({}, managers.translation.getTranslation("CONTINUE_BUTTON"))
