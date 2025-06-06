@@ -28,6 +28,5 @@ authentic.ui.injectUserInterface({
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Add automatic backoff to Autoguard when receiving Retry-After header in response.
 * Add automatic retries with exponential backoff on error to Autoguard.
-* Fix issue with wait in BackendManager.
 * Add reset command button to ui.
 * Submit steps when pressing enter.
