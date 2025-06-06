@@ -39,12 +39,7 @@ export class BackendManager implements api.Client {
 		this.state = stateify(undefined);
 		this.wait_until_utc = Date.now();
 		this.pending = stateify(false);
-		this.readState({}).catch(() => undefined).then(async (response) => {
-			if (response != null) {
-				let payload = await response.payload();
-				this.state.update(payload.state);
-			}
-		});
+		this.readState({});
 	}
 
 	async readState(...args: Parameters<api.Client["readState"]>): ReturnType<api.Client["readState"]> {
