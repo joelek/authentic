@@ -272,6 +272,10 @@ const STATES = {
     ...WAITING_FOR_COMMAND
 };
 const TRANSLATIONS = {
+    "RESET_STATE_BUTTON": {
+        en: "Start over",
+        sv: "Börja om"
+    },
     "REGISTER_BUTTON": {
         en: "Register account",
         sv: "Registrera konto"

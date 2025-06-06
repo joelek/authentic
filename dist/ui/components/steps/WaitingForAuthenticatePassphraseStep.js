@@ -10,13 +10,14 @@ function WaitingForAuthenticatePassphraseStep(managers, attributes) {
     let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
     let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
     let value = (0, bonsai_1.stateify)("");
+    let input = bonsai_1.html.input({
+        disabled: editable,
+        value
+    });
     return ((0, Step_1.Step)(managers, {
         type,
         reason
-    }, bonsai_1.html.input({
-        disabled: editable,
-        value
-    }), bonsai_1.html.button({
+    }, input, bonsai_1.html.button({
         disabled: submittable,
         onclick: async () => {
             await managers.backend.sendCommand({
@@ -27,6 +28,9 @@ function WaitingForAuthenticatePassphraseStep(managers, attributes) {
                     }
                 }
             });
+            if (type.value() != null) {
+                input.focus();
+            }
         }
     }, bonsai_1.html.p({}, managers.translation.getTranslation("CONTINUE_BUTTON")))));
 }

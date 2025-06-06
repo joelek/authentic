@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Step = void 0;
 const bonsai_1 = require("@joelek/bonsai");
+const ResetStateButton_1 = require("../buttons/ResetStateButton");
 document.head.appendChild(bonsai_1.html.style({}, `\
 	.step {
 
@@ -21,7 +22,7 @@ function Step(managers, attributes, ...children) {
     let visible = type.compute((type) => type != null);
     return (bonsai_1.html.div({
         class: ["step", visible.compute((visible) => visible ? "step--visible" : "step--hidden")]
-    }, ...children, bonsai_1.html.p({}, managers.translation.getStateTranslation(type)), bonsai_1.html.p({}, managers.translation.getStateTranslation(reason))));
+    }, ...children, bonsai_1.html.p({}, managers.translation.getStateTranslation(type)), bonsai_1.html.p({}, managers.translation.getStateTranslation(reason)), (0, ResetStateButton_1.ResetStateButton)(managers, {})));
 }
 exports.Step = Step;
 ;

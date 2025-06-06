@@ -215,6 +215,10 @@ declare const STATES: {
 type States = typeof STATES;
 type StatesKey = keyof States;
 declare const TRANSLATIONS: {
+    RESET_STATE_BUTTON: {
+        en: string;
+        sv: string;
+    };
     REGISTER_BUTTON: {
         en: string;
         sv: string;
