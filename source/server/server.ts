@@ -262,7 +262,7 @@ export class Server {
 		return this.origins.createObject({
 			address: address,
 			expires_utc: this.getExpiresInMinutes(this.origin_validity_minutes),
-			wait_until_utc: this.getExpiresInSeconds(0)
+			wait_until_utc: this.getExpiresInMilliseconds(0)
 		});
 	}
 
@@ -285,7 +285,7 @@ export class Server {
 		return await this.origins.updateObject({
 			...origin,
 			expires_utc: this.getExpiresInMinutes(this.origin_validity_minutes),
-			wait_until_utc: this.getExpiresInSeconds(1)
+			wait_until_utc: this.getExpiresInMilliseconds(250)
 		});
 	}
 
@@ -300,7 +300,7 @@ export class Server {
 			type: "WAITING_FOR_COMMAND",
 			reason: "COMMAND_REQUIRED",
 			expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-			wait_until_utc: this.getExpiresInSeconds(0)
+			wait_until_utc: this.getExpiresInMilliseconds(0)
 		});
 	}
 
@@ -312,7 +312,7 @@ export class Server {
 					type: "WAITING_FOR_REGISTER_USERNAME",
 					reason: "REGISTER_USERNAME_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(1)
+					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
 			} else {
 				let users = await this.users.lookupObjects("username", "=", session.username);
@@ -324,7 +324,7 @@ export class Server {
 						type: "WAITING_FOR_REGISTER_USERNAME",
 						reason: "REGISTER_USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 					};
 				}
 			}
@@ -335,7 +335,7 @@ export class Server {
 				type: "WAITING_FOR_REGISTER_EMAIL",
 				reason: "REGISTER_EMAIL_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(1)
+				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
 		let users = await this.users.lookupObjects("email", "=", session.email);
@@ -349,7 +349,7 @@ export class Server {
 				type: "WAITING_FOR_REGISTER_EMAIL",
 				reason: "REGISTER_EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
+				wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
 		if (this.require_token || !this.require_passphrase) {
@@ -362,7 +362,7 @@ export class Server {
 					type: "WAITING_FOR_REGISTER_TOKEN",
 					reason: "REGISTER_TOKEN_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(1)
+					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
 			}
 		}
@@ -373,7 +373,7 @@ export class Server {
 					type: "WAITING_FOR_REGISTER_PASSPHRASE",
 					reason: "REGISTER_PASSPHRASE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(1)
+					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
 			}
 		}
@@ -388,7 +388,7 @@ export class Server {
 			type: "REGISTERED",
 			reason: "REGISTRATION_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
-			wait_until_utc: this.getExpiresInSeconds(1)
+			wait_until_utc: this.getExpiresInMilliseconds(250)
 		};
 	}
 
@@ -404,7 +404,7 @@ export class Server {
 						type: "WAITING_FOR_AUTHENTICATE_USERNAME",
 						reason: "AUTHENTICATE_USERNAME_NOT_AVAILABLE",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 					};
 				}
 			}
@@ -415,7 +415,7 @@ export class Server {
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 				reason: "AUTHENTICATE_EMAIL_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(1)
+				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
 		let users = await this.users.lookupObjects("email", "=", session.email);
@@ -429,7 +429,7 @@ export class Server {
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 				reason: "AUTHENTICATE_EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
+				wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
 		let user = users.pop();
@@ -446,7 +446,7 @@ export class Server {
 					type: "WAITING_FOR_AUTHENTICATE_TOKEN",
 					reason: "AUTHENTICATE_TOKEN_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(1)
+					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
 			}
 		}
@@ -458,7 +458,7 @@ export class Server {
 					type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE",
 					reason: "AUTHENTICATE_PASSPHRASE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(1)
+					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
 			}
 		}
@@ -468,7 +468,7 @@ export class Server {
 			type: "AUTHENTICATED",
 			reason: "AUTHENTICATION_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
-			wait_until_utc: this.getExpiresInSeconds(1)
+			wait_until_utc: this.getExpiresInMilliseconds(250)
 		};
 	}
 
@@ -483,7 +483,7 @@ export class Server {
 					type: "WAITING_FOR_RECOVER_USERNAME",
 					reason: "RECOVER_USERNAME_NOT_AVAILABLE",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
+					wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, username_attempts - this.tolerable_username_attempts))
 				};
 			}
 		}
@@ -493,7 +493,7 @@ export class Server {
 				type: "WAITING_FOR_RECOVER_EMAIL",
 				reason: "RECOVER_EMAIL_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(1)
+				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
 		let users = await this.users.lookupObjects("email", "=", session.email);
@@ -507,7 +507,7 @@ export class Server {
 				type: "WAITING_FOR_RECOVER_EMAIL",
 				reason: "RECOVER_EMAIL_NOT_AVAILABLE",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
+				wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
 		let user = users.pop();
@@ -523,7 +523,7 @@ export class Server {
 				type: "WAITING_FOR_RECOVER_TOKEN",
 				reason: "RECOVER_TOKEN_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(1)
+				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
 		if (this.require_passphrase) {
@@ -533,7 +533,7 @@ export class Server {
 					type: "WAITING_FOR_RECOVER_PASSPHRASE",
 					reason: "RECOVER_PASSPHRASE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInSeconds(1)
+					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
 			}
 		}
@@ -543,7 +543,7 @@ export class Server {
 			type: "RECOVERED",
 			reason: "RECOVERY_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
-			wait_until_utc: this.getExpiresInSeconds(1)
+			wait_until_utc: this.getExpiresInMilliseconds(250)
 		};
 	}
 
@@ -554,7 +554,7 @@ export class Server {
 				type: "WAITING_FOR_COMMAND",
 				reason: "COMMAND_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(1)
+				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
 		if (session.expires_utc <= Date.now()) {
@@ -563,7 +563,7 @@ export class Server {
 				type: "WAITING_FOR_COMMAND",
 				reason: "SESSION_EXPIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-				wait_until_utc: this.getExpiresInSeconds(1)
+				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
 		if (api.WaitingForCommandState.is(session)) {
@@ -584,7 +584,7 @@ export class Server {
 						type: "WAITING_FOR_REGISTER_USERNAME",
 						reason: "REGISTER_USERNAME_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				return this.getNextRegisterSession({
@@ -600,7 +600,7 @@ export class Server {
 						type: "WAITING_FOR_REGISTER_EMAIL",
 						reason: "REGISTER_EMAIL_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				return this.getNextRegisterSession({
@@ -619,7 +619,7 @@ export class Server {
 						type: "WAITING_FOR_REGISTER_TOKEN",
 						reason: "REGISTER_TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
 				}
 				return this.getNextRegisterSession({
@@ -634,7 +634,7 @@ export class Server {
 						type: "WAITING_FOR_REGISTER_PASSPHRASE",
 						reason: "REGISTER_PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				let passdata = this.computePassdata(command.passphrase);
@@ -651,7 +651,7 @@ export class Server {
 						type: "WAITING_FOR_AUTHENTICATE_USERNAME",
 						reason: "AUTHENTICATE_USERNAME_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				return this.getNextAuthenticateSession({
@@ -667,7 +667,7 @@ export class Server {
 						type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 						reason: "AUTHENTICATE_EMAIL_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				return this.getNextAuthenticateSession({
@@ -686,7 +686,7 @@ export class Server {
 						type: "WAITING_FOR_AUTHENTICATE_TOKEN",
 						reason: "AUTHENTICATE_TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
 				}
 				return this.getNextAuthenticateSession({
@@ -703,7 +703,7 @@ export class Server {
 						type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE",
 						reason: "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, passdata_attempts - this.tolerable_passdata_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, passdata_attempts - this.tolerable_passdata_attempts))
 					};
 				}
 				return this.getNextAuthenticateSession({
@@ -719,7 +719,7 @@ export class Server {
 						type: "WAITING_FOR_RECOVER_USERNAME",
 						reason: "RECOVER_USERNAME_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				return this.getNextRecoverSession({
@@ -735,7 +735,7 @@ export class Server {
 						type: "WAITING_FOR_RECOVER_EMAIL",
 						reason: "RECOVER_EMAIL_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				return this.getNextRecoverSession({
@@ -754,7 +754,7 @@ export class Server {
 						type: "WAITING_FOR_RECOVER_TOKEN",
 						reason: "RECOVER_TOKEN_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
 					};
 				}
 				return this.getNextRecoverSession({
@@ -769,7 +769,7 @@ export class Server {
 						type: "WAITING_FOR_RECOVER_PASSPHRASE",
 						reason: "RECOVER_PASSPHRASE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInSeconds(1)
+						wait_until_utc: this.getExpiresInMilliseconds(250)
 					};
 				}
 				let passdata = this.computePassdata(command.passphrase);
@@ -784,7 +784,7 @@ export class Server {
 			type: "WAITING_FOR_COMMAND",
 			reason: "INVALID_COMMAND",
 			expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-			wait_until_utc: this.getExpiresInSeconds(1)
+			wait_until_utc: this.getExpiresInMilliseconds(250)
 		};
 	}
 
