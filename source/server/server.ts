@@ -174,12 +174,20 @@ export class Server {
 		return Date.now() + valid_for_days * 24 * 60 * 60 * 1000;
 	}
 
+	protected getExpiresInHours(valid_for_hours: number): number {
+		return Date.now() + valid_for_hours * 60 * 60 * 1000;
+	}
+
 	protected getExpiresInMinutes(valid_for_minutes: number): number {
 		return Date.now() + valid_for_minutes * 60 * 1000;
 	}
 
 	protected getExpiresInSeconds(valid_for_seconds: number): number {
 		return Date.now() + valid_for_seconds * 1000;
+	}
+
+	protected getExpiresInMilliseconds(valid_for_milliseconds: number): number {
+		return Date.now() + valid_for_milliseconds;
 	}
 
 	protected getHeaders(all_headers: Record<string, autoguard.api.JSON> | undefined, name: string): Array<string> {
