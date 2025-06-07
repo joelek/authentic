@@ -71,8 +71,10 @@ export declare class Server {
     protected generateToken(): string;
     protected getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined>;
     protected getExpiresInDays(valid_for_days: number): number;
+    protected getExpiresInHours(valid_for_hours: number): number;
     protected getExpiresInMinutes(valid_for_minutes: number): number;
     protected getExpiresInSeconds(valid_for_seconds: number): number;
+    protected getExpiresInMilliseconds(valid_for_milliseconds: number): number;
     protected getHeaders(all_headers: Record<string, autoguard.api.JSON> | undefined, name: string): Array<string>;
     protected getCookieData(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): CookieData | undefined;
     protected getRemoteAddress(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): string;
