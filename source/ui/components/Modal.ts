@@ -1,11 +1,14 @@
 import { html, State, stateify } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
+import { Block } from "./Block";
 import { AuthenticatedStep, RecoveredStep, RegisteredStep, WaitingForAuthenticateEmailStep, WaitingForAuthenticatePassphraseStep, WaitingForAuthenticateTokenStep, WaitingForAuthenticateUsernameStep, WaitingForRecoverEmailStep, WaitingForRecoverPassphraseStep, WaitingForRecoverTokenStep, WaitingForRecoverUsernameStep, WaitingForRegisterEmailStep, WaitingForRegisterPassphraseStep, WaitingForRegisterTokenStep, WaitingForRegisterUsernameStep } from "./steps";
 import { WaitingForCommandStep } from "./steps/WaitingForCommandStep";
 
 document.head.appendChild(html.style({}, `\
 	.modal {
-
+		position: absolute;
+			top: 0%;
+			left: 0%;
 	}
 
 	.modal--visible {
@@ -14,6 +17,48 @@ document.head.appendChild(html.style({}, `\
 
 	.modal--hidden {
 		display: none;
+	}
+
+	.modal__background {
+		background-color: rgb(31, 31, 31);
+		padding: 24px;
+	}
+
+	.modal__positioner {
+		align-content: center;
+		display: grid;
+		grid-template-columns: minmax(240px, 400px);
+		justify-content: center;
+	}
+
+	.modal__window {
+		background-color: rgb(47, 47, 47);
+		border-radius: 2px;
+	}
+
+	.modal__scroll {
+		overflow-x: auto;
+		overflow-y: auto;
+	}
+
+	.modal__scroll::-webkit-scrollbar {
+		background-color: transparent;
+		height: 12px;
+		width: 12px;
+	}
+
+	.modal__scroll::-webkit-scrollbar-corner {
+		background-color: transparent;
+	}
+
+	.modal__scroll::-webkit-scrollbar-thumb {
+		background-color: rgb(63, 63, 63);
+		border-radius: 12px;
+	}
+
+	.modal__content {
+		height: auto;
+		padding: 24px;
 	}
 `));
 
@@ -24,25 +69,45 @@ export type Modal = {
 export function Modal(managers: Managers, attributes: Modal) {
 	let visible = stateify(attributes.visible);
 	return (
-		html.div({
+		Block({
 			class: ["modal", visible.compute((visible) => visible ? "modal--visible" : "modal--hidden")]
 		},
-			WaitingForCommandStep(managers, {}),
-			WaitingForAuthenticateEmailStep(managers, {}),
-			WaitingForAuthenticatePassphraseStep(managers, {}),
-			WaitingForAuthenticateTokenStep(managers, {}),
-			WaitingForAuthenticateUsernameStep(managers, {}),
-			AuthenticatedStep(managers, {}),
-			WaitingForRecoverEmailStep(managers, {}),
-			WaitingForRecoverPassphraseStep(managers, {}),
-			WaitingForRecoverTokenStep(managers, {}),
-			WaitingForRecoverUsernameStep(managers, {}),
-			RecoveredStep(managers, {}),
-			WaitingForRegisterEmailStep(managers, {}),
-			WaitingForRegisterPassphraseStep(managers, {}),
-			WaitingForRegisterTokenStep(managers, {}),
-			WaitingForRegisterUsernameStep(managers, {}),
-			RegisteredStep(managers, {})
+			Block({
+				class: ["modal__background"]
+			},
+				Block({
+					class: ["modal__positioner"]
+				},
+					Block({
+						class: ["modal__window"]
+					},
+						Block({
+							class: ["modal__scroll"]
+						},
+							Block({
+								class: ["modal__content"]
+							},
+								WaitingForCommandStep(managers, {}),
+								WaitingForAuthenticateEmailStep(managers, {}),
+								WaitingForAuthenticatePassphraseStep(managers, {}),
+								WaitingForAuthenticateTokenStep(managers, {}),
+								WaitingForAuthenticateUsernameStep(managers, {}),
+								AuthenticatedStep(managers, {}),
+								WaitingForRecoverEmailStep(managers, {}),
+								WaitingForRecoverPassphraseStep(managers, {}),
+								WaitingForRecoverTokenStep(managers, {}),
+								WaitingForRecoverUsernameStep(managers, {}),
+								RecoveredStep(managers, {}),
+								WaitingForRegisterEmailStep(managers, {}),
+								WaitingForRegisterPassphraseStep(managers, {}),
+								WaitingForRegisterTokenStep(managers, {}),
+								WaitingForRegisterUsernameStep(managers, {}),
+								RegisteredStep(managers, {})
+							)
+						)
+					)
+				)
+			)
 		)
 	);
 };
