@@ -1,13 +1,12 @@
-import { html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
+import { FormButton } from "../form/FormButton";
+import { ButtonTitle } from "../titles";
 
 export type ResetStateButton = {};
 
 export function ResetStateButton(managers: Managers, attributes: ResetStateButton) {
-	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	return (
-		html.button({
-			disabled: submittable,
+		FormButton(managers, {
 			onclick: async () => {
 				await managers.backend.sendCommand({
 					payload: {
@@ -18,7 +17,7 @@ export function ResetStateButton(managers: Managers, attributes: ResetStateButto
 				});
 			}
 		},
-			html.p({}, managers.translation.getTranslation("RESET_STATE_BUTTON"))
+			ButtonTitle(managers, {}, managers.translation.getTranslation("RESET_STATE_BUTTON"))
 		)
 	);
 };

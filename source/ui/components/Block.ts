@@ -8,6 +8,13 @@ document.head.appendChild(html.style({}, `\
 		overflow: hidden;
 		position: relative;
 	}
+
+	.block {
+		border: none;
+		margin: 0px;
+		outline: none;
+		padding: 0px;
+	}
 `));
 
 export type Block<A extends keyof HTMLElementTagNameMap> = Augmentations<HTMLElementEventMap, HTMLElementTagNameMap[A]>;

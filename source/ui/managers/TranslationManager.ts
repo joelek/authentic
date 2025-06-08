@@ -14,8 +14,8 @@ const WAITING_FOR_REGISTER_USERNAME = {
 		sv: "Vänligen ange ditt användarnamn."
 	},
 	"REGISTER_USERNAME_REQUIRED": {
-		en: "A username is required.",
-		sv: "Ett användarnamn krävs."
+		en: "Your username has not been entered.",
+		sv: "Ditt användarnamn har ännu inte angetts."
 	},
 	"REGISTER_USERNAME_NOT_ACCEPTED": {
 		en: "The username is not accepted. Please make sure that it's correct and try again.",
@@ -33,8 +33,8 @@ const WAITING_FOR_REGISTER_EMAIL = {
 		sv: "Vänligen ange din e-postadress."
 	},
 	"REGISTER_EMAIL_REQUIRED": {
-		en: "An email address is required.",
-		sv: "En e-postadress krävs."
+		en: "Your email address has not been entered.",
+		sv: "Din e-postadress har ännu inte angetts."
 	},
 	"REGISTER_EMAIL_NOT_ACCEPTED": {
 		en: "The email address is not accepted. Please make sure that it's correct and try again.",
@@ -52,8 +52,8 @@ const WAITING_FOR_REGISTER_TOKEN = {
 		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
 	},
 	"REGISTER_TOKEN_REQUIRED": {
-		en: "A verification code is required.",
-		sv: "En verifieringskod krävs."
+		en: "The verification code has not been entered.",
+		sv: "Verifieringskoden har ännu inte angetts."
 	},
 	"REGISTER_TOKEN_NOT_ACCEPTED": {
 		en: "The verification code is not accepted. Please make sure that it's correct and try again.",
@@ -67,8 +67,8 @@ const WAITING_FOR_REGISTER_PASSPHRASE = {
 		sv: "Vänligen ange ditt lösenord."
 	},
 	"REGISTER_PASSPHRASE_REQUIRED": {
-		en: "A password is required.",
-		sv: "Ett lösenord krävs."
+		en: "Your password has not been entered.",
+		sv: "Ditt lösenord har ännu inte angetts."
 	},
 	"REGISTER_PASSPHRASE_NOT_ACCEPTED": {
 		en: "The password is not accepted. Please make sure that it's correct and try again.",
@@ -78,8 +78,8 @@ const WAITING_FOR_REGISTER_PASSPHRASE = {
 
 const REGISTERED = {
 	"REGISTERED": {
-		en: "Registrerd.",
-		sv: "Registrerad."
+		en: "Your account has been registered.",
+		sv: "Ditt konto har registrerats."
 	},
 	"REGISTRATION_COMPLETED": {
 		en: "Registration completed.",
@@ -101,8 +101,8 @@ const WAITING_FOR_AUTHENTICATE_USERNAME = {
 		sv: "Vänligen ange ditt användarnamn."
 	},
 	"AUTHENTICATE_USERNAME_REQUIRED": {
-		en: "A username is required.",
-		sv: "Ett användarnamn krävs."
+		en: "Your username has not been entered.",
+		sv: "Ditt användarnamn har ännu inte angetts."
 	},
 	"AUTHENTICATE_USERNAME_NOT_ACCEPTED": {
 		en: "The username is not accepted. Please make sure that it's correct and try again.",
@@ -120,8 +120,8 @@ const WAITING_FOR_AUTHENTICATE_EMAIL = {
 		sv: "Vänligen ange din e-postadress."
 	},
 	"AUTHENTICATE_EMAIL_REQUIRED": {
-		en: "An email address is required.",
-		sv: "En e-postadress krävs."
+		en: "Your email address has not been entered.",
+		sv: "Din e-postadress har ännu inte angetts."
 	},
 	"AUTHENTICATE_EMAIL_NOT_ACCEPTED": {
 		en: "The email address is not accepted. Please make sure that it's correct and try again.",
@@ -139,8 +139,8 @@ const WAITING_FOR_AUTHENTICATE_TOKEN = {
 		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
 	},
 	"AUTHENTICATE_TOKEN_REQUIRED": {
-		en: "A verification code is required.",
-		sv: "En verifieringskod krävs."
+		en: "The verification code has not been entered.",
+		sv: "Verifieringskoden har ännu inte angetts."
 	},
 	"AUTHENTICATE_TOKEN_NOT_ACCEPTED": {
 		en: "The verification code is not accepted. Please make sure that it's correct and try again.",
@@ -154,8 +154,8 @@ const WAITING_FOR_AUTHENTICATE_PASSPHRASE = {
 		sv: "Vänligen ange ditt lösenord."
 	},
 	"AUTHENTICATE_PASSPHRASE_REQUIRED": {
-		en: "A password is required.",
-		sv: "Ett lösenord krävs."
+		en: "Your password has not been entered.",
+		sv: "Ditt lösenord har ännu inte angetts."
 	},
 	"AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED": {
 		en: "The password is not accepted. Please make sure that it's correct and try again.",
@@ -165,12 +165,12 @@ const WAITING_FOR_AUTHENTICATE_PASSPHRASE = {
 
 const AUTHENTICATED = {
 	"AUTHENTICATED": {
-		en: "Registrerd.",
-		sv: "Registrerad."
+		en: "Your account has been authenticated.",
+		sv: "Ditt konto har autentiserats."
 	},
 	"AUTHENTICATION_COMPLETED": {
-		en: "Registration completed.",
-		sv: "Registreringen är slutförd."
+		en: "Authentication completed.",
+		sv: "Autentiseringen är slutförd."
 	}
 };
 
@@ -188,8 +188,8 @@ const WAITING_FOR_RECOVER_USERNAME = {
 		sv: "Vänligen ange ditt användarnamn."
 	},
 	"RECOVER_USERNAME_REQUIRED": {
-		en: "A username is required.",
-		sv: "Ett användarnamn krävs."
+		en: "Your username has not been entered.",
+		sv: "Ditt användarnamn har ännu inte angetts."
 	},
 	"RECOVER_USERNAME_NOT_ACCEPTED": {
 		en: "The username is not accepted. Please make sure that it's correct and try again.",
@@ -207,8 +207,8 @@ const WAITING_FOR_RECOVER_EMAIL = {
 		sv: "Vänligen ange din e-postadress."
 	},
 	"RECOVER_EMAIL_REQUIRED": {
-		en: "An email address is required.",
-		sv: "En e-postadress krävs."
+		en: "Your email address has not been entered.",
+		sv: "Din e-postadress har ännu inte angetts."
 	},
 	"RECOVER_EMAIL_NOT_ACCEPTED": {
 		en: "The email address is not accepted. Please make sure that it's correct and try again.",
@@ -226,8 +226,8 @@ const WAITING_FOR_RECOVER_TOKEN = {
 		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
 	},
 	"RECOVER_TOKEN_REQUIRED": {
-		en: "A verification code is required.",
-		sv: "En verifieringskod krävs."
+		en: "The verification code has not been entered.",
+		sv: "Verifieringskoden har ännu inte angetts."
 	},
 	"RECOVER_TOKEN_NOT_ACCEPTED": {
 		en: "The verification code is not accepted. Please make sure that it's correct and try again.",
@@ -241,8 +241,8 @@ const WAITING_FOR_RECOVER_PASSPHRASE = {
 		sv: "Vänligen ange ditt lösenord."
 	},
 	"RECOVER_PASSPHRASE_REQUIRED": {
-		en: "A password is required.",
-		sv: "Ett lösenord krävs."
+		en: "Your password has not been entered.",
+		sv: "Ditt lösenord har ännu inte angetts."
 	},
 	"RECOVER_PASSPHRASE_NOT_ACCEPTED": {
 		en: "The password is not accepted. Please make sure that it's correct and try again.",
@@ -252,12 +252,12 @@ const WAITING_FOR_RECOVER_PASSPHRASE = {
 
 const RECOVERED = {
 	"RECOVERED": {
-		en: "Registrerd.",
-		sv: "Registrerad."
+		en: "Your account has been recovered.",
+		sv: "Ditt konto har återställts."
 	},
 	"RECOVERY_COMPLETED": {
-		en: "Registration completed.",
-		sv: "Registreringen är slutförd."
+		en: "Recovery completed.",
+		sv: "Återställningen är slutförd."
 	}
 };
 
@@ -308,8 +308,8 @@ const TRANSLATIONS = {
 		sv: "Registrera konto"
 	},
 	"AUTHENTICATE_BUTTON": {
-		en: "Authorize account",
-		sv: "Auktorisera konto"
+		en: "Authenticate account",
+		sv: "Autentisera konto"
 	},
 	"RECOVER_BUTTON": {
 		en: "Recover account",
@@ -319,17 +319,21 @@ const TRANSLATIONS = {
 		en: "Continue",
 		sv: "Fortsätt"
 	},
-	"AUTHENTICATED_TEXT": {
-		en: "Your account has been authorized.",
-		sv: "Ditt konto har auktoriserats."
+	"EMAIL_PLACEHOLDER": {
+		en: "Email address...",
+		sv: "E-postadress..."
 	},
-	"RECOVERED_TEXT": {
-		en: "Your account has been recovered.",
-		sv: "Ditt konto har återställts."
+	"PASSPHRASE_PLACEHOLDER": {
+		en: "Password...",
+		sv: "Lösenord..."
 	},
-	"REGISTERED_TEXT": {
-		en: "Your account has been registered.",
-		sv: "Ditt konto har registrerats."
+	"TOKEN_PLACEHOLDER": {
+		en: "Verification code...",
+		sv: "Verifieringskod..."
+	},
+	"USERNAME_PLACEHOLDER": {
+		en: "Username...",
+		sv: "Användarnamn..."
 	}
 };
 

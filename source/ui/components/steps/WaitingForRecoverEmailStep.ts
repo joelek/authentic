@@ -1,7 +1,9 @@
-import { html, stateify } from "@joelek/bonsai";
+import { stateify } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
-import { StepTitle } from "../titles";
+import { ResetStateButton } from "../buttons/ResetStateButton";
+import { FormButton, FormGroup, FormInput } from "../form";
+import { ButtonTitle, StepDescriptionTitle, StepHeaderTitle } from "../titles";
 import { Step } from "./Step";
 
 export type WaitingForRecoverEmailStep = {};
@@ -9,11 +11,10 @@ export type WaitingForRecoverEmailStep = {};
 export function WaitingForRecoverEmailStep(managers: Managers, attributes: WaitingForRecoverEmailStep) {
 	let state = managers.backend.getState();
 	let { type, reason } = state.compute((state) => api.WaitingForRecoverEmailState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForRecoverEmailState>);
-	let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
-	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	let value = stateify("");
-	let input = html.input({
-		disabled: editable,
+	let input = FormInput(managers, {
+		type: "email",
+		placeholder: managers.translation.getTranslation("EMAIL_PLACEHOLDER"),
 		value
 	});
 	return (
@@ -21,28 +22,32 @@ export function WaitingForRecoverEmailStep(managers: Managers, attributes: Waiti
 			type,
 			reason
 		},
-			StepTitle(managers, {},
+			StepHeaderTitle(managers, {},
 				managers.translation.getTranslation("RECOVER_BUTTON")
 			),
-			input,
-			html.button({
-				disabled: submittable,
-				onclick: async () => {
-					await managers.backend.sendCommand({
-						payload: {
-							command: {
-								type: "RECOVER_EMAIL",
-								email: value.value()
+			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
+			FormGroup(managers, {},
+				input,
+				FormButton(managers, {
+					onclick: async () => {
+						await managers.backend.sendCommand({
+							payload: {
+								command: {
+									type: "RECOVER_EMAIL",
+									email: value.value()
+								}
 							}
+						});
+						if (type.value() != null) {
+							input.focus();
 						}
-					});
-					if (type.value() != null) {
-						input.focus();
 					}
-				}
-			},
-				html.p({}, managers.translation.getTranslation("CONTINUE_BUTTON"))
-			)
+				},
+					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE_BUTTON"))
+				)
+			),
+			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason)),
+			ResetStateButton(managers, {})
 		)
 	);
 };

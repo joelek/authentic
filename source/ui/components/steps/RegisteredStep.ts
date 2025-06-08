@@ -1,7 +1,6 @@
-import { html } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
-import { StepTitle } from "../titles";
+import { StepDescriptionTitle, StepHeaderTitle } from "../titles";
 import { Step } from "./Step";
 
 export type RegisteredStep = {};
@@ -9,17 +8,15 @@ export type RegisteredStep = {};
 export function RegisteredStep(managers: Managers, attributes: RegisteredStep) {
 	let state = managers.backend.getState();
 	let { type, reason } = state.compute((state) => api.RegisteredState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.RegisteredState>);
-	let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
-	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	return (
 		Step(managers, {
 			type,
 			reason
 		},
-			StepTitle(managers, {},
+			StepHeaderTitle(managers, {},
 				managers.translation.getTranslation("REGISTER_BUTTON")
 			),
-			html.p({}, managers.translation.getTranslation("REGISTERED_TEXT"))
+			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type))
 		)
 	);
 };

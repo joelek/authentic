@@ -1,1 +1,3 @@
-export * from "./StepTitle";
+export * from "./ButtonTitle";
+export * from "./StepDescriptionTitle";
+export * from "./StepHeaderTitle";
