@@ -69,22 +69,22 @@ export type Modal = {
 export function Modal(managers: Managers, attributes: Modal) {
 	let visible = stateify(attributes.visible);
 	return (
-		Block({
+		Block("div", {
 			class: ["modal", visible.compute((visible) => visible ? "modal--visible" : "modal--hidden")]
 		},
-			Block({
+			Block("div", {
 				class: ["modal__background"]
 			},
-				Block({
+				Block("div", {
 					class: ["modal__positioner"]
 				},
-					Block({
+					Block("div", {
 						class: ["modal__window"]
 					},
-						Block({
+						Block("div", {
 							class: ["modal__scroll"]
 						},
-							Block({
+							Block("div", {
 								class: ["modal__content"]
 							},
 								WaitingForCommandStep(managers, {}),

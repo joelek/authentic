@@ -1,4 +1,4 @@
-import { Augmentations, Children, FunctionalElementEventMap, html } from "@joelek/bonsai";
+import { Augmentations, Children, html } from "@joelek/bonsai";
 
 document.head.appendChild(html.style({}, `\
 	.block {
@@ -10,13 +10,11 @@ document.head.appendChild(html.style({}, `\
 	}
 `));
 
-export type BlockEvents<A> = FunctionalElementEventMap<A> & {};
+export type Block<A extends keyof HTMLElementTagNameMap> = Augmentations<HTMLElementEventMap, HTMLElementTagNameMap[A]>;
 
-export type Block = {};
-
-export function Block<A extends BlockEvents<A>, B extends Element>(attributes: Augmentations<A, B>, ...children: Children) {
+export function Block<A extends keyof HTMLElementTagNameMap>(type: A, attributes: Block<A>, ...children: Children) {
 	return (
-		html.div(attributes, ...children)
+		html[type](attributes, ...children)
 			.attribute("class", (classes) => ["block", ...classes])
 	);
 };
