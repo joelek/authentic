@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Step = void 0;
 const bonsai_1 = require("@joelek/bonsai");
-const ResetStateButton_1 = require("../buttons/ResetStateButton");
+const Block_1 = require("../Block");
 document.head.appendChild(bonsai_1.html.style({}, `\
 	.step {
-
+		display: grid;
+		gap: 24px;
 	}
 
 	.step--visible {
@@ -20,9 +21,9 @@ function Step(managers, attributes, ...children) {
     let type = attributes.type;
     let reason = attributes.reason;
     let visible = type.compute((type) => type != null);
-    return (bonsai_1.html.div({
+    return ((0, Block_1.Block)("div", {
         class: ["step", visible.compute((visible) => visible ? "step--visible" : "step--hidden")]
-    }, ...children, bonsai_1.html.p({}, managers.translation.getStateTranslation(type)), bonsai_1.html.p({}, managers.translation.getStateTranslation(reason)), (0, ResetStateButton_1.ResetStateButton)(managers, {})));
+    }, ...children));
 }
 exports.Step = Step;
 ;

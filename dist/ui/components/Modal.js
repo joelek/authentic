@@ -64,17 +64,17 @@ document.head.appendChild(bonsai_1.html.style({}, `\
 `));
 function Modal(managers, attributes) {
     let visible = (0, bonsai_1.stateify)(attributes.visible);
-    return ((0, Block_1.Block)({
+    return ((0, Block_1.Block)("div", {
         class: ["modal", visible.compute((visible) => visible ? "modal--visible" : "modal--hidden")]
-    }, (0, Block_1.Block)({
+    }, (0, Block_1.Block)("div", {
         class: ["modal__background"]
-    }, (0, Block_1.Block)({
+    }, (0, Block_1.Block)("div", {
         class: ["modal__positioner"]
-    }, (0, Block_1.Block)({
+    }, (0, Block_1.Block)("div", {
         class: ["modal__window"]
-    }, (0, Block_1.Block)({
+    }, (0, Block_1.Block)("div", {
         class: ["modal__scroll"]
-    }, (0, Block_1.Block)({
+    }, (0, Block_1.Block)("div", {
         class: ["modal__content"]
     }, (0, WaitingForCommandStep_1.WaitingForCommandStep)(managers, {}), (0, steps_1.WaitingForAuthenticateEmailStep)(managers, {}), (0, steps_1.WaitingForAuthenticatePassphraseStep)(managers, {}), (0, steps_1.WaitingForAuthenticateTokenStep)(managers, {}), (0, steps_1.WaitingForAuthenticateUsernameStep)(managers, {}), (0, steps_1.AuthenticatedStep)(managers, {}), (0, steps_1.WaitingForRecoverEmailStep)(managers, {}), (0, steps_1.WaitingForRecoverPassphraseStep)(managers, {}), (0, steps_1.WaitingForRecoverTokenStep)(managers, {}), (0, steps_1.WaitingForRecoverUsernameStep)(managers, {}), (0, steps_1.RecoveredStep)(managers, {}), (0, steps_1.WaitingForRegisterEmailStep)(managers, {}), (0, steps_1.WaitingForRegisterPassphraseStep)(managers, {}), (0, steps_1.WaitingForRegisterTokenStep)(managers, {}), (0, steps_1.WaitingForRegisterUsernameStep)(managers, {}), (0, steps_1.RegisteredStep)(managers, {}))))))));
 }

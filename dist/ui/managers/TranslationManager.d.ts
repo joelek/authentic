@@ -235,15 +235,19 @@ declare const TRANSLATIONS: {
         en: string;
         sv: string;
     };
-    AUTHENTICATED_TEXT: {
+    EMAIL_PLACEHOLDER: {
         en: string;
         sv: string;
     };
-    RECOVERED_TEXT: {
+    PASSPHRASE_PLACEHOLDER: {
         en: string;
         sv: string;
     };
-    REGISTERED_TEXT: {
+    TOKEN_PLACEHOLDER: {
+        en: string;
+        sv: string;
+    };
+    USERNAME_PLACEHOLDER: {
         en: string;
         sv: string;
     };

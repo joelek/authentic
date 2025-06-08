@@ -1,4 +1,3 @@
-import { Augmentations, Children, FunctionalElementEventMap } from "@joelek/bonsai";
-export type BlockEvents<A> = FunctionalElementEventMap<A> & {};
-export type Block = {};
-export declare function Block<A extends BlockEvents<A>, B extends Element>(attributes: Augmentations<A, B>, ...children: Children): import("@joelek/bonsai").FunctionalElement<HTMLElementEventMap, HTMLDivElement>;
+import { Augmentations, Children } from "@joelek/bonsai";
+export type Block<A extends keyof HTMLElementTagNameMap> = Augmentations<HTMLElementEventMap, HTMLElementTagNameMap[A]>;
+export declare function Block<A extends keyof HTMLElementTagNameMap>(type: A, attributes: Block<A>, ...children: Children): import("@joelek/bonsai").FunctionalElement<HTMLElementEventMap, HTMLElementTagNameMap[A]>;
