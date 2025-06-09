@@ -16,6 +16,11 @@ function WaitingForRegisterEmailStep(managers, attributes) {
         placeholder: managers.translation.getTranslation("EMAIL_PLACEHOLDER"),
         value
     });
+    type.compute((type) => {
+        if (type != null) {
+            input.focus();
+        }
+    });
     return ((0, Step_1.Step)(managers, {
         type,
         reason

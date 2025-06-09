@@ -10,13 +10,16 @@ const Step_1 = require("./Step");
 function WaitingForAuthenticateTokenStep(managers, attributes) {
     let state = managers.backend.getState();
     let { type, reason } = state.compute((state) => api.WaitingForAuthenticateTokenState.is(state) ? state : { type: undefined, reason: undefined });
-    let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
-    let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
     let value = (0, bonsai_1.stateify)("");
     let input = (0, form_1.FormInput)(managers, {
         type: "text",
         placeholder: managers.translation.getTranslation("TOKEN_PLACEHOLDER"),
         value
+    });
+    type.compute((type) => {
+        if (type != null) {
+            input.focus();
+        }
     });
     return ((0, Step_1.Step)(managers, {
         type,
