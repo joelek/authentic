@@ -5,16 +5,24 @@ import { Block } from "../Block";
 
 document.head.appendChild(html.style({}, `\
 	.step {
-		display: grid;
-		gap: 24px;
+		transition: all 0.50s;
 	}
 
 	.step--visible {
-
+		height: auto;
+		opacity: 1.0;
+		transform: translate(0px, 0px);
 	}
 
 	.step--hidden {
-		display: none;
+		height: 0px;
+		opacity: 0.0;
+		transform: translate(0px, 120px);
+	}
+
+	.step__content {
+		display: grid;
+		gap: 24px;
 	}
 `));
 
@@ -31,7 +39,11 @@ export function Step<A extends api.State>(managers: Managers, attributes: Step<A
 		Block("div", {
 			class: ["step", visible.compute((visible) => visible ? "step--visible" : "step--hidden")]
 		},
-			...children
+			Block("div", {
+				class: ["step__content"]
+			},
+				...children
+			)
 		)
 	);
 };
