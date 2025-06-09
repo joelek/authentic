@@ -11,8 +11,6 @@ export type WaitingForAuthenticateTokenStep = {};
 export function WaitingForAuthenticateTokenStep(managers: Managers, attributes: WaitingForAuthenticateTokenStep) {
 	let state = managers.backend.getState();
 	let { type, reason } = state.compute((state) => api.WaitingForAuthenticateTokenState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForAuthenticateTokenState>);
-	let editable = managers.backend.getEditable().compute((editable) => editable ? undefined : "");
-	let submittable = managers.backend.getSubmittable().compute((submittable) => submittable ? undefined : "");
 	let value = stateify("");
 	let input = FormInput(managers, {
 		type: "text",
