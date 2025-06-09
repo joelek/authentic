@@ -17,6 +17,11 @@ export function WaitingForRecoverUsernameStep(managers: Managers, attributes: Wa
 		placeholder: managers.translation.getTranslation("USERNAME_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,

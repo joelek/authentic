@@ -17,6 +17,11 @@ export function WaitingForRegisterEmailStep(managers: Managers, attributes: Wait
 		placeholder: managers.translation.getTranslation("EMAIL_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,

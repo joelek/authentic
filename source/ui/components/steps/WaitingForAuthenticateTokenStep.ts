@@ -17,6 +17,11 @@ export function WaitingForAuthenticateTokenStep(managers: Managers, attributes: 
 		placeholder: managers.translation.getTranslation("TOKEN_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,

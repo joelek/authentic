@@ -17,6 +17,11 @@ export function WaitingForAuthenticateEmailStep(managers: Managers, attributes: 
 		placeholder: managers.translation.getTranslation("EMAIL_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,

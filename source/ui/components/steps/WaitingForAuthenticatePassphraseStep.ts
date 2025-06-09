@@ -17,6 +17,11 @@ export function WaitingForAuthenticatePassphraseStep(managers: Managers, attribu
 		placeholder: managers.translation.getTranslation("PASSPHRASE_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,

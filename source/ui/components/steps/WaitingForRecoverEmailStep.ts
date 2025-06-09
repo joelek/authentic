@@ -17,6 +17,11 @@ export function WaitingForRecoverEmailStep(managers: Managers, attributes: Waiti
 		placeholder: managers.translation.getTranslation("EMAIL_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,

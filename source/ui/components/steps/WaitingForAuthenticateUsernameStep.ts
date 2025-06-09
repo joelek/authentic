@@ -17,6 +17,11 @@ export function WaitingForAuthenticateUsernameStep(managers: Managers, attribute
 		placeholder: managers.translation.getTranslation("USERNAME_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,

@@ -17,6 +17,11 @@ export function WaitingForRegisterUsernameStep(managers: Managers, attributes: W
 		placeholder: managers.translation.getTranslation("USERNAME_PLACEHOLDER"),
 		value
 	});
+	type.compute((type) => {
+		if (type != null) {
+			input.focus();
+		}
+	});
 	return (
 		Step(managers, {
 			type,
