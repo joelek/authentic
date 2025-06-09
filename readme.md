@@ -28,5 +28,4 @@ authentic.ui.injectUserInterface({
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Add automatic backoff to Autoguard when receiving Retry-After header in response.
 * Add automatic retries with exponential backoff on error to Autoguard.
-* Submit steps when pressing enter.
 * Display authenticated user in ui.
