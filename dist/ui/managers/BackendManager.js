@@ -5,6 +5,7 @@ const bonsai_1 = require("@joelek/bonsai");
 class BackendManager {
     client;
     state;
+    user;
     lock;
     editable;
     submittable;
@@ -17,6 +18,7 @@ class BackendManager {
     constructor(client) {
         this.client = client;
         this.state = (0, bonsai_1.stateify)(undefined);
+        this.user = (0, bonsai_1.stateify)(undefined);
         this.lock = Promise.resolve();
         this.editable = (0, bonsai_1.stateify)(true);
         this.submittable = (0, bonsai_1.stateify)(true);
@@ -41,6 +43,7 @@ class BackendManager {
             .then(async (response) => {
             let payload = await response.payload();
             this.state.update(payload.state);
+            this.user.update(payload.user);
             return response;
         })
             .finally(() => {
@@ -67,6 +70,7 @@ class BackendManager {
             .then(async (response) => {
             let payload = await response.payload();
             this.state.update(payload.state);
+            this.user.update(payload.user);
             return response;
         })
             .finally(() => {
@@ -82,6 +86,9 @@ class BackendManager {
     }
     getState() {
         return this.state;
+    }
+    getUser() {
+        return this.user;
     }
 }
 exports.BackendManager = BackendManager;

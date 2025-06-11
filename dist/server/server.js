@@ -107,6 +107,23 @@ class Server {
     generateToken() {
         return libcrypto.randomBytes(16).toString("hex");
     }
+    getApiState(session) {
+        return api.State.as({
+            type: session.type,
+            reason: session.reason
+        });
+    }
+    async getApiUser(session) {
+        if (session.authenticated_user_id == null) {
+            return;
+        }
+        let user = await this.users.lookupObject(session.authenticated_user_id);
+        return {
+            id: user.id,
+            email: user.email,
+            username: user.username
+        };
+    }
     async getAuthenticatedUserId(session, ticket) {
         if (ticket == null) {
             return;
@@ -114,7 +131,7 @@ class Server {
         if (session.expires_utc <= Date.now()) {
             return;
         }
-        if (session.user_id == null) {
+        if (session.authenticated_user_id == null) {
             return;
         }
         if (session.ticket_hash == null) {
@@ -126,7 +143,7 @@ class Server {
         }
         session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
         await this.sessions.updateObject(session);
-        return session.user_id;
+        return session.authenticated_user_id;
     }
     getExpiresInDays(valid_for_days) {
         return Date.now() + valid_for_days * 24 * 60 * 60 * 1000;
@@ -333,7 +350,7 @@ class Server {
         });
         return {
             id: session.id,
-            user_id: user.id,
+            authenticated_user_id: user.id,
             type: "REGISTERED",
             reason: "REGISTRATION_COMPLETED",
             expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -412,7 +429,7 @@ class Server {
         }
         return {
             id: session.id,
-            user_id: user.id,
+            authenticated_user_id: user.id,
             type: "AUTHENTICATED",
             reason: "AUTHENTICATION_COMPLETED",
             expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -486,7 +503,7 @@ class Server {
         }
         return {
             id: session.id,
-            user_id: user.id,
+            authenticated_user_id: user.id,
             type: "RECOVERED",
             reason: "RECOVERY_COMPLETED",
             expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -769,13 +786,12 @@ class Server {
         let { session_id, ticket } = this.getCookieData(request) ?? {};
         let session = await this.getSession(session_id);
         this.checkRateLimit(session.wait_until_utc);
-        let state = api.State.as({
-            type: session.type,
-            reason: session.reason
-        });
+        let state = this.getApiState(session);
+        let user = await this.getApiUser(session);
         return this.finalizeResponse({
             payload: {
-                state
+                state,
+                user
             },
             headers: {
                 "x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
@@ -794,13 +810,12 @@ class Server {
             session.ticket_hash = this.computeHash(ticket);
         }
         await this.sessions.updateObject(session);
-        let state = api.State.as({
-            type: session.type,
-            reason: session.reason
-        });
+        let state = this.getApiState(session);
+        let user = await this.getApiUser(session);
         return this.finalizeResponse({
             payload: {
-                state
+                state,
+                user
             },
             headers: {
                 "x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())

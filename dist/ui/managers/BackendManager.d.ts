@@ -3,6 +3,7 @@ import * as api from "../../api/client";
 export declare class BackendManager implements api.Client {
     protected client: api.Client;
     protected state: State<api.State | undefined>;
+    protected user: State<api.User | undefined>;
     protected lock: Promise<any>;
     protected editable: State<boolean>;
     protected submittable: State<boolean>;
@@ -13,4 +14,5 @@ export declare class BackendManager implements api.Client {
     getEditable(): State<boolean>;
     getSubmittable(): State<boolean>;
     getState(): State<api.State | undefined>;
+    getUser(): State<api.User | undefined>;
 }

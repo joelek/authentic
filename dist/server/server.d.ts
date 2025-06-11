@@ -69,6 +69,8 @@ export declare class Server {
     protected createSetCookieValues(session: Session, ticket: string | undefined): Array<string>;
     protected finalizeResponse<A extends autoguard.api.EndpointResponse>(response: A, session: Session, ticket: string | undefined): A;
     protected generateToken(): string;
+    protected getApiState(session: Session): api.State;
+    protected getApiUser(session: Session): Promise<api.User | undefined>;
     protected getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined>;
     protected getExpiresInDays(valid_for_days: number): number;
     protected getExpiresInHours(valid_for_hours: number): number;

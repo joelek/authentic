@@ -215,7 +215,7 @@ declare const STATES: {
 type States = typeof STATES;
 type StatesKey = keyof States;
 declare const TRANSLATIONS: {
-    RESET_STATE_BUTTON: {
+    CANCEL_BUTTON: {
         en: string;
         sv: string;
     };
@@ -232,6 +232,10 @@ declare const TRANSLATIONS: {
         sv: string;
     };
     CONTINUE_BUTTON: {
+        en: string;
+        sv: string;
+    };
+    LOG_OUT_BUTTON: {
         en: string;
         sv: string;
     };

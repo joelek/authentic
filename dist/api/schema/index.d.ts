@@ -263,6 +263,13 @@ export type State = autoguard.guards.Union<[
     autoguard.guards.Reference<AuthenticateStates>,
     autoguard.guards.Reference<RecoverStates>
 ]>;
+export declare const User: autoguard.serialization.MessageGuard<User>;
+export type User = autoguard.guards.Object<{
+    "id": autoguard.guards.String;
+    "email": autoguard.guards.String;
+}, {
+    "username": autoguard.guards.String;
+}>;
 export declare namespace Autoguard {
     const Guards: {
         RegisterCommand: autoguard.guards.ReferenceGuard<{
@@ -576,6 +583,11 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_COMMAND";
             reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
         }>;
+        User: autoguard.guards.ReferenceGuard<{
+            id: string;
+            email: string;
+            username?: string | undefined;
+        }>;
     };
     type Guards = {
         [A in keyof typeof Guards]: ReturnType<typeof Guards[A]["as"]>;
@@ -706,6 +718,11 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_COMMAND";
                     reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
                 };
+                user?: {
+                    id: string;
+                    email: string;
+                    username?: string | undefined;
+                } | undefined;
             };
         }, {
             status: number;
@@ -765,6 +782,11 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_COMMAND";
                     reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
                 };
+                user?: {
+                    id: string;
+                    email: string;
+                    username?: string | undefined;
+                } | undefined;
             };
         }, {
             status: number;

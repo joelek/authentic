@@ -272,9 +272,9 @@ const STATES = {
     ...WAITING_FOR_COMMAND
 };
 const TRANSLATIONS = {
-    "RESET_STATE_BUTTON": {
-        en: "Start over",
-        sv: "Börja om"
+    "CANCEL_BUTTON": {
+        en: "Cancel",
+        sv: "Avbryt"
     },
     "REGISTER_BUTTON": {
         en: "Register account",
@@ -291,6 +291,10 @@ const TRANSLATIONS = {
     "CONTINUE_BUTTON": {
         en: "Continue",
         sv: "Fortsätt"
+    },
+    "LOG_OUT_BUTTON": {
+        en: "Log out",
+        sv: "Logga ut"
     },
     "EMAIL_PLACEHOLDER": {
         en: "Email address...",

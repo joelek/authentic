@@ -26,7 +26,7 @@ exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Re
     "token_hash_attempts": autoguard.guards.Integer,
     "passdata": autoguard.guards.String,
     "passdata_attempts": autoguard.guards.Integer,
-    "user_id": autoguard.guards.String,
+    "authenticated_user_id": autoguard.guards.String,
     "ticket_hash": autoguard.guards.String
 }));
 exports.OriginProperties = autoguard.guards.Object.of({
