@@ -155,6 +155,18 @@ export class Server {
 		});
 	}
 
+	protected async getApiUser(session: Session): Promise<api.User | undefined> {
+		if (session.authenticated_user_id == null) {
+			return;
+		}
+		let user = await this.users.lookupObject(session.authenticated_user_id);
+		return {
+			id: user.id,
+			email: user.email,
+			username: user.username
+		};
+	}
+
 	protected async getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined> {
 		if (ticket == null) {
 			return;
@@ -824,9 +836,11 @@ export class Server {
 		let session = await this.getSession(session_id);
 		this.checkRateLimit(session.wait_until_utc);
 		let state = this.getApiStateFromSessionState(session);
+		let user = await this.getApiUser(session);
 		return this.finalizeResponse({
 			payload: {
-				state
+				state,
+				user
 			},
 			headers: {
 				"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
@@ -847,9 +861,11 @@ export class Server {
 		}
 		await this.sessions.updateObject(session);
 		let state = this.getApiStateFromSessionState(session);
+		let user = await this.getApiUser(session);
 		return this.finalizeResponse({
 			payload: {
-				state
+				state,
+				user
 			},
 			headers: {
 				"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())

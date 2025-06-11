@@ -222,10 +222,17 @@ guard State:
 
 # =============================================================================
 
+guard User: {
+	id: string,
+	email: string,
+	username?: string
+};
+
 route readState(): GET:/ => [
 	"x-wait-ms": integer(0,*)
 ] {
-	state: State
+	state: State,
+	user?: User
 };
 
 route sendCommand(): POST:/ <= {
@@ -233,5 +240,6 @@ route sendCommand(): POST:/ <= {
 } => [
 	"x-wait-ms": integer(0,*)
 ] {
-	state: State
+	state: State,
+	user?: User
 };

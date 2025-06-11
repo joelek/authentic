@@ -530,6 +530,20 @@ export type State = autoguard.guards.Union<[
 	autoguard.guards.Reference<RecoverStates>
 ]>;
 
+export const User: autoguard.serialization.MessageGuard<User> = autoguard.guards.Object.of({
+	"id": autoguard.guards.String,
+	"email": autoguard.guards.String
+}, {
+	"username": autoguard.guards.String
+});
+
+export type User = autoguard.guards.Object<{
+	"id": autoguard.guards.String,
+	"email": autoguard.guards.String
+}, {
+	"username": autoguard.guards.String
+}>;
+
 export namespace Autoguard {
 	export const Guards = {
 		"RegisterCommand": autoguard.guards.Reference.of(() => RegisterCommand),
@@ -571,7 +585,8 @@ export namespace Autoguard {
 		"ResetStateCommand": autoguard.guards.Reference.of(() => ResetStateCommand),
 		"Command": autoguard.guards.Reference.of(() => Command),
 		"WaitingForCommandState": autoguard.guards.Reference.of(() => WaitingForCommandState),
-		"State": autoguard.guards.Reference.of(() => State)
+		"State": autoguard.guards.Reference.of(() => State),
+		"User": autoguard.guards.Reference.of(() => User)
 	};
 
 	export type Guards = { [A in keyof typeof Guards]: ReturnType<typeof Guards[A]["as"]>; };
@@ -616,7 +631,9 @@ export namespace Autoguard {
 			),
 			"payload": autoguard.guards.Object.of({
 				"state": autoguard.guards.Reference.of(() => State)
-			}, {})
+			}, {
+				"user": autoguard.guards.Reference.of(() => User)
+			})
 		}, {
 			"status": autoguard.guards.Integer
 		}),
@@ -629,7 +646,9 @@ export namespace Autoguard {
 			),
 			"payload": autoguard.guards.Object.of({
 				"state": autoguard.guards.Reference.of(() => State)
-			}, {})
+			}, {
+				"user": autoguard.guards.Reference.of(() => User)
+			})
 		}, {
 			"status": autoguard.guards.Integer
 		})
