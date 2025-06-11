@@ -4,6 +4,7 @@ import * as api from "../../api/client";
 export class BackendManager implements api.Client {
 	protected client: api.Client;
 	protected state: State<api.State | undefined>;
+	protected user: State<api.User | undefined>;
 	protected lock: Promise<any>;
 	protected editable: State<boolean>;
 	protected submittable: State<boolean>;
@@ -18,6 +19,7 @@ export class BackendManager implements api.Client {
 	constructor(client: api.Client) {
 		this.client = client;
 		this.state = stateify(undefined);
+		this.user = stateify(undefined);
 		this.lock = Promise.resolve();
 		this.editable = stateify(true);
 		this.submittable = stateify(true);
@@ -43,6 +45,7 @@ export class BackendManager implements api.Client {
 			.then(async (response) => {
 				let payload = await response.payload();
 				this.state.update(payload.state);
+				this.user.update(payload.user);
 				return response;
 			})
 			.finally(() => {
@@ -70,6 +73,7 @@ export class BackendManager implements api.Client {
 			.then(async (response) => {
 				let payload = await response.payload();
 				this.state.update(payload.state);
+				this.user.update(payload.user);
 				return response;
 			})
 			.finally(() => {
@@ -88,5 +92,9 @@ export class BackendManager implements api.Client {
 
 	getState(): State<api.State | undefined> {
 		return this.state;
+	}
+
+	getUser(): State<api.User | undefined> {
+		return this.user;
 	}
 };
