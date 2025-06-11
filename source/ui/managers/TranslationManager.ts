@@ -319,6 +319,10 @@ const TRANSLATIONS = {
 		en: "Continue",
 		sv: "Fortsätt"
 	},
+	"LOG_OUT_BUTTON": {
+		en: "Log out",
+		sv: "Logga ut"
+	},
 	"EMAIL_PLACEHOLDER": {
 		en: "Email address...",
 		sv: "E-postadress..."
