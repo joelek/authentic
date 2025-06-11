@@ -299,9 +299,9 @@ type States = typeof STATES;
 type StatesKey = keyof States;
 
 const TRANSLATIONS = {
-	"RESET_STATE_BUTTON": {
-		en: "Start over",
-		sv: "Börja om"
+	"CANCEL_BUTTON": {
+		en: "Cancel",
+		sv: "Avbryt"
 	},
 	"REGISTER_BUTTON": {
 		en: "Register account",

@@ -1,7 +1,7 @@
 import { stateify } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
-import { ResetStateButton } from "../buttons/ResetStateButton";
+import { CancelButton } from "../buttons/CancelButton";
 import { FormButton, FormGroup, FormInput } from "../form";
 import { ButtonTitle, StepDescriptionTitle, StepHeaderTitle } from "../titles";
 import { Step } from "./Step";
@@ -52,7 +52,7 @@ export function WaitingForAuthenticatePassphraseStep(managers: Managers, attribu
 				)
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason)),
-			ResetStateButton(managers, {})
+			CancelButton(managers, {})
 		)
 	);
 };
