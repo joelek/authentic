@@ -155,7 +155,7 @@ export class Server {
 		if (session.expires_utc <= Date.now()) {
 			return;
 		}
-		if (session.user_id == null) {
+		if (session.authenticated_user_id == null) {
 			return;
 		}
 		if (session.ticket_hash == null) {
@@ -167,7 +167,7 @@ export class Server {
 		}
 		session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
 		await this.sessions.updateObject(session);
-		return session.user_id;
+		return session.authenticated_user_id;
 	}
 
 	protected getExpiresInDays(valid_for_days: number): number {
@@ -384,7 +384,7 @@ export class Server {
 		});
 		return {
 			id: session.id,
-			user_id: user.id,
+			authenticated_user_id: user.id,
 			type: "REGISTERED",
 			reason: "REGISTRATION_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -464,7 +464,7 @@ export class Server {
 		}
 		return {
 			id: session.id,
-			user_id: user.id,
+			authenticated_user_id: user.id,
 			type: "AUTHENTICATED",
 			reason: "AUTHENTICATION_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -539,7 +539,7 @@ export class Server {
 		}
 		return {
 			id: session.id,
-			user_id: user.id,
+			authenticated_user_id: user.id,
 			type: "RECOVERED",
 			reason: "RECOVERY_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),

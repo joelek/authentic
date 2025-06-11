@@ -20,7 +20,7 @@ guard SessionProperties: ../api/server/State & {
 	token_hash_attempts?: integer,
 	passdata?: string,
 	passdata_attempts?: integer,
-	user_id?: string,
+	authenticated_user_id?: string,
 	ticket_hash?: string
 };
 
