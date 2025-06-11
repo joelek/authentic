@@ -148,7 +148,7 @@ export class Server {
 		return libcrypto.randomBytes(16).toString("hex");
 	}
 
-	protected getApiStateFromSessionState(session: Session): api.State {
+	protected getApiState(session: Session): api.State {
 		return api.State.as({
 			type: session.type,
 			reason: session.reason
@@ -835,7 +835,7 @@ export class Server {
 		let { session_id, ticket } = this.getCookieData(request) ?? {};
 		let session = await this.getSession(session_id);
 		this.checkRateLimit(session.wait_until_utc);
-		let state = this.getApiStateFromSessionState(session);
+		let state = this.getApiState(session);
 		let user = await this.getApiUser(session);
 		return this.finalizeResponse({
 			payload: {
@@ -860,7 +860,7 @@ export class Server {
 			session.ticket_hash = this.computeHash(ticket);
 		}
 		await this.sessions.updateObject(session);
-		let state = this.getApiStateFromSessionState(session);
+		let state = this.getApiState(session);
 		let user = await this.getApiUser(session);
 		return this.finalizeResponse({
 			payload: {
