@@ -610,7 +610,7 @@ export namespace Autoguard {
 		"readState": autoguard.guards.Object.of({
 			"headers": autoguard.guards.Intersection.of(
 				autoguard.guards.Object.of({
-					"x-wait-ms": autoguard.guards.Integer
+					"x-wait-ms": new autoguard.guards.IntegerGuard(0, undefined)
 				}, {}),
 				autoguard.api.Headers
 			),
@@ -623,7 +623,7 @@ export namespace Autoguard {
 		"sendCommand": autoguard.guards.Object.of({
 			"headers": autoguard.guards.Intersection.of(
 				autoguard.guards.Object.of({
-					"x-wait-ms": autoguard.guards.Integer
+					"x-wait-ms": new autoguard.guards.IntegerGuard(0, undefined)
 				}, {}),
 				autoguard.api.Headers
 			),

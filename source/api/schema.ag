@@ -223,7 +223,7 @@ guard State:
 # =============================================================================
 
 route readState(): GET:/ => [
-	"x-wait-ms": integer
+	"x-wait-ms": integer(0,*)
 ] {
 	state: State
 };
@@ -231,7 +231,7 @@ route readState(): GET:/ => [
 route sendCommand(): POST:/ <= {
 	command: Command
 } => [
-	"x-wait-ms": integer
+	"x-wait-ms": integer(0,*)
 ] {
 	state: State
 };
