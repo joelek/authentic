@@ -41,4 +41,3 @@ manager.toggle();
 * Investigate issue occuring when registering two users.
 * Restrict length of user data values.
 * Consider adding display name.
-* Document full integration.
