@@ -30,7 +30,6 @@ authentic.ui.injectUserInterface({
 * Add automatic retries with exponential backoff on error to Autoguard.
 * Combine all authenticated states to one.
 * Investigate issue occuring when registering two users.
-* Clear ticket when logging out.
 * Restrict length of user data values.
 * Consider adding display name.
 * Document full integration.
