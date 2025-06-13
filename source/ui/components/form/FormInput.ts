@@ -2,7 +2,7 @@ import { Augmentations, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
-document.head.appendChild(html.style({}, `\
+document.head.appendChild(html.style({}, `
 	.form-input {
 		background-color: rgb(63, 63, 63);
 		border-radius: 4px;

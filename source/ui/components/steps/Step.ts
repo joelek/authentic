@@ -3,7 +3,7 @@ import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
-document.head.appendChild(html.style({}, `\
+document.head.appendChild(html.style({}, `
 	.step {
 		transition: all 0.50s;
 	}

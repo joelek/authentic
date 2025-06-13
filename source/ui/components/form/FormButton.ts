@@ -2,7 +2,7 @@ import { Augmentations, Children, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
-document.head.appendChild(html.style({}, `\
+document.head.appendChild(html.style({}, `
 	.form-button {
 		background-color: rgb(223, 159, 31);
 		border-radius: 4px;

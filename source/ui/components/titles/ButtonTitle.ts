@@ -2,7 +2,7 @@ import {  Children, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
-document.head.appendChild(html.style({}, `\
+document.head.appendChild(html.style({}, `
 	.button-title {
 		color: rgb(255, 255, 255);
 		font-family: sans-serif;

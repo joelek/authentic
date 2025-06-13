@@ -1,6 +1,6 @@
 import { Augmentations, Children, html } from "@joelek/bonsai";
 
-document.head.appendChild(html.style({}, `\
+document.head.appendChild(html.style({}, `
 	.block {
 		box-sizing: border-box;
 			width: 100%;

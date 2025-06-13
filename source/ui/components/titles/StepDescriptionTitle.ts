@@ -2,7 +2,7 @@ import {  Children, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
-document.head.appendChild(html.style({}, `\
+document.head.appendChild(html.style({}, `
 	.step-description-title {
 		color: rgb(191, 191, 191);
 		font-family: sans-serif;

@@ -4,7 +4,7 @@ import { Block } from "./Block";
 import { AuthenticatedStep, RecoveredStep, RegisteredStep, WaitingForAuthenticateEmailStep, WaitingForAuthenticatePassphraseStep, WaitingForAuthenticateTokenStep, WaitingForAuthenticateUsernameStep, WaitingForRecoverEmailStep, WaitingForRecoverPassphraseStep, WaitingForRecoverTokenStep, WaitingForRecoverUsernameStep, WaitingForRegisterEmailStep, WaitingForRegisterPassphraseStep, WaitingForRegisterTokenStep, WaitingForRegisterUsernameStep } from "./steps";
 import { WaitingForCommandStep } from "./steps/WaitingForCommandStep";
 
-document.head.appendChild(html.style({}, `\
+document.head.appendChild(html.style({}, `
 	.modal {
 		position: absolute;
 			top: 0%;
