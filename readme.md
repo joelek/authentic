@@ -5,22 +5,31 @@ import * as libhttp from "http";
 import * as authentic from "@joelek/authentic/dist/lib/node";
 
 const SERVER = new authentic.server.Server();
-const REQUEST_LISTENER = SERVER.createRequestListener();
-const HTTP_SERVER = libhttp.createServer({}, REQUEST_LISTENER);
-const HTTP_HOSTNAME = "localhost";
-const HTTP_PORT = 8080;
 
-HTTP_SERVER.listen(HTTP_PORT, HTTP_HOSTNAME, () => {
-	console.log(`Server listening at http://${HTTP_HOSTNAME}:${HTTP_PORT}/ ...`);
+const REQUEST_LISTENER = SERVER.createRequestListener({
+	urlPrefix: "/auth"
 });
+
+const HTTP_SERVER = libhttp.createServer((request, response) => {
+	let url = request.url ?? "/";
+	if (url.startsWith("/auth/")) {
+		return REQUEST_LISTENER(request, response);
+	}
+	response.writeHead(404);
+});
+
+HTTP_SERVER.listen();
 ```
 
 ```ts
 import * as authentic from "@joelek/authentic/dist/lib/browser";
 
-authentic.ui.injectUserInterface({
-	client: authentic.client.createClient()
+let manager = authentic.ui.injectUserInterface({
+	client: authentic.client.createClient({
+		urlPrefix: "/auth"
+	})
 });
+manager.toggle();
 ```
 
 ## Roadmap
