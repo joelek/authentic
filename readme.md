@@ -31,3 +31,4 @@ authentic.ui.injectUserInterface({
 * Combine all authenticated states to one.
 * Investigate issue occuring when registering two users.
 * Clear ticket when logging out.
+* Restrict length of user data values.
