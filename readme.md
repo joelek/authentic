@@ -33,3 +33,4 @@ authentic.ui.injectUserInterface({
 * Clear ticket when logging out.
 * Restrict length of user data values.
 * Consider adding display name.
+* Document full integration.
