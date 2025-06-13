@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Step = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
-document.head.appendChild(bonsai_1.html.style({}, `\
+document.head.appendChild(bonsai_1.html.style({}, `
 	.step {
 		transition: all 0.50s;
 	}

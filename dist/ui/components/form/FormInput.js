@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FormInput = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
-document.head.appendChild(bonsai_1.html.style({}, `\
+document.head.appendChild(bonsai_1.html.style({}, `
 	.form-input {
 		background-color: rgb(63, 63, 63);
 		border-radius: 4px;

@@ -5,7 +5,7 @@ const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("./Block");
 const steps_1 = require("./steps");
 const WaitingForCommandStep_1 = require("./steps/WaitingForCommandStep");
-document.head.appendChild(bonsai_1.html.style({}, `\
+document.head.appendChild(bonsai_1.html.style({}, `
 	.modal {
 		position: absolute;
 			top: 0%;

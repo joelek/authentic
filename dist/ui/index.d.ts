@@ -2,7 +2,7 @@ import { Client } from "../client";
 export type UIOptions = {
     client?: Client;
 };
-export interface Interface {
+export interface InterfaceManager {
     toggle(): void;
 }
-export declare function injectUserInterface(options?: UIOptions): Interface;
+export declare function injectUserInterface(options?: UIOptions): InterfaceManager;

@@ -773,13 +773,16 @@ class Server {
         });
     }
     validateEmailFormat(email) {
-        return /^([0-9a-z!#$%&'*+/=?^_`{|}~-]+(?:[\.][0-9a-z!#$%&'*+/=?^_`{|}~-]+)*)[@]([0-9a-z](?:[0-9a-z-]*[0-9a-z])?(?:[\.][0-9a-z](?:[0-9a-z-]*[0-9a-z])?)*)$/iu.test(email);
+        let bytes = Buffer.from(email, "utf-8").length;
+        return /^([0-9a-z!#$%&'*+/=?^_`{|}~-]+(?:[\.][0-9a-z!#$%&'*+/=?^_`{|}~-]+)*)[@]([0-9a-z](?:[0-9a-z-]*[0-9a-z])?(?:[\.][0-9a-z](?:[0-9a-z-]*[0-9a-z])?)*)$/iu.test(email) && bytes < 256;
     }
     validatePassphraseFormat(passphrase) {
-        return /^(.{8,})$/iu.test(passphrase);
+        let bytes = Buffer.from(passphrase, "utf-8").length;
+        return /^(.+)$/iu.test(passphrase) && bytes > 8;
     }
     validateUsernameFormat(username) {
-        return /^([a-z0-9_]+)$/iu.test(username);
+        let bytes = Buffer.from(username, "utf-8").length;
+        return /^([a-z0-9_]+)$/iu.test(username) && bytes < 32;
     }
     readState = async (request) => {
         let origin = await this.getOriginAndApplyRateLimit(request);
@@ -808,6 +811,10 @@ class Server {
         if (api.AuthenticatedState.is(session) || api.RegisteredState.is(session) || api.RecoveredState.is(session)) {
             ticket = this.generateToken();
             session.ticket_hash = this.computeHash(ticket);
+        }
+        else {
+            ticket = undefined;
+            session.ticket_hash = undefined;
         }
         await this.sessions.updateObject(session);
         let state = this.getApiState(session);

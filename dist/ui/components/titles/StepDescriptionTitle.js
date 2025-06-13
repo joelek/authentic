@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StepDescriptionTitle = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
-document.head.appendChild(bonsai_1.html.style({}, `\
+document.head.appendChild(bonsai_1.html.style({}, `
 	.step-description-title {
 		color: rgb(191, 191, 191);
 		font-family: sans-serif;
