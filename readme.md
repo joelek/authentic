@@ -32,3 +32,4 @@ authentic.ui.injectUserInterface({
 * Investigate issue occuring when registering two users.
 * Clear ticket when logging out.
 * Restrict length of user data values.
+* Consider adding display name.
