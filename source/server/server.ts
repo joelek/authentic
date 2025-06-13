@@ -819,15 +819,18 @@ export class Server {
 	}
 
 	protected validateEmailFormat(email: string): boolean {
-		return /^([0-9a-z!#$%&'*+/=?^_`{|}~-]+(?:[\.][0-9a-z!#$%&'*+/=?^_`{|}~-]+)*)[@]([0-9a-z](?:[0-9a-z-]*[0-9a-z])?(?:[\.][0-9a-z](?:[0-9a-z-]*[0-9a-z])?)*)$/iu.test(email);
+		let bytes = Buffer.from(email, "utf-8").length;
+		return /^([0-9a-z!#$%&'*+/=?^_`{|}~-]+(?:[\.][0-9a-z!#$%&'*+/=?^_`{|}~-]+)*)[@]([0-9a-z](?:[0-9a-z-]*[0-9a-z])?(?:[\.][0-9a-z](?:[0-9a-z-]*[0-9a-z])?)*)$/iu.test(email) && bytes < 256;
 	}
 
 	protected validatePassphraseFormat(passphrase: string): boolean {
-		return /^(.{8,})$/iu.test(passphrase);
+		let bytes = Buffer.from(passphrase, "utf-8").length;
+		return /^(.+)$/iu.test(passphrase) && bytes > 8;
 	}
 
 	protected validateUsernameFormat(username: string): boolean {
-		return /^([a-z0-9_]+)$/iu.test(username);
+		let bytes = Buffer.from(username, "utf-8").length;
+		return /^([a-z0-9_]+)$/iu.test(username) && bytes < 32;
 	}
 
 	protected readState: Parameters<typeof api.makeServer>[0]["readState"] = async (request) => {
