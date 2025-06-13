@@ -858,6 +858,9 @@ export class Server {
 		if (api.AuthenticatedState.is(session) || api.RegisteredState.is(session) || api.RecoveredState.is(session)) {
 			ticket = this.generateToken();
 			session.ticket_hash = this.computeHash(ticket);
+		} else {
+			ticket = undefined;
+			session.ticket_hash = undefined;
 		}
 		await this.sessions.updateObject(session);
 		let state = this.getApiState(session);
