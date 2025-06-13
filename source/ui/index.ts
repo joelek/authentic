@@ -7,11 +7,11 @@ export type UIOptions = {
 	client?: Client;
 };
 
-export interface Interface {
+export interface InterfaceManager {
 	toggle(): void;
 };
 
-export function injectUserInterface(options?: UIOptions): Interface {
+export function injectUserInterface(options?: UIOptions): InterfaceManager {
 	let client = options?.client ?? createClient();
 	let managers = Managers.create(client);
 	let visible = stateify(false as boolean);
