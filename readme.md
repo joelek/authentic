@@ -37,6 +37,4 @@ manager.toggle();
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Add automatic backoff to Autoguard when receiving Retry-After header in response.
 * Add automatic retries with exponential backoff on error to Autoguard.
-* Combine all authenticated states to one.
-* Investigate issue occuring when registering two users.
 * Consider adding display name.
