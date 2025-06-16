@@ -30,7 +30,7 @@ export function WaitingForAuthenticatePassphraseStep(managers: Managers, attribu
 			reason
 		},
 			StepHeaderTitle(managers, {},
-				managers.translation.getTranslation("AUTHENTICATE_BUTTON")
+				managers.translation.getTranslation("AUTHENTICATE_ACCOUNT")
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
@@ -50,7 +50,7 @@ export function WaitingForAuthenticatePassphraseStep(managers: Managers, attribu
 						}
 					}
 				},
-					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE_BUTTON"))
+					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE"))
 				)
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason)),

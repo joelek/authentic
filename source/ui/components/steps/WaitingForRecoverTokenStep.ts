@@ -30,7 +30,7 @@ export function WaitingForRecoverTokenStep(managers: Managers, attributes: Waiti
 			reason
 		},
 			StepHeaderTitle(managers, {},
-				managers.translation.getTranslation("RECOVER_BUTTON")
+				managers.translation.getTranslation("RECOVER_ACCOUNT")
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
@@ -50,7 +50,7 @@ export function WaitingForRecoverTokenStep(managers: Managers, attributes: Waiti
 						}
 					}
 				},
-					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE_BUTTON"))
+					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE"))
 				)
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason)),

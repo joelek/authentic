@@ -30,7 +30,7 @@ export function WaitingForRegisterUsernameStep(managers: Managers, attributes: W
 			reason
 		},
 			StepHeaderTitle(managers, {},
-				managers.translation.getTranslation("REGISTER_BUTTON")
+				managers.translation.getTranslation("REGISTER_ACCOUNT")
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
@@ -50,7 +50,7 @@ export function WaitingForRegisterUsernameStep(managers: Managers, attributes: W
 						}
 					}
 				},
-					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE_BUTTON"))
+					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE"))
 				)
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason)),

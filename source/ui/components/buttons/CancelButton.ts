@@ -17,7 +17,7 @@ export function CancelButton(managers: Managers, attributes: CancelButton) {
 				});
 			}
 		},
-			ButtonTitle(managers, {}, managers.translation.getTranslation("CANCEL_BUTTON"))
+			ButtonTitle(managers, {}, managers.translation.getTranslation("CANCEL"))
 		)
 	);
 };

@@ -17,7 +17,7 @@ export function LogOutButton(managers: Managers, attributes: LogOutButton) {
 				});
 			}
 		},
-			ButtonTitle(managers, {}, managers.translation.getTranslation("LOG_OUT_BUTTON"))
+			ButtonTitle(managers, {}, managers.translation.getTranslation("LOG_OUT"))
 		)
 	);
 };

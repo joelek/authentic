@@ -283,27 +283,27 @@ type States = typeof STATES;
 type StatesKey = keyof States;
 
 const TRANSLATIONS = {
-	"CANCEL_BUTTON": {
+	"CANCEL": {
 		en: "Cancel",
 		sv: "Avbryt"
 	},
-	"REGISTER_BUTTON": {
+	"REGISTER_ACCOUNT": {
 		en: "Register account",
 		sv: "Registrera konto"
 	},
-	"AUTHENTICATE_BUTTON": {
+	"AUTHENTICATE_ACCOUNT": {
 		en: "Authenticate account",
 		sv: "Autentisera konto"
 	},
-	"RECOVER_BUTTON": {
+	"RECOVER_ACCOUNT": {
 		en: "Recover account",
 		sv: "Återställ konto"
 	},
-	"CONTINUE_BUTTON": {
+	"CONTINUE": {
 		en: "Continue",
 		sv: "Fortsätt"
 	},
-	"LOG_OUT_BUTTON": {
+	"LOG_OUT": {
 		en: "Log out",
 		sv: "Logga ut"
 	},

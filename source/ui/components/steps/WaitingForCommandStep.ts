@@ -26,7 +26,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 						});
 					}
 				},
-					ButtonTitle(managers, {}, managers.translation.getTranslation("REGISTER_BUTTON"))
+					ButtonTitle(managers, {}, managers.translation.getTranslation("REGISTER_ACCOUNT"))
 				),
 				FormButton(managers, {
 					onclick: async () => {
@@ -39,7 +39,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 						});
 					}
 				},
-					ButtonTitle(managers, {}, managers.translation.getTranslation("AUTHENTICATE_BUTTON"))
+					ButtonTitle(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT"))
 				),
 				FormButton(managers, {
 					onclick: async () => {
@@ -52,7 +52,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 						});
 					}
 				},
-					ButtonTitle(managers, {}, managers.translation.getTranslation("RECOVER_BUTTON"))
+					ButtonTitle(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT"))
 				)
 			)
 		)
