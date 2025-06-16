@@ -830,7 +830,7 @@ export class Server {
 
 	protected validatePassphraseFormat(passphrase: string): boolean {
 		let bytes = Buffer.from(passphrase, "utf-8").length;
-		return /^(.+)$/iu.test(passphrase) && bytes > 8;
+		return /^(.+)$/iu.test(passphrase) && bytes >= 8;
 	}
 
 	protected validateUsernameFormat(username: string): boolean {
