@@ -29,9 +29,7 @@ export function WaitingForAuthenticateUsernameStep(managers: Managers, attribute
 			type,
 			reason
 		},
-			StepHeaderTitle(managers, {},
-				managers.translation.getTranslation("AUTHENTICATE_ACCOUNT")
-			),
+			StepHeaderTitle(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT")),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
 				input,

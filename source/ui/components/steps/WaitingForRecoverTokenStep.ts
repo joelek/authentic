@@ -29,9 +29,7 @@ export function WaitingForRecoverTokenStep(managers: Managers, attributes: Waiti
 			type,
 			reason
 		},
-			StepHeaderTitle(managers, {},
-				managers.translation.getTranslation("RECOVER_ACCOUNT")
-			),
+			StepHeaderTitle(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT")),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
 				input,

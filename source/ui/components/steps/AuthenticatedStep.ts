@@ -17,9 +17,7 @@ export function AuthenticatedStep(managers: Managers, attributes: AuthenticatedS
 			type,
 			reason
 		},
-			StepHeaderTitle(managers, {},
-				managers.translation.getTranslation("LOGGED_IN_AS")
-			),
+			StepHeaderTitle(managers, {}, managers.translation.getTranslation("LOGGED_IN_AS")),
 			FormGroup(managers, {},
 				StepDescriptionTitle(managers, {}, email),
 				LogOutButton(managers, {})

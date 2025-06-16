@@ -29,9 +29,7 @@ export function WaitingForRegisterTokenStep(managers: Managers, attributes: Wait
 			type,
 			reason
 		},
-			StepHeaderTitle(managers, {},
-				managers.translation.getTranslation("REGISTER_ACCOUNT")
-			),
+			StepHeaderTitle(managers, {}, managers.translation.getTranslation("REGISTER_ACCOUNT")),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
 				input,
