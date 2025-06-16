@@ -554,6 +554,11 @@ export class Server {
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
+			} else {
+				await this.users.updateObject({
+					...user,
+					passdata: session.passdata
+				});
 			}
 		}
 		return {
