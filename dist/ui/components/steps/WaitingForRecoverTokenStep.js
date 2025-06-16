@@ -20,6 +20,9 @@ function WaitingForRecoverTokenStep(managers, attributes) {
         if (type != null) {
             input.focus();
         }
+        else {
+            value.update("");
+        }
     });
     return ((0, Step_1.Step)(managers, {
         type,

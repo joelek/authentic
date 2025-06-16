@@ -15,8 +15,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./AuthenticatedStep"), exports);
-__exportStar(require("./RecoveredStep"), exports);
-__exportStar(require("./RegisteredStep"), exports);
 __exportStar(require("./Step"), exports);
 __exportStar(require("./WaitingForCommandStep"), exports);
 __exportStar(require("./WaitingForAuthenticateEmailStep"), exports);

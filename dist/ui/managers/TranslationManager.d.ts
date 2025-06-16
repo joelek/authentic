@@ -3,6 +3,22 @@ import { Attribute, State } from "@joelek/bonsai";
 declare const Language: guards.UnionGuard<["en", "sv"]>;
 type Language = ReturnType<typeof Language["as"]>;
 declare const STATES: {
+    AUTHENTICATED: {
+        en: string;
+        sv: string;
+    };
+    AUTHENTICATION_COMPLETED: {
+        en: string;
+        sv: string;
+    };
+    REGISTRATION_COMPLETED: {
+        en: string;
+        sv: string;
+    };
+    RECOVERY_COMPLETED: {
+        en: string;
+        sv: string;
+    };
     WAITING_FOR_COMMAND: {
         en: string;
         sv: string;
@@ -16,14 +32,6 @@ declare const STATES: {
         sv: string;
     };
     INVALID_COMMAND: {
-        en: string;
-        sv: string;
-    };
-    RECOVERED: {
-        en: string;
-        sv: string;
-    };
-    RECOVERY_COMPLETED: {
         en: string;
         sv: string;
     };
@@ -83,14 +91,6 @@ declare const STATES: {
         en: string;
         sv: string;
     };
-    AUTHENTICATED: {
-        en: string;
-        sv: string;
-    };
-    AUTHENTICATION_COMPLETED: {
-        en: string;
-        sv: string;
-    };
     WAITING_FOR_AUTHENTICATE_PASSPHRASE: {
         en: string;
         sv: string;
@@ -144,14 +144,6 @@ declare const STATES: {
         sv: string;
     };
     AUTHENTICATE_USERNAME_NOT_AVAILABLE: {
-        en: string;
-        sv: string;
-    };
-    REGISTERED: {
-        en: string;
-        sv: string;
-    };
-    REGISTRATION_COMPLETED: {
         en: string;
         sv: string;
     };
@@ -252,6 +244,10 @@ declare const TRANSLATIONS: {
         sv: string;
     };
     USERNAME_PLACEHOLDER: {
+        en: string;
+        sv: string;
+    };
+    LOGGED_IN_AS: {
         en: string;
         sv: string;
     };

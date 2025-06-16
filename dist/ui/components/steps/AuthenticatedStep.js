@@ -14,7 +14,7 @@ function AuthenticatedStep(managers, attributes) {
     return ((0, Step_1.Step)(managers, {
         type,
         reason
-    }, (0, titles_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("AUTHENTICATE_BUTTON")), (0, titles_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, form_1.FormGroup)(managers, {}, (0, titles_1.StepDescriptionTitle)(managers, {}, email), (0, buttons_1.LogOutButton)(managers, {}))));
+    }, (0, titles_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("LOGGED_IN_AS")), (0, form_1.FormGroup)(managers, {}, (0, titles_1.StepDescriptionTitle)(managers, {}, email), (0, buttons_1.LogOutButton)(managers, {}))));
 }
 exports.AuthenticatedStep = AuthenticatedStep;
 ;

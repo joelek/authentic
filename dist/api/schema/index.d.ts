@@ -65,18 +65,12 @@ export type WaitingForRegisterPassphraseState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"REGISTER_PASSPHRASE_NOT_ACCEPTED">
     ]>;
 }, {}>;
-export declare const RegisteredState: autoguard.serialization.MessageGuard<RegisteredState>;
-export type RegisteredState = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"REGISTERED">;
-    "reason": autoguard.guards.StringLiteral<"REGISTRATION_COMPLETED">;
-}, {}>;
 export declare const RegisterStates: autoguard.serialization.MessageGuard<RegisterStates>;
 export type RegisterStates = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForRegisterUsernameState>,
     autoguard.guards.Reference<WaitingForRegisterEmailState>,
     autoguard.guards.Reference<WaitingForRegisterTokenState>,
-    autoguard.guards.Reference<WaitingForRegisterPassphraseState>,
-    autoguard.guards.Reference<RegisteredState>
+    autoguard.guards.Reference<WaitingForRegisterPassphraseState>
 ]>;
 export declare const AuthenticateCommand: autoguard.serialization.MessageGuard<AuthenticateCommand>;
 export type AuthenticateCommand = autoguard.guards.Object<{
@@ -144,18 +138,12 @@ export type WaitingForAuthenticatePassphraseState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED">
     ]>;
 }, {}>;
-export declare const AuthenticatedState: autoguard.serialization.MessageGuard<AuthenticatedState>;
-export type AuthenticatedState = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"AUTHENTICATED">;
-    "reason": autoguard.guards.StringLiteral<"AUTHENTICATION_COMPLETED">;
-}, {}>;
 export declare const AuthenticateStates: autoguard.serialization.MessageGuard<AuthenticateStates>;
 export type AuthenticateStates = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForAuthenticateUsernameState>,
     autoguard.guards.Reference<WaitingForAuthenticateEmailState>,
     autoguard.guards.Reference<WaitingForAuthenticateTokenState>,
-    autoguard.guards.Reference<WaitingForAuthenticatePassphraseState>,
-    autoguard.guards.Reference<AuthenticatedState>
+    autoguard.guards.Reference<WaitingForAuthenticatePassphraseState>
 ]>;
 export declare const RecoverCommand: autoguard.serialization.MessageGuard<RecoverCommand>;
 export type RecoverCommand = autoguard.guards.Object<{
@@ -223,18 +211,12 @@ export type WaitingForRecoverPassphraseState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"RECOVER_PASSPHRASE_NOT_ACCEPTED">
     ]>;
 }, {}>;
-export declare const RecoveredState: autoguard.serialization.MessageGuard<RecoveredState>;
-export type RecoveredState = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"RECOVERED">;
-    "reason": autoguard.guards.StringLiteral<"RECOVERY_COMPLETED">;
-}, {}>;
 export declare const RecoverStates: autoguard.serialization.MessageGuard<RecoverStates>;
 export type RecoverStates = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForRecoverUsernameState>,
     autoguard.guards.Reference<WaitingForRecoverEmailState>,
     autoguard.guards.Reference<WaitingForRecoverTokenState>,
-    autoguard.guards.Reference<WaitingForRecoverPassphraseState>,
-    autoguard.guards.Reference<RecoveredState>
+    autoguard.guards.Reference<WaitingForRecoverPassphraseState>
 ]>;
 export declare const ResetStateCommand: autoguard.serialization.MessageGuard<ResetStateCommand>;
 export type ResetStateCommand = autoguard.guards.Object<{
@@ -256,12 +238,22 @@ export type WaitingForCommandState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"INVALID_COMMAND">
     ]>;
 }, {}>;
+export declare const AuthenticatedState: autoguard.serialization.MessageGuard<AuthenticatedState>;
+export type AuthenticatedState = autoguard.guards.Object<{
+    "type": autoguard.guards.StringLiteral<"AUTHENTICATED">;
+    "reason": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"REGISTRATION_COMPLETED">,
+        autoguard.guards.StringLiteral<"AUTHENTICATION_COMPLETED">,
+        autoguard.guards.StringLiteral<"RECOVERY_COMPLETED">
+    ]>;
+}, {}>;
 export declare const State: autoguard.serialization.MessageGuard<State>;
 export type State = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForCommandState>,
     autoguard.guards.Reference<RegisterStates>,
     autoguard.guards.Reference<AuthenticateStates>,
-    autoguard.guards.Reference<RecoverStates>
+    autoguard.guards.Reference<RecoverStates>,
+    autoguard.guards.Reference<AuthenticatedState>
 ]>;
 export declare const User: autoguard.serialization.MessageGuard<User>;
 export type User = autoguard.guards.Object<{
@@ -322,10 +314,6 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_REGISTER_PASSPHRASE";
             reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
         }>;
-        RegisteredState: autoguard.guards.ReferenceGuard<{
-            type: "REGISTERED";
-            reason: "REGISTRATION_COMPLETED";
-        }>;
         RegisterStates: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_REGISTER_USERNAME";
             reason: "REGISTER_USERNAME_REQUIRED" | "REGISTER_USERNAME_NOT_ACCEPTED" | "REGISTER_USERNAME_NOT_AVAILABLE";
@@ -338,9 +326,6 @@ export declare namespace Autoguard {
         } | {
             type: "WAITING_FOR_REGISTER_PASSPHRASE";
             reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
-        } | {
-            type: "REGISTERED";
-            reason: "REGISTRATION_COMPLETED";
         }>;
         AuthenticateCommand: autoguard.guards.ReferenceGuard<{
             type: "AUTHENTICATE";
@@ -392,10 +377,6 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
             reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
         }>;
-        AuthenticatedState: autoguard.guards.ReferenceGuard<{
-            type: "AUTHENTICATED";
-            reason: "AUTHENTICATION_COMPLETED";
-        }>;
         AuthenticateStates: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_AUTHENTICATE_USERNAME";
             reason: "AUTHENTICATE_USERNAME_REQUIRED" | "AUTHENTICATE_USERNAME_NOT_ACCEPTED" | "AUTHENTICATE_USERNAME_NOT_AVAILABLE";
@@ -408,9 +389,6 @@ export declare namespace Autoguard {
         } | {
             type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
             reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
-        } | {
-            type: "AUTHENTICATED";
-            reason: "AUTHENTICATION_COMPLETED";
         }>;
         RecoverCommand: autoguard.guards.ReferenceGuard<{
             type: "RECOVER";
@@ -462,10 +440,6 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_RECOVER_PASSPHRASE";
             reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
         }>;
-        RecoveredState: autoguard.guards.ReferenceGuard<{
-            type: "RECOVERED";
-            reason: "RECOVERY_COMPLETED";
-        }>;
         RecoverStates: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_RECOVER_USERNAME";
             reason: "RECOVER_USERNAME_REQUIRED" | "RECOVER_USERNAME_NOT_ACCEPTED" | "RECOVER_USERNAME_NOT_AVAILABLE";
@@ -478,9 +452,6 @@ export declare namespace Autoguard {
         } | {
             type: "WAITING_FOR_RECOVER_PASSPHRASE";
             reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
-        } | {
-            type: "RECOVERED";
-            reason: "RECOVERY_COMPLETED";
         }>;
         ResetStateCommand: autoguard.guards.ReferenceGuard<{
             type: "RESET_STATE";
@@ -534,6 +505,10 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_COMMAND";
             reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
         }>;
+        AuthenticatedState: autoguard.guards.ReferenceGuard<{
+            type: "AUTHENTICATED";
+            reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED";
+        }>;
         State: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_REGISTER_USERNAME";
             reason: "REGISTER_USERNAME_REQUIRED" | "REGISTER_USERNAME_NOT_ACCEPTED" | "REGISTER_USERNAME_NOT_AVAILABLE";
@@ -547,9 +522,6 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_REGISTER_PASSPHRASE";
             reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
         } | {
-            type: "REGISTERED";
-            reason: "REGISTRATION_COMPLETED";
-        } | {
             type: "WAITING_FOR_AUTHENTICATE_USERNAME";
             reason: "AUTHENTICATE_USERNAME_REQUIRED" | "AUTHENTICATE_USERNAME_NOT_ACCEPTED" | "AUTHENTICATE_USERNAME_NOT_AVAILABLE";
         } | {
@@ -561,9 +533,6 @@ export declare namespace Autoguard {
         } | {
             type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
             reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
-        } | {
-            type: "AUTHENTICATED";
-            reason: "AUTHENTICATION_COMPLETED";
         } | {
             type: "WAITING_FOR_RECOVER_USERNAME";
             reason: "RECOVER_USERNAME_REQUIRED" | "RECOVER_USERNAME_NOT_ACCEPTED" | "RECOVER_USERNAME_NOT_AVAILABLE";
@@ -577,11 +546,11 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_RECOVER_PASSPHRASE";
             reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
         } | {
-            type: "RECOVERED";
-            reason: "RECOVERY_COMPLETED";
-        } | {
             type: "WAITING_FOR_COMMAND";
             reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
+        } | {
+            type: "AUTHENTICATED";
+            reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED";
         }>;
         User: autoguard.guards.ReferenceGuard<{
             id: string;
@@ -682,9 +651,6 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_REGISTER_PASSPHRASE";
                     reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
                 } | {
-                    type: "REGISTERED";
-                    reason: "REGISTRATION_COMPLETED";
-                } | {
                     type: "WAITING_FOR_AUTHENTICATE_USERNAME";
                     reason: "AUTHENTICATE_USERNAME_REQUIRED" | "AUTHENTICATE_USERNAME_NOT_ACCEPTED" | "AUTHENTICATE_USERNAME_NOT_AVAILABLE";
                 } | {
@@ -696,9 +662,6 @@ export declare namespace Autoguard {
                 } | {
                     type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
                     reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
-                } | {
-                    type: "AUTHENTICATED";
-                    reason: "AUTHENTICATION_COMPLETED";
                 } | {
                     type: "WAITING_FOR_RECOVER_USERNAME";
                     reason: "RECOVER_USERNAME_REQUIRED" | "RECOVER_USERNAME_NOT_ACCEPTED" | "RECOVER_USERNAME_NOT_AVAILABLE";
@@ -712,11 +675,11 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_RECOVER_PASSPHRASE";
                     reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
                 } | {
-                    type: "RECOVERED";
-                    reason: "RECOVERY_COMPLETED";
-                } | {
                     type: "WAITING_FOR_COMMAND";
                     reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
+                } | {
+                    type: "AUTHENTICATED";
+                    reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED";
                 };
                 user?: {
                     id: string;
@@ -746,9 +709,6 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_REGISTER_PASSPHRASE";
                     reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
                 } | {
-                    type: "REGISTERED";
-                    reason: "REGISTRATION_COMPLETED";
-                } | {
                     type: "WAITING_FOR_AUTHENTICATE_USERNAME";
                     reason: "AUTHENTICATE_USERNAME_REQUIRED" | "AUTHENTICATE_USERNAME_NOT_ACCEPTED" | "AUTHENTICATE_USERNAME_NOT_AVAILABLE";
                 } | {
@@ -760,9 +720,6 @@ export declare namespace Autoguard {
                 } | {
                     type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
                     reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
-                } | {
-                    type: "AUTHENTICATED";
-                    reason: "AUTHENTICATION_COMPLETED";
                 } | {
                     type: "WAITING_FOR_RECOVER_USERNAME";
                     reason: "RECOVER_USERNAME_REQUIRED" | "RECOVER_USERNAME_NOT_ACCEPTED" | "RECOVER_USERNAME_NOT_AVAILABLE";
@@ -776,11 +733,11 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_RECOVER_PASSPHRASE";
                     reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
                 } | {
-                    type: "RECOVERED";
-                    reason: "RECOVERY_COMPLETED";
-                } | {
                     type: "WAITING_FOR_COMMAND";
                     reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND";
+                } | {
+                    type: "AUTHENTICATED";
+                    reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED";
                 };
                 user?: {
                     id: string;

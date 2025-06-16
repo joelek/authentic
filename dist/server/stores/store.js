@@ -262,9 +262,11 @@ class VolatileObjectStore {
         };
         for (let unique_key of this.unique_keys) {
             let value = object[unique_key];
-            let objects = await this.lookupObjects(unique_key, "=", value);
-            if (objects.length !== 0) {
-                throw new ExpectedUniquePropertyError(unique_key, value);
+            if (value != null) {
+                let objects = await this.lookupObjects(unique_key, "=", value);
+                if (objects.length !== 0) {
+                    throw new ExpectedUniquePropertyError(unique_key, value);
+                }
             }
         }
         this.objects.set(id, object);
@@ -291,9 +293,11 @@ class VolatileObjectStore {
         }
         for (let unique_key of this.unique_keys) {
             let value = object[unique_key];
-            let objects = await this.lookupObjects(unique_key, "=", value);
-            if (objects.length !== 0 && objects[0].id !== id) {
-                throw new ExpectedUniquePropertyError(unique_key, value);
+            if (value != null) {
+                let objects = await this.lookupObjects(unique_key, "=", value);
+                if (objects.length !== 0 && objects[0].id !== id) {
+                    throw new ExpectedUniquePropertyError(unique_key, value);
+                }
             }
         }
         object = this.cloneObject(object);

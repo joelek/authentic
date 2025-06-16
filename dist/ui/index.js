@@ -12,8 +12,20 @@ function injectUserInterface(options) {
     let visible = (0, bonsai_1.stateify)(false);
     document.body.appendChild((0, components_1.Modal)(managers, { visible }));
     return {
+        logout: async () => {
+            await managers.backend.sendCommand({
+                payload: {
+                    command: {
+                        type: "RESET_STATE"
+                    }
+                }
+            });
+        },
         toggle: () => {
             visible.update(!visible.value());
+        },
+        getUser: () => {
+            return managers.backend.getUser();
         }
     };
 }
