@@ -404,7 +404,7 @@ export class Server {
 		return {
 			id: session.id,
 			authenticated_user_id: user.id,
-			type: "REGISTERED",
+			type: "AUTHENTICATED",
 			reason: "REGISTRATION_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
 			wait_until_utc: this.getExpiresInMilliseconds(250)
@@ -559,7 +559,7 @@ export class Server {
 		return {
 			id: session.id,
 			authenticated_user_id: user.id,
-			type: "RECOVERED",
+			type: "AUTHENTICATED",
 			reason: "RECOVERY_COMPLETED",
 			expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
 			wait_until_utc: this.getExpiresInMilliseconds(250)
@@ -858,7 +858,7 @@ export class Server {
 		this.checkRateLimit(session.wait_until_utc);
 		let payload = await request.payload(1024);
 		session = await this.getNextSession(session, payload.command, request);
-		if (api.AuthenticatedState.is(session) || api.RegisteredState.is(session) || api.RecoveredState.is(session)) {
+		if (api.AuthenticatedState.is(session)) {
 			ticket = this.generateToken();
 			session.ticket_hash = this.computeHash(ticket);
 		} else {

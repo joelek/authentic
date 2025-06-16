@@ -1,6 +1,4 @@
 export * from "./AuthenticatedStep";
-export * from "./RecoveredStep";
-export * from "./RegisteredStep";
 export * from "./Step";
 export * from "./WaitingForCommandStep";
 export * from "./WaitingForAuthenticateEmailStep";

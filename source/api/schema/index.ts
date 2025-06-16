@@ -134,30 +134,18 @@ export type WaitingForRegisterPassphraseState = autoguard.guards.Object<{
 	]>
 }, {}>;
 
-export const RegisteredState: autoguard.serialization.MessageGuard<RegisteredState> = autoguard.guards.Object.of({
-	"type": autoguard.guards.StringLiteral.of("REGISTERED"),
-	"reason": autoguard.guards.StringLiteral.of("REGISTRATION_COMPLETED")
-}, {});
-
-export type RegisteredState = autoguard.guards.Object<{
-	"type": autoguard.guards.StringLiteral<"REGISTERED">,
-	"reason": autoguard.guards.StringLiteral<"REGISTRATION_COMPLETED">
-}, {}>;
-
 export const RegisterStates: autoguard.serialization.MessageGuard<RegisterStates> = autoguard.guards.Union.of(
 	autoguard.guards.Reference.of(() => WaitingForRegisterUsernameState),
 	autoguard.guards.Reference.of(() => WaitingForRegisterEmailState),
 	autoguard.guards.Reference.of(() => WaitingForRegisterTokenState),
-	autoguard.guards.Reference.of(() => WaitingForRegisterPassphraseState),
-	autoguard.guards.Reference.of(() => RegisteredState)
+	autoguard.guards.Reference.of(() => WaitingForRegisterPassphraseState)
 );
 
 export type RegisterStates = autoguard.guards.Union<[
 	autoguard.guards.Reference<WaitingForRegisterUsernameState>,
 	autoguard.guards.Reference<WaitingForRegisterEmailState>,
 	autoguard.guards.Reference<WaitingForRegisterTokenState>,
-	autoguard.guards.Reference<WaitingForRegisterPassphraseState>,
-	autoguard.guards.Reference<RegisteredState>
+	autoguard.guards.Reference<WaitingForRegisterPassphraseState>
 ]>;
 
 export const AuthenticateCommand: autoguard.serialization.MessageGuard<AuthenticateCommand> = autoguard.guards.Object.of({
@@ -292,30 +280,18 @@ export type WaitingForAuthenticatePassphraseState = autoguard.guards.Object<{
 	]>
 }, {}>;
 
-export const AuthenticatedState: autoguard.serialization.MessageGuard<AuthenticatedState> = autoguard.guards.Object.of({
-	"type": autoguard.guards.StringLiteral.of("AUTHENTICATED"),
-	"reason": autoguard.guards.StringLiteral.of("AUTHENTICATION_COMPLETED")
-}, {});
-
-export type AuthenticatedState = autoguard.guards.Object<{
-	"type": autoguard.guards.StringLiteral<"AUTHENTICATED">,
-	"reason": autoguard.guards.StringLiteral<"AUTHENTICATION_COMPLETED">
-}, {}>;
-
 export const AuthenticateStates: autoguard.serialization.MessageGuard<AuthenticateStates> = autoguard.guards.Union.of(
 	autoguard.guards.Reference.of(() => WaitingForAuthenticateUsernameState),
 	autoguard.guards.Reference.of(() => WaitingForAuthenticateEmailState),
 	autoguard.guards.Reference.of(() => WaitingForAuthenticateTokenState),
-	autoguard.guards.Reference.of(() => WaitingForAuthenticatePassphraseState),
-	autoguard.guards.Reference.of(() => AuthenticatedState)
+	autoguard.guards.Reference.of(() => WaitingForAuthenticatePassphraseState)
 );
 
 export type AuthenticateStates = autoguard.guards.Union<[
 	autoguard.guards.Reference<WaitingForAuthenticateUsernameState>,
 	autoguard.guards.Reference<WaitingForAuthenticateEmailState>,
 	autoguard.guards.Reference<WaitingForAuthenticateTokenState>,
-	autoguard.guards.Reference<WaitingForAuthenticatePassphraseState>,
-	autoguard.guards.Reference<AuthenticatedState>
+	autoguard.guards.Reference<WaitingForAuthenticatePassphraseState>
 ]>;
 
 export const RecoverCommand: autoguard.serialization.MessageGuard<RecoverCommand> = autoguard.guards.Object.of({
@@ -450,30 +426,18 @@ export type WaitingForRecoverPassphraseState = autoguard.guards.Object<{
 	]>
 }, {}>;
 
-export const RecoveredState: autoguard.serialization.MessageGuard<RecoveredState> = autoguard.guards.Object.of({
-	"type": autoguard.guards.StringLiteral.of("RECOVERED"),
-	"reason": autoguard.guards.StringLiteral.of("RECOVERY_COMPLETED")
-}, {});
-
-export type RecoveredState = autoguard.guards.Object<{
-	"type": autoguard.guards.StringLiteral<"RECOVERED">,
-	"reason": autoguard.guards.StringLiteral<"RECOVERY_COMPLETED">
-}, {}>;
-
 export const RecoverStates: autoguard.serialization.MessageGuard<RecoverStates> = autoguard.guards.Union.of(
 	autoguard.guards.Reference.of(() => WaitingForRecoverUsernameState),
 	autoguard.guards.Reference.of(() => WaitingForRecoverEmailState),
 	autoguard.guards.Reference.of(() => WaitingForRecoverTokenState),
-	autoguard.guards.Reference.of(() => WaitingForRecoverPassphraseState),
-	autoguard.guards.Reference.of(() => RecoveredState)
+	autoguard.guards.Reference.of(() => WaitingForRecoverPassphraseState)
 );
 
 export type RecoverStates = autoguard.guards.Union<[
 	autoguard.guards.Reference<WaitingForRecoverUsernameState>,
 	autoguard.guards.Reference<WaitingForRecoverEmailState>,
 	autoguard.guards.Reference<WaitingForRecoverTokenState>,
-	autoguard.guards.Reference<WaitingForRecoverPassphraseState>,
-	autoguard.guards.Reference<RecoveredState>
+	autoguard.guards.Reference<WaitingForRecoverPassphraseState>
 ]>;
 
 export const ResetStateCommand: autoguard.serialization.MessageGuard<ResetStateCommand> = autoguard.guards.Object.of({
@@ -516,18 +480,38 @@ export type WaitingForCommandState = autoguard.guards.Object<{
 	]>
 }, {}>;
 
+export const AuthenticatedState: autoguard.serialization.MessageGuard<AuthenticatedState> = autoguard.guards.Object.of({
+	"type": autoguard.guards.StringLiteral.of("AUTHENTICATED"),
+	"reason": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("REGISTRATION_COMPLETED"),
+		autoguard.guards.StringLiteral.of("AUTHENTICATION_COMPLETED"),
+		autoguard.guards.StringLiteral.of("RECOVERY_COMPLETED")
+	)
+}, {});
+
+export type AuthenticatedState = autoguard.guards.Object<{
+	"type": autoguard.guards.StringLiteral<"AUTHENTICATED">,
+	"reason": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"REGISTRATION_COMPLETED">,
+		autoguard.guards.StringLiteral<"AUTHENTICATION_COMPLETED">,
+		autoguard.guards.StringLiteral<"RECOVERY_COMPLETED">
+	]>
+}, {}>;
+
 export const State: autoguard.serialization.MessageGuard<State> = autoguard.guards.Union.of(
 	autoguard.guards.Reference.of(() => WaitingForCommandState),
 	autoguard.guards.Reference.of(() => RegisterStates),
 	autoguard.guards.Reference.of(() => AuthenticateStates),
-	autoguard.guards.Reference.of(() => RecoverStates)
+	autoguard.guards.Reference.of(() => RecoverStates),
+	autoguard.guards.Reference.of(() => AuthenticatedState)
 );
 
 export type State = autoguard.guards.Union<[
 	autoguard.guards.Reference<WaitingForCommandState>,
 	autoguard.guards.Reference<RegisterStates>,
 	autoguard.guards.Reference<AuthenticateStates>,
-	autoguard.guards.Reference<RecoverStates>
+	autoguard.guards.Reference<RecoverStates>,
+	autoguard.guards.Reference<AuthenticatedState>
 ]>;
 
 export const User: autoguard.serialization.MessageGuard<User> = autoguard.guards.Object.of({
@@ -556,7 +540,6 @@ export namespace Autoguard {
 		"WaitingForRegisterEmailState": autoguard.guards.Reference.of(() => WaitingForRegisterEmailState),
 		"WaitingForRegisterTokenState": autoguard.guards.Reference.of(() => WaitingForRegisterTokenState),
 		"WaitingForRegisterPassphraseState": autoguard.guards.Reference.of(() => WaitingForRegisterPassphraseState),
-		"RegisteredState": autoguard.guards.Reference.of(() => RegisteredState),
 		"RegisterStates": autoguard.guards.Reference.of(() => RegisterStates),
 		"AuthenticateCommand": autoguard.guards.Reference.of(() => AuthenticateCommand),
 		"AuthenticateUsernameCommand": autoguard.guards.Reference.of(() => AuthenticateUsernameCommand),
@@ -568,7 +551,6 @@ export namespace Autoguard {
 		"WaitingForAuthenticateEmailState": autoguard.guards.Reference.of(() => WaitingForAuthenticateEmailState),
 		"WaitingForAuthenticateTokenState": autoguard.guards.Reference.of(() => WaitingForAuthenticateTokenState),
 		"WaitingForAuthenticatePassphraseState": autoguard.guards.Reference.of(() => WaitingForAuthenticatePassphraseState),
-		"AuthenticatedState": autoguard.guards.Reference.of(() => AuthenticatedState),
 		"AuthenticateStates": autoguard.guards.Reference.of(() => AuthenticateStates),
 		"RecoverCommand": autoguard.guards.Reference.of(() => RecoverCommand),
 		"RecoverUsernameCommand": autoguard.guards.Reference.of(() => RecoverUsernameCommand),
@@ -580,11 +562,11 @@ export namespace Autoguard {
 		"WaitingForRecoverEmailState": autoguard.guards.Reference.of(() => WaitingForRecoverEmailState),
 		"WaitingForRecoverTokenState": autoguard.guards.Reference.of(() => WaitingForRecoverTokenState),
 		"WaitingForRecoverPassphraseState": autoguard.guards.Reference.of(() => WaitingForRecoverPassphraseState),
-		"RecoveredState": autoguard.guards.Reference.of(() => RecoveredState),
 		"RecoverStates": autoguard.guards.Reference.of(() => RecoverStates),
 		"ResetStateCommand": autoguard.guards.Reference.of(() => ResetStateCommand),
 		"Command": autoguard.guards.Reference.of(() => Command),
 		"WaitingForCommandState": autoguard.guards.Reference.of(() => WaitingForCommandState),
+		"AuthenticatedState": autoguard.guards.Reference.of(() => AuthenticatedState),
 		"State": autoguard.guards.Reference.of(() => State),
 		"User": autoguard.guards.Reference.of(() => User)
 	};

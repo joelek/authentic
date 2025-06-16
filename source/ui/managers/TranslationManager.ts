@@ -76,23 +76,11 @@ const WAITING_FOR_REGISTER_PASSPHRASE = {
 	}
 };
 
-const REGISTERED = {
-	"REGISTERED": {
-		en: "Your account has been registered.",
-		sv: "Ditt konto har registrerats."
-	},
-	"REGISTRATION_COMPLETED": {
-		en: "Registration completed.",
-		sv: "Registreringen är slutförd."
-	}
-};
-
 const REGISTER_STATES = {
 	...WAITING_FOR_REGISTER_USERNAME,
 	...WAITING_FOR_REGISTER_EMAIL,
 	...WAITING_FOR_REGISTER_TOKEN,
-	...WAITING_FOR_REGISTER_PASSPHRASE,
-	...REGISTERED
+	...WAITING_FOR_REGISTER_PASSPHRASE
 };
 
 const WAITING_FOR_AUTHENTICATE_USERNAME = {
@@ -163,23 +151,11 @@ const WAITING_FOR_AUTHENTICATE_PASSPHRASE = {
 	}
 };
 
-const AUTHENTICATED = {
-	"AUTHENTICATED": {
-		en: "Your account has been authenticated.",
-		sv: "Ditt konto har autentiserats."
-	},
-	"AUTHENTICATION_COMPLETED": {
-		en: "Authentication completed.",
-		sv: "Autentiseringen är slutförd."
-	}
-};
-
 const AUTHENTICATE_STATES = {
 	...WAITING_FOR_AUTHENTICATE_USERNAME,
 	...WAITING_FOR_AUTHENTICATE_EMAIL,
 	...WAITING_FOR_AUTHENTICATE_TOKEN,
-	...WAITING_FOR_AUTHENTICATE_PASSPHRASE,
-	...AUTHENTICATED
+	...WAITING_FOR_AUTHENTICATE_PASSPHRASE
 };
 
 const WAITING_FOR_RECOVER_USERNAME = {
@@ -250,23 +226,11 @@ const WAITING_FOR_RECOVER_PASSPHRASE = {
 	}
 };
 
-const RECOVERED = {
-	"RECOVERED": {
-		en: "Your account has been recovered.",
-		sv: "Ditt konto har återställts."
-	},
-	"RECOVERY_COMPLETED": {
-		en: "Recovery completed.",
-		sv: "Återställningen är slutförd."
-	}
-};
-
 const RECOVER_STATES = {
 	...WAITING_FOR_RECOVER_USERNAME,
 	...WAITING_FOR_RECOVER_EMAIL,
 	...WAITING_FOR_RECOVER_TOKEN,
-	...WAITING_FOR_RECOVER_PASSPHRASE,
-	...RECOVERED
+	...WAITING_FOR_RECOVER_PASSPHRASE
 };
 
 const WAITING_FOR_COMMAND = {
@@ -288,11 +252,31 @@ const WAITING_FOR_COMMAND = {
 	}
 };
 
+const AUTHENTICATED = {
+	"AUTHENTICATED": {
+		en: "Your account has been authenticated.",
+		sv: "Ditt konto har autentiserats."
+	},
+	"AUTHENTICATION_COMPLETED": {
+		en: "Authentication completed.",
+		sv: "Autentiseringen är slutförd."
+	},
+	"REGISTRATION_COMPLETED": {
+		en: "Registration completed.",
+		sv: "Registreringen är slutförd."
+	},
+	"RECOVERY_COMPLETED": {
+		en: "Recovery completed.",
+		sv: "Återställningen är slutförd."
+	}
+};
+
 const STATES = {
 	...REGISTER_STATES,
 	...AUTHENTICATE_STATES,
 	...RECOVER_STATES,
-	...WAITING_FOR_COMMAND
+	...WAITING_FOR_COMMAND,
+	...AUTHENTICATED
 };
 
 type States = typeof STATES;
@@ -338,6 +322,10 @@ const TRANSLATIONS = {
 	"USERNAME_PLACEHOLDER": {
 		en: "Username...",
 		sv: "Användarnamn..."
+	},
+	"LOGGED_IN_AS": {
+		en: "Logged in as",
+		sv: "Inloggad som"
 	}
 };
 

@@ -1,7 +1,7 @@
 import { html, State, stateify } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
 import { Block } from "./Block";
-import { AuthenticatedStep, RecoveredStep, RegisteredStep, WaitingForAuthenticateEmailStep, WaitingForAuthenticatePassphraseStep, WaitingForAuthenticateTokenStep, WaitingForAuthenticateUsernameStep, WaitingForRecoverEmailStep, WaitingForRecoverPassphraseStep, WaitingForRecoverTokenStep, WaitingForRecoverUsernameStep, WaitingForRegisterEmailStep, WaitingForRegisterPassphraseStep, WaitingForRegisterTokenStep, WaitingForRegisterUsernameStep } from "./steps";
+import { AuthenticatedStep, WaitingForAuthenticateEmailStep, WaitingForAuthenticatePassphraseStep, WaitingForAuthenticateTokenStep, WaitingForAuthenticateUsernameStep, WaitingForRecoverEmailStep, WaitingForRecoverPassphraseStep, WaitingForRecoverTokenStep, WaitingForRecoverUsernameStep, WaitingForRegisterEmailStep, WaitingForRegisterPassphraseStep, WaitingForRegisterTokenStep, WaitingForRegisterUsernameStep } from "./steps";
 import { WaitingForCommandStep } from "./steps/WaitingForCommandStep";
 
 document.head.appendChild(html.style({}, `
@@ -87,22 +87,20 @@ export function Modal(managers: Managers, attributes: Modal) {
 							Block("div", {
 								class: ["modal__content"]
 							},
+								AuthenticatedStep(managers, {}),
 								WaitingForCommandStep(managers, {}),
 								WaitingForAuthenticateEmailStep(managers, {}),
 								WaitingForAuthenticatePassphraseStep(managers, {}),
 								WaitingForAuthenticateTokenStep(managers, {}),
 								WaitingForAuthenticateUsernameStep(managers, {}),
-								AuthenticatedStep(managers, {}),
 								WaitingForRecoverEmailStep(managers, {}),
 								WaitingForRecoverPassphraseStep(managers, {}),
 								WaitingForRecoverTokenStep(managers, {}),
 								WaitingForRecoverUsernameStep(managers, {}),
-								RecoveredStep(managers, {}),
 								WaitingForRegisterEmailStep(managers, {}),
 								WaitingForRegisterPassphraseStep(managers, {}),
 								WaitingForRegisterTokenStep(managers, {}),
-								WaitingForRegisterUsernameStep(managers, {}),
-								RegisteredStep(managers, {})
+								WaitingForRegisterUsernameStep(managers, {})
 							)
 						)
 					)

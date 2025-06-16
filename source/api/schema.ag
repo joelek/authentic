@@ -51,17 +51,11 @@ guard WaitingForRegisterPassphraseState: {
 	reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED"
 };
 
-guard RegisteredState: {
-	type: "REGISTERED",
-	reason: "REGISTRATION_COMPLETED"
-};
-
 guard RegisterStates:
 	WaitingForRegisterUsernameState |
 	WaitingForRegisterEmailState |
 	WaitingForRegisterTokenState |
-	WaitingForRegisterPassphraseState |
-	RegisteredState;
+	WaitingForRegisterPassphraseState;
 
 # =============================================================================
 
@@ -118,17 +112,11 @@ guard WaitingForAuthenticatePassphraseState: {
 	reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED"
 };
 
-guard AuthenticatedState: {
-	type: "AUTHENTICATED",
-	reason: "AUTHENTICATION_COMPLETED"
-};
-
 guard AuthenticateStates:
 	WaitingForAuthenticateUsernameState |
 	WaitingForAuthenticateEmailState |
 	WaitingForAuthenticateTokenState |
-	WaitingForAuthenticatePassphraseState |
-	AuthenticatedState;
+	WaitingForAuthenticatePassphraseState;
 
 # =============================================================================
 
@@ -185,17 +173,11 @@ guard WaitingForRecoverPassphraseState: {
 	reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED"
 };
 
-guard RecoveredState: {
-	type: "RECOVERED",
-	reason: "RECOVERY_COMPLETED"
-};
-
 guard RecoverStates:
 	WaitingForRecoverUsernameState |
 	WaitingForRecoverEmailState |
 	WaitingForRecoverTokenState |
-	WaitingForRecoverPassphraseState |
-	RecoveredState;
+	WaitingForRecoverPassphraseState;
 
 # =============================================================================
 
@@ -214,11 +196,17 @@ guard WaitingForCommandState: {
 	reason: "COMMAND_REQUIRED" | "SESSION_EXPIRED" | "INVALID_COMMAND"
 };
 
+guard AuthenticatedState: {
+	type: "AUTHENTICATED",
+	reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED"
+};
+
 guard State:
 	WaitingForCommandState |
 	RegisterStates |
 	AuthenticateStates |
-	RecoverStates;
+	RecoverStates |
+	AuthenticatedState;
 
 # =============================================================================
 
