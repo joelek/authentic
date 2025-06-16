@@ -8,6 +8,7 @@ export type UIOptions = {
 };
 
 export interface InterfaceManager {
+	logout(): Promise<void>;
 	toggle(): void;
 };
 
@@ -17,6 +18,15 @@ export function injectUserInterface(options?: UIOptions): InterfaceManager {
 	let visible = stateify(false as boolean);
 	document.body.appendChild(Modal(managers, { visible }));
 	return {
+		logout: async () => {
+			await managers.backend.sendCommand({
+				payload: {
+					command: {
+						type: "RESET_STATE"
+					}
+				}
+			});
+		},
 		toggle: () => {
 			visible.update(!visible.value());
 		}
