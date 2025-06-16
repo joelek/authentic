@@ -20,6 +20,8 @@ export function WaitingForAuthenticatePassphraseStep(managers: Managers, attribu
 	type.compute((type) => {
 		if (type != null) {
 			input.focus();
+		} else {
+			value.update("");
 		}
 	});
 	return (

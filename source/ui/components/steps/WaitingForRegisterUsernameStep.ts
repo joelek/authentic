@@ -20,6 +20,8 @@ export function WaitingForRegisterUsernameStep(managers: Managers, attributes: W
 	type.compute((type) => {
 		if (type != null) {
 			input.focus();
+		} else {
+			value.update("");
 		}
 	});
 	return (

@@ -20,6 +20,8 @@ export function WaitingForRegisterTokenStep(managers: Managers, attributes: Wait
 	type.compute((type) => {
 		if (type != null) {
 			input.focus();
+		} else {
+			value.update("");
 		}
 	});
 	return (

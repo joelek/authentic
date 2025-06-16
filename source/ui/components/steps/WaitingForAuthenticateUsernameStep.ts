@@ -20,6 +20,8 @@ export function WaitingForAuthenticateUsernameStep(managers: Managers, attribute
 	type.compute((type) => {
 		if (type != null) {
 			input.focus();
+		} else {
+			value.update("");
 		}
 	});
 	return (

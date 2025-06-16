@@ -20,6 +20,8 @@ export function WaitingForRegisterPassphraseStep(managers: Managers, attributes:
 	type.compute((type) => {
 		if (type != null) {
 			input.focus();
+		} else {
+			value.update("");
 		}
 	});
 	return (

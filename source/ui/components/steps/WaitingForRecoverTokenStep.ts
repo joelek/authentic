@@ -20,6 +20,8 @@ export function WaitingForRecoverTokenStep(managers: Managers, attributes: Waiti
 	type.compute((type) => {
 		if (type != null) {
 			input.focus();
+		} else {
+			value.update("");
 		}
 	});
 	return (
