@@ -1,4 +1,5 @@
-import { stateify } from "@joelek/bonsai";
+import { State, stateify } from "@joelek/bonsai";
+import * as api from "../api/client";
 import { Client, createClient } from "../client";
 import { Modal } from "./components";
 import { Managers } from "./managers";
@@ -10,6 +11,7 @@ export type UIOptions = {
 export interface InterfaceManager {
 	logout(): Promise<void>;
 	toggle(): void;
+	getUser(): State<api.User | undefined>;
 };
 
 export function injectUserInterface(options?: UIOptions): InterfaceManager {
@@ -29,6 +31,9 @@ export function injectUserInterface(options?: UIOptions): InterfaceManager {
 		},
 		toggle: () => {
 			visible.update(!visible.value());
+		},
+		getUser: () => {
+			return managers.backend.getUser();
 		}
 	};
 };
