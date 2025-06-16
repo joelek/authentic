@@ -839,49 +839,59 @@ export class Server {
 	}
 
 	protected readState: Parameters<typeof api.makeServer>[0]["readState"] = async (request) => {
-		let origin = await this.getOriginAndApplyRateLimit(request);
-		let { session_id, ticket } = this.getCookieData(request) ?? {};
-		let session = await this.getSession(session_id);
-		this.checkRateLimit(session.wait_until_utc);
-		let state = this.getApiState(session);
-		let user = await this.getApiUser(session);
-		return this.finalizeResponse({
-			payload: {
-				state,
-				user
-			},
-			headers: {
-				"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
-			}
-		}, session, ticket);
+		try {
+			let origin = await this.getOriginAndApplyRateLimit(request);
+			let { session_id, ticket } = this.getCookieData(request) ?? {};
+			let session = await this.getSession(session_id);
+			this.checkRateLimit(session.wait_until_utc);
+			let state = this.getApiState(session);
+			let user = await this.getApiUser(session);
+			return this.finalizeResponse({
+				payload: {
+					state,
+					user
+				},
+				headers: {
+					"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
+				}
+			}, session, ticket);
+		} catch (error) {
+			console.log(error);
+			throw error;
+		}
 	};
 
 	protected sendCommand: Parameters<typeof api.makeServer>[0]["sendCommand"] = async (request) => {
-		let origin = await this.getOriginAndApplyRateLimit(request);
-		let { session_id, ticket } = this.getCookieData(request) ?? {};
-		let session = await this.getSession(session_id);
-		this.checkRateLimit(session.wait_until_utc);
-		let payload = await request.payload(1024);
-		session = await this.getNextSession(session, payload.command, request);
-		if (api.AuthenticatedState.is(session)) {
-			ticket = this.generateToken();
-			session.ticket_hash = this.computeHash(ticket);
-		} else {
-			ticket = undefined;
-			session.ticket_hash = undefined;
-		}
-		await this.sessions.updateObject(session);
-		let state = this.getApiState(session);
-		let user = await this.getApiUser(session);
-		return this.finalizeResponse({
-			payload: {
-				state,
-				user
-			},
-			headers: {
-				"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
+		try {
+			let origin = await this.getOriginAndApplyRateLimit(request);
+			let { session_id, ticket } = this.getCookieData(request) ?? {};
+			let session = await this.getSession(session_id);
+			this.checkRateLimit(session.wait_until_utc);
+			let payload = await request.payload(1024);
+			session = await this.getNextSession(session, payload.command, request);
+			if (api.AuthenticatedState.is(session)) {
+				ticket = this.generateToken();
+				session.ticket_hash = this.computeHash(ticket);
+			} else {
+				ticket = undefined;
+				session.ticket_hash = undefined;
 			}
-		}, session, ticket);
+			await this.sessions.updateObject(session);
+			let state = this.getApiState(session);
+			let user = await this.getApiUser(session);
+			return this.finalizeResponse({
+				payload: {
+					state,
+					user
+				},
+				headers: {
+					"x-wait-ms": Math.max(0, Math.max(origin.wait_until_utc, session.wait_until_utc) - Date.now())
+				}
+			}, session, ticket);
+		} catch (error) {
+			console.log(error);
+			throw error;
+		}
 	};
 
 	constructor(options?: ServerOptions) {
