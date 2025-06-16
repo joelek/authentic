@@ -14,7 +14,7 @@ function CancelButton(managers, attributes) {
                 }
             });
         }
-    }, (0, titles_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CANCEL_BUTTON"))));
+    }, (0, titles_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CANCEL"))));
 }
 exports.CancelButton = CancelButton;
 ;

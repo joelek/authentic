@@ -207,27 +207,27 @@ declare const STATES: {
 type States = typeof STATES;
 type StatesKey = keyof States;
 declare const TRANSLATIONS: {
-    CANCEL_BUTTON: {
+    CANCEL: {
         en: string;
         sv: string;
     };
-    REGISTER_BUTTON: {
+    REGISTER_ACCOUNT: {
         en: string;
         sv: string;
     };
-    AUTHENTICATE_BUTTON: {
+    AUTHENTICATE_ACCOUNT: {
         en: string;
         sv: string;
     };
-    RECOVER_BUTTON: {
+    RECOVER_ACCOUNT: {
         en: string;
         sv: string;
     };
-    CONTINUE_BUTTON: {
+    CONTINUE: {
         en: string;
         sv: string;
     };
-    LOG_OUT_BUTTON: {
+    LOG_OUT: {
         en: string;
         sv: string;
     };

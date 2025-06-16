@@ -14,7 +14,7 @@ function LogOutButton(managers, attributes) {
                 }
             });
         }
-    }, (0, titles_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("LOG_OUT_BUTTON"))));
+    }, (0, titles_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("LOG_OUT"))));
 }
 exports.LogOutButton = LogOutButton;
 ;

@@ -27,7 +27,7 @@ function WaitingForAuthenticatePassphraseStep(managers, attributes) {
     return ((0, Step_1.Step)(managers, {
         type,
         reason
-    }, (0, titles_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("AUTHENTICATE_BUTTON")), (0, titles_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, form_1.FormGroup)(managers, {}, input, (0, form_1.FormButton)(managers, {
+    }, (0, titles_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT")), (0, titles_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, form_1.FormGroup)(managers, {}, input, (0, form_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
                 payload: {
@@ -41,7 +41,7 @@ function WaitingForAuthenticatePassphraseStep(managers, attributes) {
                 input.focus();
             }
         }
-    }, (0, titles_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE_BUTTON")))), (0, titles_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason)), (0, CancelButton_1.CancelButton)(managers, {})));
+    }, (0, titles_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")))), (0, titles_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason)), (0, CancelButton_1.CancelButton)(managers, {})));
 }
 exports.WaitingForAuthenticatePassphraseStep = WaitingForAuthenticatePassphraseStep;
 ;
