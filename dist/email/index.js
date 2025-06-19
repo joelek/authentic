@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SMTPMailer = exports.MissingReplyAddressError = exports.MissingFromAddressError = exports.MissingToAddressError = exports.loadConfig = exports.TestMailer = exports.split = exports.encode = void 0;
+const libcrypto = require("crypto");
 const libfs = require("fs");
 const libtls = require("tls");
 const config_1 = require("./config");
@@ -71,6 +72,10 @@ exports.MissingReplyAddressError = MissingReplyAddressError;
 ;
 class SMTPMailer {
     options;
+    generateMessageIDAddress(from_address) {
+        let token = libcrypto.randomBytes(16).toString("hex");
+        return `${token}@${from_address.slice(from_address.indexOf("@") + 1)}`;
+    }
     getTo(options) {
         let address = options.to_address ?? this.options.defaults?.to_address;
         let name = options.to_name ?? this.options.defaults?.to_name;
@@ -186,7 +191,8 @@ class SMTPMailer {
                                 `MIME-Version: 1.0`,
                                 `Date: ${new Date().toUTCString()}`,
                                 `Content-Type: text/plain; charset=utf-8`,
-                                `Content-Transfer-Encoding: base64`
+                                `Content-Transfer-Encoding: base64`,
+                                `Message-ID: <${this.generateMessageIDAddress(from.address)}>`
                             ];
                             if (typeof from.name !== "undefined") {
                                 lines.push(`From: ${encode(from.name)} <${from.address}>`);

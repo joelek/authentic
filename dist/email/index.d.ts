@@ -42,6 +42,7 @@ export declare class MissingReplyAddressError extends Error {
 }
 export declare class SMTPMailer implements Mailer {
     protected options: MailerOptions;
+    protected generateMessageIDAddress(from_address: string): string;
     protected getTo(options: {
         to_address?: string;
         to_name?: string;
