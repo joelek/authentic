@@ -10,16 +10,16 @@ const WAITING_FOR_REGISTER_USERNAME = {
         sv: "Vänligen ange ditt önskade användarnamn. Användarnamnet får innehålla bokstäverna A-Z, sifforna 0-9 samt tecknet \"_\"."
     },
     "REGISTER_USERNAME_REQUIRED": {
-        en: "Your desired username has not yet been entered.",
-        sv: "Ditt önskade användarnamn har ännu inte angetts."
+        en: "A username has not yet been entered.",
+        sv: "Ett användarnamn har ännu inte angetts."
     },
     "REGISTER_USERNAME_NOT_ACCEPTED": {
         en: "The username was not accepted. Please make sure that it only contains valid characters and try again.",
-        sv: "Användarnamnet accepterades ej. Vänligen kontrollera så att det endast innehåller tillåtna tecken och försök sedan igen."
+        sv: "Användarnamnet accepterades inte. Vänligen kontrollera så att det endast innehåller tillåtna tecken och försök sedan igen."
     },
     "REGISTER_USERNAME_NOT_AVAILABLE": {
-        en: "The username is taken. Please try another one.",
-        sv: "Användarnamnet är upptaget. Vänligen försök med ett annat."
+        en: "The username is already taken. Please select another one and try again.",
+        sv: "Användarnamnet är redan upptaget. Vänligen välj ett annat och försök igen."
     }
 };
 const WAITING_FOR_REGISTER_EMAIL = {
@@ -28,16 +28,16 @@ const WAITING_FOR_REGISTER_EMAIL = {
         sv: "Vänligen ange din e-postadress."
     },
     "REGISTER_EMAIL_REQUIRED": {
-        en: "Your email address has not yet been entered.",
-        sv: "Din e-postadress har ännu inte angetts."
+        en: "An email address has not yet been entered.",
+        sv: "En e-postadress har ännu inte angetts."
     },
     "REGISTER_EMAIL_NOT_ACCEPTED": {
-        en: "The email address was not accepted. Please make sure that it's correctly written and try again.",
-        sv: "E-postadressen accepterades ej. Vänligen kontrollera så att den är korrekt skriven och försök sedan igen."
+        en: "The email address was not accepted. Please make sure that it's correct and try again.",
+        sv: "E-postadressen accepterades inte. Vänligen kontrollera så att den stämmer och försök sedan igen."
     },
     "REGISTER_EMAIL_NOT_AVAILABLE": {
-        en: "The email address is not available. Please try another one.",
-        sv: "E-postadressen är inte tillgänglig. Vänligen försök med en annan."
+        en: "The email address is already taken. Please select another one and try again.",
+        sv: "E-postadressen är redan upptagen. Vänligen välj ett annan och försök igen."
     }
 };
 const WAITING_FOR_REGISTER_TOKEN = {
@@ -46,12 +46,12 @@ const WAITING_FOR_REGISTER_TOKEN = {
         sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
     },
     "REGISTER_TOKEN_REQUIRED": {
-        en: "The verification code has not yet been entered.",
-        sv: "Verifieringskoden har ännu inte angetts."
+        en: "A verification code has not yet been entered.",
+        sv: "En verifieringskod har ännu inte angetts."
     },
     "REGISTER_TOKEN_NOT_ACCEPTED": {
         en: "The verification code was not accepted. Please make sure that it's correct and try again.",
-        sv: "Verifieringskoden accepterades ej. Vänligen kontrollera så att den stämmer och försök sedan igen."
+        sv: "Verifieringskoden accepterades inte. Vänligen kontrollera så att den stämmer och försök sedan igen."
     }
 };
 const WAITING_FOR_REGISTER_PASSPHRASE = {
@@ -60,12 +60,12 @@ const WAITING_FOR_REGISTER_PASSPHRASE = {
         sv: "Vänligen ange ditt önskade lösenord. Lösenord måste bestå av minst 8 tecken."
     },
     "REGISTER_PASSPHRASE_REQUIRED": {
-        en: "Your password has not yet been entered.",
-        sv: "Ditt lösenord har ännu inte angetts."
+        en: "A password has not yet been entered.",
+        sv: "Ett lösenord har ännu inte angetts."
     },
     "REGISTER_PASSPHRASE_NOT_ACCEPTED": {
         en: "The password was not accepted. Please make sure that it's sufficiently long and try again.",
-        sv: "Lösenordet accepterades ej. Vänligen kontrollera så att det är tillräckligt långt och försök sedan igen."
+        sv: "Lösenordet accepterades inte. Vänligen kontrollera så att det är tillräckligt långt och försök sedan igen."
     }
 };
 const REGISTER_STATES = {
@@ -80,16 +80,16 @@ const WAITING_FOR_AUTHENTICATE_USERNAME = {
         sv: "Vänligen ange ditt användarnamn."
     },
     "AUTHENTICATE_USERNAME_REQUIRED": {
-        en: "Your username has not yet been entered.",
-        sv: "Ditt användarnamn har ännu inte angetts."
+        en: "A username has not yet been entered.",
+        sv: "Ett användarnamn har ännu inte angetts."
     },
     "AUTHENTICATE_USERNAME_NOT_ACCEPTED": {
         en: "The username was not accepted. Please make sure that it's correct and try again.",
-        sv: "Användarnamnet accepterades ej. Vänligen kontrollera att det stämmer och försök sedan igen."
+        sv: "Användarnamnet accepterades inte. Vänligen kontrollera att det stämmer och försök sedan igen."
     },
     "AUTHENTICATE_USERNAME_NOT_AVAILABLE": {
-        en: "The username is not available. Please try another one.",
-        sv: "Användarnamnet är inte tillgängligt. Vänligen försök med ett annat."
+        en: "The username is not in use. Please try another one.",
+        sv: "Användarnamnet används inte. Vänligen försök med ett annat."
     }
 };
 const WAITING_FOR_AUTHENTICATE_EMAIL = {
@@ -98,16 +98,16 @@ const WAITING_FOR_AUTHENTICATE_EMAIL = {
         sv: "Vänligen ange din e-postadress."
     },
     "AUTHENTICATE_EMAIL_REQUIRED": {
-        en: "Your email address has not yet been entered.",
-        sv: "Din e-postadress har ännu inte angetts."
+        en: "An email address has not yet been entered.",
+        sv: "En e-postadress har ännu inte angetts."
     },
     "AUTHENTICATE_EMAIL_NOT_ACCEPTED": {
-        en: "The email address was not accepted. Please make sure that it's correctly written and try again.",
-        sv: "E-postadressen accepterades ej. Vänligen kontrollera så att den är korrekt skriven och försök sedan igen."
+        en: "The email address was not accepted. Please make sure that it's correct and try again.",
+        sv: "E-postadressen accepterades inte. Vänligen kontrollera så att den stämmer och försök sedan igen."
     },
     "AUTHENTICATE_EMAIL_NOT_AVAILABLE": {
-        en: "The email address is not available. Please try another one.",
-        sv: "E-postadressen är inte tillgänglig. Vänligen försök med en annan."
+        en: "The email address is not in use. Please try another one.",
+        sv: "E-postadressen används inte. Vänligen försök med en annan."
     }
 };
 const WAITING_FOR_AUTHENTICATE_TOKEN = {
@@ -116,12 +116,12 @@ const WAITING_FOR_AUTHENTICATE_TOKEN = {
         sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
     },
     "AUTHENTICATE_TOKEN_REQUIRED": {
-        en: "The verification code has not yet been entered.",
-        sv: "Verifieringskoden har ännu inte angetts."
+        en: "A verification code has not yet been entered.",
+        sv: "En verifieringskod har ännu inte angetts."
     },
     "AUTHENTICATE_TOKEN_NOT_ACCEPTED": {
         en: "The verification code was not accepted. Please make sure that it's correct and try again.",
-        sv: "Verifieringskoden accepterades ej. Vänligen kontrollera så att den stämmer och försök sedan igen."
+        sv: "Verifieringskoden accepterades inte. Vänligen kontrollera så att den stämmer och försök sedan igen."
     }
 };
 const WAITING_FOR_AUTHENTICATE_PASSPHRASE = {
@@ -130,12 +130,12 @@ const WAITING_FOR_AUTHENTICATE_PASSPHRASE = {
         sv: "Vänligen ange ditt lösenord."
     },
     "AUTHENTICATE_PASSPHRASE_REQUIRED": {
-        en: "Your password has not yet been entered.",
-        sv: "Ditt lösenord har ännu inte angetts."
+        en: "A password has not yet been entered.",
+        sv: "Ett lösenord har ännu inte angetts."
     },
     "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED": {
         en: "The password was not accepted. Please make sure that it's correct and try again.",
-        sv: "Lösenordet accepterades ej. Vänligen kontrollera så att det stämmer och försök sedan igen."
+        sv: "Lösenordet accepterades inte. Vänligen kontrollera så att det stämmer och försök sedan igen."
     }
 };
 const AUTHENTICATE_STATES = {
@@ -150,16 +150,16 @@ const WAITING_FOR_RECOVER_USERNAME = {
         sv: "Vänligen ange ditt användarnamn."
     },
     "RECOVER_USERNAME_REQUIRED": {
-        en: "Your username has not yet been entered.",
-        sv: "Ditt användarnamn har ännu inte angetts."
+        en: "A username has not yet been entered.",
+        sv: "Ett användarnamn har ännu inte angetts."
     },
     "RECOVER_USERNAME_NOT_ACCEPTED": {
         en: "The username was not accepted. Please make sure that it's correct and try again.",
-        sv: "Användarnamnet accepterades ej. Vänligen kontrollera att det stämmer och försök sedan igen."
+        sv: "Användarnamnet accepterades inte. Vänligen kontrollera att det stämmer och försök sedan igen."
     },
     "RECOVER_USERNAME_NOT_AVAILABLE": {
-        en: "The username is not available. Please try another one.",
-        sv: "Användarnamnet är inte tillgängligt. Vänligen försök med ett annat."
+        en: "The username is not in use. Please try another one.",
+        sv: "Användarnamnet används inte. Vänligen försök med ett annat."
     }
 };
 const WAITING_FOR_RECOVER_EMAIL = {
@@ -168,16 +168,16 @@ const WAITING_FOR_RECOVER_EMAIL = {
         sv: "Vänligen ange din e-postadress."
     },
     "RECOVER_EMAIL_REQUIRED": {
-        en: "Your email address has not yet been entered.",
-        sv: "Din e-postadress har ännu inte angetts."
+        en: "An email address has not yet been entered.",
+        sv: "En e-postadress har ännu inte angetts."
     },
     "RECOVER_EMAIL_NOT_ACCEPTED": {
-        en: "The email address was not accepted. Please make sure that it's correctly written and try again.",
-        sv: "E-postadressen accepterades ej. Vänligen kontrollera så att den är korrekt skriven och försök sedan igen."
+        en: "The email address was not accepted. Please make sure that it's correct and try again.",
+        sv: "E-postadressen accepterades inte. Vänligen kontrollera så att den stämmer och försök sedan igen."
     },
     "RECOVER_EMAIL_NOT_AVAILABLE": {
-        en: "The email address is not available. Please try another one.",
-        sv: "E-postadressen är inte tillgänglig. Vänligen försök med en annan."
+        en: "The email address is not in use. Please try another one.",
+        sv: "E-postadressen används inte. Vänligen försök med en annan."
     }
 };
 const WAITING_FOR_RECOVER_TOKEN = {
@@ -186,12 +186,12 @@ const WAITING_FOR_RECOVER_TOKEN = {
         sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
     },
     "RECOVER_TOKEN_REQUIRED": {
-        en: "The verification code has not yet been entered.",
-        sv: "Verifieringskoden har ännu inte angetts."
+        en: "A verification code has not yet been entered.",
+        sv: "En verifieringskod har ännu inte angetts."
     },
     "RECOVER_TOKEN_NOT_ACCEPTED": {
         en: "The verification code was not accepted. Please make sure that it's correct and try again.",
-        sv: "Verifieringskoden accepterades ej. Vänligen kontrollera så att den stämmer och försök sedan igen."
+        sv: "Verifieringskoden accepterades inte. Vänligen kontrollera så att den stämmer och försök sedan igen."
     }
 };
 const WAITING_FOR_RECOVER_PASSPHRASE = {
@@ -200,12 +200,12 @@ const WAITING_FOR_RECOVER_PASSPHRASE = {
         sv: "Vänligen ange ditt önskade lösenord. Lösenord måste bestå av minst 8 tecken."
     },
     "RECOVER_PASSPHRASE_REQUIRED": {
-        en: "Your desired password has not yet been entered.",
-        sv: "Ditt önskade lösenord har ännu inte angetts."
+        en: "A password has not yet been entered.",
+        sv: "Ett lösenord har ännu inte angetts."
     },
     "RECOVER_PASSPHRASE_NOT_ACCEPTED": {
         en: "The password was not accepted. Please make sure that it's sufficiently long and try again.",
-        sv: "Lösenordet accepterades ej. Vänligen kontrollera så att det är tillräckligt långt och försök sedan igen."
+        sv: "Lösenordet accepterades inte. Vänligen kontrollera så att det är tillräckligt långt och försök sedan igen."
     }
 };
 const RECOVER_STATES = {
