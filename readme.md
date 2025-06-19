@@ -38,3 +38,6 @@ manager.toggle();
 * Add automatic backoff to Autoguard when receiving Retry-After header in response.
 * Add automatic retries with exponential backoff on error to Autoguard.
 * Consider adding display name.
+* Consider adding registration keys.
+* Consider adding secrets.
+* Rename token to code.
