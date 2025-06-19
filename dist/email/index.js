@@ -94,8 +94,8 @@ class SMTPMailer {
         };
     }
     getReply(options) {
-        let address = options.reply_address ?? this.options.defaults?.from_address;
-        let name = options.reply_name ?? this.options.defaults?.from_name;
+        let address = options.reply_address ?? this.options.defaults?.reply_address;
+        let name = options.reply_name ?? this.options.defaults?.reply_name;
         if (address == null) {
             throw new MissingReplyAddressError();
         }
