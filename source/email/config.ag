@@ -1,6 +1,16 @@
 guard MailerOptions: {
-	hostname: string,
-	port: number,
-	username: string,
-	password: string
+	smtp: {
+		hostname: string,
+		port: number,
+		username: string,
+		password: string
+	},
+	defaults?: {
+		to_address?: string,
+		to_name?: string,
+		from_address?: string,
+		from_name?: string,
+		reply_address?: string,
+		reply_name?: string
+	}
 };

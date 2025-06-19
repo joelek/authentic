@@ -3,18 +3,40 @@
 import * as autoguard from "@joelek/autoguard/dist/lib-shared";
 
 export const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions> = autoguard.guards.Object.of({
-	"hostname": autoguard.guards.String,
-	"port": autoguard.guards.Number,
-	"username": autoguard.guards.String,
-	"password": autoguard.guards.String
-}, {});
+	"smtp": autoguard.guards.Object.of({
+		"hostname": autoguard.guards.String,
+		"port": autoguard.guards.Number,
+		"username": autoguard.guards.String,
+		"password": autoguard.guards.String
+	}, {})
+}, {
+	"defaults": autoguard.guards.Object.of({}, {
+		"to_address": autoguard.guards.String,
+		"to_name": autoguard.guards.String,
+		"from_address": autoguard.guards.String,
+		"from_name": autoguard.guards.String,
+		"reply_address": autoguard.guards.String,
+		"reply_name": autoguard.guards.String
+	})
+});
 
 export type MailerOptions = autoguard.guards.Object<{
-	"hostname": autoguard.guards.String,
-	"port": autoguard.guards.Number,
-	"username": autoguard.guards.String,
-	"password": autoguard.guards.String
-}, {}>;
+	"smtp": autoguard.guards.Object<{
+		"hostname": autoguard.guards.String,
+		"port": autoguard.guards.Number,
+		"username": autoguard.guards.String,
+		"password": autoguard.guards.String
+	}, {}>
+}, {
+	"defaults": autoguard.guards.Object<{}, {
+		"to_address": autoguard.guards.String,
+		"to_name": autoguard.guards.String,
+		"from_address": autoguard.guards.String,
+		"from_name": autoguard.guards.String,
+		"reply_address": autoguard.guards.String,
+		"reply_name": autoguard.guards.String
+	}>
+}>;
 
 export namespace Autoguard {
 	export const Guards = {

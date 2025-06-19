@@ -31,13 +31,13 @@ export function split(string: string, max_length: number): Array<string> {
 
 export interface Mailer {
 	send(options: {
-		from_address: string,
-		to_address: string,
-		reply_address: string,
 		subject: string,
 		message: string,
-		from_name?: string;
+		to_address?: string,
 		to_name?: string;
+		from_address?: string,
+		from_name?: string;
+		reply_address?: string,
 		reply_name?: string;
 	}): Promise<void>;
 };
@@ -46,13 +46,13 @@ export class TestMailer implements Mailer {
 	constructor() {}
 
 	async send(options: {
-		from_address: string,
-		to_address: string,
-		reply_address: string,
 		subject: string,
 		message: string,
-		from_name?: string;
+		to_address?: string,
 		to_name?: string;
+		from_address?: string,
+		from_name?: string;
+		reply_address?: string,
 		reply_name?: string;
 	}): Promise<void> {
 		console.log(options);
@@ -65,27 +65,104 @@ export function loadConfig(config: string): MailerOptions {
 	return MailerOptions.as(json);
 };
 
+export class MissingToAddressError extends Error {
+	constructor() {
+		super();
+	}
+
+	toString(): string {
+		return `Expected to address to be specified!`;
+	}
+};
+
+export class MissingFromAddressError extends Error {
+	constructor() {
+		super();
+	}
+
+	toString(): string {
+		return `Expected from address to be specified!`;
+	}
+};
+
+export class MissingReplyAddressError extends Error {
+	constructor() {
+		super();
+	}
+
+	toString(): string {
+		return `Expected reply address to be specified!`;
+	}
+};
+
 export class SMTPMailer implements Mailer {
 	protected options: MailerOptions;
 
+	protected getTo(options: { to_address?: string; to_name?: string; }): { address: string; name?: string; } {
+		let address = options.to_address ?? this.options.defaults?.to_address;
+		let name = options.to_name ?? this.options.defaults?.to_name;
+		if (address == null) {
+			throw new MissingToAddressError();
+		}
+		return {
+			address,
+			name
+		};
+	}
+
+	protected getFrom(options: { from_address?: string; from_name?: string; }): { address: string; name?: string; } {
+		let address = options.from_address ?? this.options.defaults?.from_address;
+		let name = options.from_name ?? this.options.defaults?.from_name;
+		if (address == null) {
+			throw new MissingFromAddressError();
+		}
+		return {
+			address,
+			name
+		};
+	}
+
+	protected getReply(options: { reply_address?: string; reply_name?: string; }): { address: string; name?: string; } {
+		let address = options.reply_address ?? this.options.defaults?.reply_address;
+		let name = options.reply_name ?? this.options.defaults?.reply_name;
+		if (address == null) {
+			throw new MissingReplyAddressError();
+		}
+		return {
+			address,
+			name
+		};
+	}
+
 	constructor(options: MailerOptions) {
-		this.options = { ...options };
+		this.options = {
+			...options,
+			smtp: {
+				...options.smtp
+			},
+			defaults: {
+				...options.defaults
+			}
+		};
 	}
 
 	send(options: {
-		from_address: string,
-		to_address: string,
-		reply_address: string,
 		subject: string,
 		message: string,
-		from_name?: string;
+		to_address?: string,
 		to_name?: string;
+		from_address?: string,
+		from_name?: string;
+		reply_address?: string,
 		reply_name?: string;
 	}): Promise<void> {
+		let to = this.getTo(options);
+		let from = this.getFrom(options);
+		let reply = this.getReply(options);
 		return new Promise((resolve, reject) => {
 			let tls_socket = libtls.connect({
-				host: this.options.hostname,
-				port: this.options.port
+				host: this.options.smtp.hostname,
+				port: this.options.smtp.port
 			});
 			let socket = tls_socket as libnet.Socket;
 			let state: State = "WAITING_FOR_GREETING";
@@ -104,7 +181,7 @@ export class SMTPMailer implements Mailer {
 					}
 					if (state === "WAITING_FOR_EHLO_REPLY") {
 						if (lines[0].startsWith("250")) {
-							socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.username + "\0" + this.options.password).toString("base64")}\r\n`);
+							socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.smtp.username + "\0" + this.options.smtp.password).toString("base64")}\r\n`);
 							state = "WAITING_FOR_AUTH_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
@@ -113,7 +190,7 @@ export class SMTPMailer implements Mailer {
 					}
 					if (state === "WAITING_FOR_AUTH_REPLY") {
 						if (lines[0].startsWith("235")) {
-							socket.write(`MAIL FROM: <${options.from_address}>\r\n`);
+							socket.write(`MAIL FROM: <${from.address}>\r\n`);
 							state = "WAITING_FOR_MAIL_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
@@ -122,7 +199,7 @@ export class SMTPMailer implements Mailer {
 					}
 					if (state === "WAITING_FOR_MAIL_REPLY") {
 						if (lines[0].startsWith("250")) {
-							socket.write(`RCPT TO: <${options.to_address}>\r\n`);
+							socket.write(`RCPT TO: <${to.address}>\r\n`);
 							state = "WAITING_FOR_RCPT_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
@@ -146,20 +223,20 @@ export class SMTPMailer implements Mailer {
 								`Content-Type: text/plain; charset=utf-8`,
 								`Content-Transfer-Encoding: base64`
 							];
-							if (typeof options?.from_name !== "undefined") {
-								lines.push(`From: ${encode(options.from_name)} <${options.from_address}>`);
+							if (typeof from.name !== "undefined") {
+								lines.push(`From: ${encode(from.name)} <${from.address}>`);
 							} else {
-								lines.push(`From: <${options.from_address}>`);
+								lines.push(`From: <${from.address}>`);
 							}
-							if (typeof options.to_name !== "undefined") {
-								lines.push(`To: ${encode(options.to_name)} <${options.to_address}>`);
+							if (typeof to.name !== "undefined") {
+								lines.push(`To: ${encode(to.name)} <${to.address}>`);
 							} else {
-								lines.push(`To: <${options.to_address}>`);
+								lines.push(`To: <${to.address}>`);
 							}
-							if (typeof options.reply_name !== "undefined") {
-								lines.push(`Reply-To: ${encode(options.reply_name)} <${options.reply_address}>`);
+							if (typeof reply.name !== "undefined") {
+								lines.push(`Reply-To: ${encode(reply.name)} <${reply.address}>`);
 							} else {
-								lines.push(`Reply-To: <${options.reply_address}>`);
+								lines.push(`Reply-To: <${reply.address}>`);
 							}
 							lines.push(`Subject: ${encode(options.subject)}`);
 							lines.push(``);
