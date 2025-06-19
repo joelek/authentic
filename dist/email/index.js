@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SMTPMailer = exports.TestMailer = exports.split = exports.encode = void 0;
+exports.SMTPMailer = exports.loadConfig = exports.TestMailer = exports.split = exports.encode = void 0;
+const libfs = require("fs");
 const libtls = require("tls");
+const config_1 = require("./config");
 function encode(string) {
     if (/^([\x09\x0A\x0D\x20-\x7E]*)$/.test(string)) {
         return string;
@@ -30,16 +32,23 @@ class TestMailer {
 }
 exports.TestMailer = TestMailer;
 ;
+function loadConfig(config) {
+    let string = libfs.readFileSync(config, "utf-8");
+    let json = JSON.parse(string);
+    return config_1.MailerOptions.as(json);
+}
+exports.loadConfig = loadConfig;
+;
 class SMTPMailer {
-    credentials;
-    constructor(credentials) {
-        this.credentials = { ...credentials };
+    options;
+    constructor(options) {
+        this.options = { ...options };
     }
     send(options) {
         return new Promise((resolve, reject) => {
             let tls_socket = libtls.connect({
-                host: this.credentials.hostname,
-                port: this.credentials.port
+                host: this.options.hostname,
+                port: this.options.port
             });
             let socket = tls_socket;
             let state = "WAITING_FOR_GREETING";
@@ -59,7 +68,7 @@ class SMTPMailer {
                     }
                     if (state === "WAITING_FOR_EHLO_REPLY") {
                         if (lines[0].startsWith("250")) {
-                            socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.credentials.username + "\0" + this.credentials.password).toString("base64")}\r\n`);
+                            socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.username + "\0" + this.options.password).toString("base64")}\r\n`);
                             state = "WAITING_FOR_AUTH_REPLY";
                         }
                         else {
