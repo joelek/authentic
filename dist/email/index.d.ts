@@ -4,41 +4,74 @@ export declare function encode(string: string): string;
 export declare function split(string: string, max_length: number): Array<string>;
 export interface Mailer {
     send(options: {
-        from_address: string;
-        to_address: string;
-        reply_address: string;
         subject: string;
         message: string;
-        from_name?: string;
+        to_address?: string;
         to_name?: string;
+        from_address?: string;
+        from_name?: string;
+        reply_address?: string;
         reply_name?: string;
     }): Promise<void>;
 }
 export declare class TestMailer implements Mailer {
     constructor();
     send(options: {
-        from_address: string;
-        to_address: string;
-        reply_address: string;
         subject: string;
         message: string;
-        from_name?: string;
+        to_address?: string;
         to_name?: string;
+        from_address?: string;
+        from_name?: string;
+        reply_address?: string;
         reply_name?: string;
     }): Promise<void>;
 }
 export declare function loadConfig(config: string): MailerOptions;
+export declare class MissingToAddressError extends Error {
+    constructor();
+    toString(): string;
+}
+export declare class MissingFromAddressError extends Error {
+    constructor();
+    toString(): string;
+}
+export declare class MissingReplyAddressError extends Error {
+    constructor();
+    toString(): string;
+}
 export declare class SMTPMailer implements Mailer {
     protected options: MailerOptions;
+    protected getTo(options: {
+        to_address?: string;
+        to_name?: string;
+    }): {
+        address: string;
+        name?: string;
+    };
+    protected getFrom(options: {
+        from_address?: string;
+        from_name?: string;
+    }): {
+        address: string;
+        name?: string;
+    };
+    protected getReply(options: {
+        reply_address?: string;
+        reply_name?: string;
+    }): {
+        address: string;
+        name?: string;
+    };
     constructor(options: MailerOptions);
     send(options: {
-        from_address: string;
-        to_address: string;
-        reply_address: string;
         subject: string;
         message: string;
-        from_name?: string;
+        to_address?: string;
         to_name?: string;
+        from_address?: string;
+        from_name?: string;
+        reply_address?: string;
         reply_name?: string;
     }): Promise<void>;
 }
