@@ -815,8 +815,6 @@ export class Server {
 	protected async sendEmail(to_address: string, message: string, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<void> {
 		let spoofable_host = this.getHeaders(request.headers(), "host").pop() ?? "localhost";
 		await this.mailer.send({
-			from_address: `postmaster@${spoofable_host}`,
-			reply_address: `postmaster@${spoofable_host}`,
 			subject: spoofable_host,
 			message: message,
 			to_address: to_address
