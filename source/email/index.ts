@@ -1,3 +1,4 @@
+import * as libcrypto from "crypto";
 import * as libfs from "fs";
 import * as libnet from "net";
 import * as libtls from "tls";
@@ -97,6 +98,11 @@ export class MissingReplyAddressError extends Error {
 
 export class SMTPMailer implements Mailer {
 	protected options: MailerOptions;
+
+	protected generateMessageIDAddress(from_address: string): string {
+		let token = libcrypto.randomBytes(16).toString("hex");
+		return `${token}@${from_address.slice(from_address.indexOf("@") + 1)}`;
+	}
 
 	protected getTo(options: { to_address?: string; to_name?: string; }): { address: string; name?: string; } {
 		let address = options.to_address ?? this.options.defaults?.to_address;
@@ -221,7 +227,8 @@ export class SMTPMailer implements Mailer {
 								`MIME-Version: 1.0`,
 								`Date: ${new Date().toUTCString()}`,
 								`Content-Type: text/plain; charset=utf-8`,
-								`Content-Transfer-Encoding: base64`
+								`Content-Transfer-Encoding: base64`,
+								`Message-ID: <${this.generateMessageIDAddress(from.address)}>`
 							];
 							if (typeof from.name !== "undefined") {
 								lines.push(`From: ${encode(from.name)} <${from.address}>`);
