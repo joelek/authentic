@@ -1,5 +1,7 @@
-import * as libtls from "tls";
+import * as libfs from "fs";
 import * as libnet from "net";
+import * as libtls from "tls";
+import { MailerOptions } from "./config";
 
 export type State =
 	"WAITING_FOR_GREETING" |
@@ -40,13 +42,6 @@ export interface Mailer {
 	}): Promise<void>;
 };
 
-export type Credentials = {
-	hostname: string;
-	port: number;
-	username: string;
-	password: string;
-};
-
 export class TestMailer implements Mailer {
 	constructor() {}
 
@@ -64,11 +59,17 @@ export class TestMailer implements Mailer {
 	}
 };
 
-export class SMTPMailer implements Mailer {
-	protected credentials: Credentials;
+export function loadConfig(config: string): MailerOptions {
+	let string = libfs.readFileSync(config, "utf-8");
+	let json = JSON.parse(string);
+	return MailerOptions.as(json);
+};
 
-	constructor(credentials: Credentials) {
-		this.credentials = { ...credentials };
+export class SMTPMailer implements Mailer {
+	protected options: MailerOptions;
+
+	constructor(options: MailerOptions) {
+		this.options = { ...options };
 	}
 
 	send(options: {
@@ -83,8 +84,8 @@ export class SMTPMailer implements Mailer {
 	}): Promise<void> {
 		return new Promise((resolve, reject) => {
 			let tls_socket = libtls.connect({
-				host: this.credentials.hostname,
-				port: this.credentials.port
+				host: this.options.hostname,
+				port: this.options.port
 			});
 			let socket = tls_socket as libnet.Socket;
 			let state: State = "WAITING_FOR_GREETING";
@@ -103,7 +104,7 @@ export class SMTPMailer implements Mailer {
 					}
 					if (state === "WAITING_FOR_EHLO_REPLY") {
 						if (lines[0].startsWith("250")) {
-							socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.credentials.username + "\0" + this.credentials.password).toString("base64")}\r\n`);
+							socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.username + "\0" + this.options.password).toString("base64")}\r\n`);
 							state = "WAITING_FOR_AUTH_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
