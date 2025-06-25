@@ -42,3 +42,4 @@ manager.toggle();
 * Consider adding secrets.
 * Rename token to code.
 * Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
+* Add customizable and localizable HTML emails.
