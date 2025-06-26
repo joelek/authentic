@@ -7,7 +7,7 @@ const libnet = require("net");
 const api = require("../api/server");
 const email_1 = require("../email");
 const shared_1 = require("../shared");
-const origins_1 = require("./stores/origins");
+const origin_1 = require("./stores/origin");
 const role_1 = require("./stores/role");
 const session_1 = require("./stores/session");
 const user_1 = require("./stores/user");
@@ -848,7 +848,7 @@ class Server {
     constructor(options) {
         this.users = options?.users ?? new user_1.VolatileUserStore();
         this.sessions = options?.sessions ?? new session_1.VolatileSessionStore();
-        this.origins = options?.origins ?? new origins_1.VolatileOriginStore();
+        this.origins = options?.origins ?? new origin_1.VolatileOriginStore();
         this.roles = options?.roles ?? new role_1.VolatileRoleStore();
         this.cookie = options?.cookie ?? "session";
         this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];

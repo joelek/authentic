@@ -2,7 +2,7 @@ import * as autoguard from "@joelek/autoguard/dist/lib-server";
 import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer } from "../email";
-import { Origin, OriginStore } from "./stores/origins";
+import { Origin, OriginStore } from "./stores/origin";
 import { RoleStore } from "./stores/role";
 import { Session, SessionStore } from "./stores/session";
 import { UserStore } from "./stores/user";
