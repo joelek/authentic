@@ -1,3 +1,4 @@
+import * as autoguard from "@joelek/autoguard";
 export declare class ExpectedObjectError extends Error {
     readonly key: ObjectKey;
     readonly value: ObjectValue;
@@ -70,9 +71,10 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>> implemen
     protected connection: ConnectionLike;
     protected table: string;
     protected id: string;
+    protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
     protected createId(): Promise<string>;
     protected escapeIdentifier(identifier: string): string;
-    constructor(connection: ConnectionLike, table: string, id: string);
+    constructor(connection: ConnectionLike, table: string, id: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>);
     createObject(properties: A): Promise<Object<A>>;
     lookupObject(id: string): Promise<Object<A>>;
     lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]>;

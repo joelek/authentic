@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
+const autoguard = require("@joelek/autoguard");
 const shared_1 = require("../../shared");
 const utils = require("../utils");
 class ExpectedObjectError extends Error {
@@ -321,6 +322,7 @@ class DatabaseObjectStore {
     connection;
     table;
     id;
+    guard;
     async createId() {
         let id = utils.generateHexId(32);
         while (true) {
@@ -335,10 +337,11 @@ class DatabaseObjectStore {
     escapeIdentifier(identifier) {
         return `"${identifier.replaceAll("\"", "\"\"")}"`;
     }
-    constructor(connection, table, id) {
+    constructor(connection, table, id, guard) {
         this.connection = connection;
         this.table = table;
         this.id = id;
+        this.guard = guard;
     }
     async createObject(properties) {
         let id = await this.createId();
@@ -371,10 +374,15 @@ class DatabaseObjectStore {
 			WHERE
 				${this.escapeIdentifier(this.id)} = ?
 		`, values);
+        objects = objects.map((object) => {
+            object["id"] = object[this.id];
+            delete object[this.id];
+            return object;
+        });
         if (objects.length === 0) {
             throw new ExpectedObjectError(this.id, id);
         }
-        return objects[0];
+        return this.guard.as(objects[0]);
     }
     async lookupObjects(key, operator, value) {
         let values = [
@@ -387,7 +395,12 @@ class DatabaseObjectStore {
 			WHERE
 				${this.escapeIdentifier(String(key))} ${operator} ?
 		`, values);
-        return objects;
+        objects = objects.map((object) => {
+            object["id"] = object[this.id];
+            delete object[this.id];
+            return object;
+        });
+        return autoguard.guards.Array.of(this.guard).as(objects);
     }
     async updateObject(object) {
         let id = object.id;
