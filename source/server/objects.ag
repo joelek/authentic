@@ -5,8 +5,12 @@ guard UserProperties: {
 };
 
 guard RoleProperties: {
-	user_id: string,
 	name: string
+};
+
+guard UserRoleProperties: {
+	user_id: string,
+	role_id: string
 };
 
 guard SessionProperties: ../api/server/State & {

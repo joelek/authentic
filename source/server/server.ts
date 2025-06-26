@@ -10,6 +10,7 @@ import { Origin, OriginStore, VolatileOriginStore } from "./stores/origin";
 import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
 import { UserStore, VolatileUserStore } from "./stores/user";
+import { UserRoleStore, VolatileUserRoleStore } from "./stores/user_role";
 import { Validator } from "./validator";
 
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
@@ -21,6 +22,7 @@ export type ServerOptions = {
 	sessions?: SessionStore;
 	origins?: OriginStore;
 	roles?: RoleStore;
+	user_roles?: UserRoleStore;
 	cookie?: string;
 	trusted_proxies?: Array<string>;
 	session_validity_minutes?: number;
@@ -78,6 +80,7 @@ export class Server {
 	protected sessions: SessionStore;
 	protected origins: OriginStore;
 	protected roles: RoleStore;
+	protected user_roles: UserRoleStore;
 	protected cookie: string;
 	protected trusted_proxies: Array<string>;
 	protected session_validity_minutes: number;
@@ -105,7 +108,8 @@ export class Server {
 		if (authenticated_user_id == null) {
 			return new AccessHandler(authenticated_user_id, []);
 		} else {
-			let roles = await this.roles.lookupObjects("user_id", "=", authenticated_user_id);
+			let user_roles = await this.user_roles.lookupObjects("user_id", "=", authenticated_user_id);
+			let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
 			return new AccessHandler(authenticated_user_id, roles.map((role) => role.name));
 		}
 	}
@@ -897,6 +901,7 @@ export class Server {
 		this.sessions = options?.sessions ?? new VolatileSessionStore();
 		this.origins = options?.origins ?? new VolatileOriginStore();
 		this.roles = options?.roles ?? new VolatileRoleStore();
+		this.user_roles = options?.user_roles ?? new VolatileUserRoleStore();
 		this.cookie = options?.cookie ?? "session";
 		this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];
 		this.session_validity_minutes = options?.session_validity_minutes ?? 20;
@@ -927,9 +932,13 @@ export class Server {
 	wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B> {
 		return async (request) => {
 			let { session_id, ticket } = this.getCookieData(request) ?? {};
+			console.log({ session_id, ticket });
 			let session = await this.getSession(session_id);
+			console.log({ session });
 			let authenticated_user_id = await this.getAuthenticatedUserId(session, ticket);
+			console.log({ authenticated_user_id });
 			let access_handler = await this.createAccessHandler(authenticated_user_id);
+			console.log({ access_handler });
 			let response = await route(request, access_handler);
 			return this.finalizeResponse(response, session, ticket);
 		};
