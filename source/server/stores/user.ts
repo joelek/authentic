@@ -25,7 +25,7 @@ export const User = autoguard.guards.Intersection.of(
 );
 
 export class DatabaseUserStore extends DatabaseObjectStore<UserProperties> {
-	constructor(connection: ConnectionLike, table: string, id: string) {
-		super(connection, table, id, User);
+	constructor(connection: ConnectionLike, table: string) {
+		super(connection, table, User);
 	}
 };

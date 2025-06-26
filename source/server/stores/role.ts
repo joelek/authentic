@@ -24,7 +24,7 @@ export const Role = autoguard.guards.Intersection.of(
 );
 
 export class DatabaseRoleStore extends DatabaseObjectStore<RoleProperties> {
-	constructor(connection: ConnectionLike, table: string, id: string) {
-		super(connection, table, id, Role);
+	constructor(connection: ConnectionLike, table: string) {
+		super(connection, table, Role);
 	}
 };

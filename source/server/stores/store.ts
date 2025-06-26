@@ -368,7 +368,6 @@ export type ConnectionLike = {
 export class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
 	protected connection: ConnectionLike;
 	protected table: string;
-	protected id: string;
 	protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
 
 	protected async createId(): Promise<string> {
@@ -387,17 +386,16 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return `"${identifier.replaceAll("\"", "\"\"")}"`;
 	}
 
-	constructor(connection: ConnectionLike, table: string, id: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
+	constructor(connection: ConnectionLike, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
 		this.connection = connection;
 		this.table = table;
-		this.id = id;
 		this.guard = guard;
 	}
 
 	async createObject(properties: A): Promise<Object<A>> {
 		let id = await this.createId();
 		let columns = [
-			this.id,
+			"id",
 			...Object.keys(properties)
 		];
 		let values = [
@@ -424,15 +422,10 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier(this.id)} = ?
+				${this.escapeIdentifier("id")} = ?
 		`, values);
-		objects = objects.map((object) => {
-			object["id"] = object[this.id];
-			delete object[this.id];
-			return object;
-		});
 		if (objects.length === 0) {
-			throw new ExpectedObjectError(this.id, id);
+			throw new ExpectedObjectError("id", id);
 		}
 		return this.guard.as(objects[0]);
 	}
@@ -448,11 +441,6 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 			WHERE
 				${this.escapeIdentifier(String(key))} ${operator} ?
 		`, values);
-		objects = objects.map((object) => {
-			object["id"] = object[this.id];
-			delete object[this.id];
-			return object;
-		});
 		return autoguard.guards.Array.of(this.guard).as(objects);
 	}
 
@@ -470,7 +458,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
 			WHERE
-				${this.escapeIdentifier(this.id)} = ?
+				${this.escapeIdentifier("id")} = ?
 		`, values);
 		return this.lookupObject(object.id);
 	}
@@ -484,7 +472,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 			DELETE
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier(this.id)} = ?
+				${this.escapeIdentifier("id")} = ?
 		`, values);
 		return object;
 	}

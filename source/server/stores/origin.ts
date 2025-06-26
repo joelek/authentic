@@ -24,7 +24,7 @@ export const Origin = autoguard.guards.Intersection.of(
 );
 
 export class DatabaseOriginStore extends DatabaseObjectStore<OriginProperties> {
-	constructor(connection: ConnectionLike, table: string, id: string) {
-		super(connection, table, id, Origin);
+	constructor(connection: ConnectionLike, table: string) {
+		super(connection, table, Origin);
 	}
 };

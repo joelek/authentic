@@ -22,7 +22,7 @@ export const Session = autoguard.guards.Intersection.of(
 );
 
 export class DatabaseSessionStore extends DatabaseObjectStore<SessionProperties> {
-	constructor(connection: ConnectionLike, table: string, id: string) {
-		super(connection, table, id, Session);
+	constructor(connection: ConnectionLike, table: string) {
+		super(connection, table, Session);
 	}
 };
