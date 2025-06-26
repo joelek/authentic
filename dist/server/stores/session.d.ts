@@ -12,5 +12,5 @@ export declare const Session: autoguard.guards.IntersectionGuard<[{
     id: string;
 }, SessionProperties]>;
 export declare class DatabaseSessionStore extends DatabaseObjectStore<SessionProperties> {
-    constructor(connection: ConnectionLike, table: string, id: string);
+    constructor(connection: ConnectionLike, table: string);
 }

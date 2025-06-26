@@ -15,5 +15,5 @@ export declare const Role: autoguard.guards.IntersectionGuard<[{
     name: string;
 }]>;
 export declare class DatabaseRoleStore extends DatabaseObjectStore<RoleProperties> {
-    constructor(connection: ConnectionLike, table: string, id: string);
+    constructor(connection: ConnectionLike, table: string);
 }

@@ -321,7 +321,6 @@ exports.VolatileObjectStore = VolatileObjectStore;
 class DatabaseObjectStore {
     connection;
     table;
-    id;
     guard;
     async createId() {
         let id = utils.generateHexId(32);
@@ -337,16 +336,15 @@ class DatabaseObjectStore {
     escapeIdentifier(identifier) {
         return `"${identifier.replaceAll("\"", "\"\"")}"`;
     }
-    constructor(connection, table, id, guard) {
+    constructor(connection, table, guard) {
         this.connection = connection;
         this.table = table;
-        this.id = id;
         this.guard = guard;
     }
     async createObject(properties) {
         let id = await this.createId();
         let columns = [
-            this.id,
+            "id",
             ...Object.keys(properties)
         ];
         let values = [
@@ -372,15 +370,10 @@ class DatabaseObjectStore {
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier(this.id)} = ?
+				${this.escapeIdentifier("id")} = ?
 		`, values);
-        objects = objects.map((object) => {
-            object["id"] = object[this.id];
-            delete object[this.id];
-            return object;
-        });
         if (objects.length === 0) {
-            throw new ExpectedObjectError(this.id, id);
+            throw new ExpectedObjectError("id", id);
         }
         return this.guard.as(objects[0]);
     }
@@ -395,11 +388,6 @@ class DatabaseObjectStore {
 			WHERE
 				${this.escapeIdentifier(String(key))} ${operator} ?
 		`, values);
-        objects = objects.map((object) => {
-            object["id"] = object[this.id];
-            delete object[this.id];
-            return object;
-        });
         return autoguard.guards.Array.of(this.guard).as(objects);
     }
     async updateObject(object) {
@@ -416,7 +404,7 @@ class DatabaseObjectStore {
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
 			WHERE
-				${this.escapeIdentifier(this.id)} = ?
+				${this.escapeIdentifier("id")} = ?
 		`, values);
         return this.lookupObject(object.id);
     }
@@ -429,7 +417,7 @@ class DatabaseObjectStore {
 			DELETE
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier(this.id)} = ?
+				${this.escapeIdentifier("id")} = ?
 		`, values);
         return object;
     }

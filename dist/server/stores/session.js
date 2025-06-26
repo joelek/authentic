@@ -17,8 +17,8 @@ exports.Session = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
     id: autoguard.guards.String
 }), objects_1.SessionProperties);
 class DatabaseSessionStore extends store_1.DatabaseObjectStore {
-    constructor(connection, table, id) {
-        super(connection, table, id, exports.Session);
+    constructor(connection, table) {
+        super(connection, table, exports.Session);
     }
 }
 exports.DatabaseSessionStore = DatabaseSessionStore;

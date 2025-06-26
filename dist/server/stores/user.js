@@ -17,8 +17,8 @@ exports.User = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
     id: autoguard.guards.String
 }), objects_1.UserProperties);
 class DatabaseUserStore extends store_1.DatabaseObjectStore {
-    constructor(connection, table, id) {
-        super(connection, table, id, exports.User);
+    constructor(connection, table) {
+        super(connection, table, exports.User);
     }
 }
 exports.DatabaseUserStore = DatabaseUserStore;

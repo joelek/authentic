@@ -16,5 +16,5 @@ export declare const User: autoguard.guards.IntersectionGuard<[{
     username?: string | undefined;
 }]>;
 export declare class DatabaseUserStore extends DatabaseObjectStore<UserProperties> {
-    constructor(connection: ConnectionLike, table: string, id: string);
+    constructor(connection: ConnectionLike, table: string);
 }

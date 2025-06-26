@@ -16,5 +16,5 @@ export declare const Origin: autoguard.guards.IntersectionGuard<[{
     wait_until_utc: number;
 }]>;
 export declare class DatabaseOriginStore extends DatabaseObjectStore<OriginProperties> {
-    constructor(connection: ConnectionLike, table: string, id: string);
+    constructor(connection: ConnectionLike, table: string);
 }
