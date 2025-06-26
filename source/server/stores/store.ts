@@ -359,3 +359,120 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends Array<
 		return this.cloneObject(object);
 	}
 };
+
+export type ConnectionLike = {
+	query<A>(sql: string, parameters?: Array<ObjectValue>): Promise<A>;
+};
+
+export class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
+	protected connection: ConnectionLike;
+	protected table: string;
+	protected id: string;
+
+	protected async createId(): Promise<string> {
+		let id = utils.generateHexId(32);
+		while (true) {
+			let object = await this.lookupObject(id).catch(() => undefined);
+			if (object == null) {
+				break;
+			}
+			id = utils.generateHexId(32);
+		}
+		return id;
+	}
+
+	protected escapeIdentifier(identifier: string): string {
+		return `"${identifier.replaceAll("\"", "\"\"")}"`;
+	}
+
+	constructor(connection: ConnectionLike, table: string, id: string) {
+		this.connection = connection;
+		this.table = table;
+		this.id = id;
+	}
+
+	async createObject(properties: A): Promise<Object<A>> {
+		let id = await this.createId();
+		let columns = [
+			this.id,
+			...Object.keys(properties)
+		];
+		let values = [
+			id,
+			...Object.values<ObjectValue>(properties)
+		];
+		await this.connection.query(`
+			INSERT INTO ${this.escapeIdentifier(this.table)} (
+				${columns.map((column) => `${this.escapeIdentifier(column)}`).join(",\r\n				")}
+			)
+			VALUES (
+				${"?".repeat(columns.length).split("").join(",\r\n				")}
+			)
+		`, values);
+		return this.lookupObject(id);
+	}
+
+	async lookupObject(id: string): Promise<Object<A>> {
+		let values = [
+			id
+		];
+		let objects = await this.connection.query<Array<Object<A>>>(`
+			SELECT
+				*
+			FROM ${this.escapeIdentifier(this.table)}
+			WHERE
+				${this.escapeIdentifier(this.id)} = ?
+		`, values);
+		if (objects.length === 0) {
+			throw new ExpectedObjectError(this.id, id);
+		}
+		return objects[0];
+	}
+
+	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]> {
+		let values = [
+			value
+		];
+		let objects = await this.connection.query<Array<Object<A>>>(`
+			SELECT
+				*
+			FROM ${this.escapeIdentifier(this.table)}
+			WHERE
+				${this.escapeIdentifier(String(key))} ${operator} ?
+		`, values);
+		return objects;
+	}
+
+	async updateObject(object: Object<A>): Promise<Object<A>> {
+		let id = object.id;
+		let columns = [
+			...Object.keys(object)
+		];
+		let values = [
+			...Object.values<ObjectValue>(object),
+			id
+		];
+		await this.connection.query(`
+			UPDATE ${this.escapeIdentifier(this.table)}
+			SET
+				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
+			WHERE
+				${this.escapeIdentifier(this.id)} = ?
+		`, values);
+		return this.lookupObject(object.id);
+	}
+
+	async deleteObject(id: string): Promise<Object<A>> {
+		let object = await this.lookupObject(id);
+		let values = [
+			id
+		];
+		await this.connection.query(`
+			DELETE
+			FROM ${this.escapeIdentifier(this.table)}
+			WHERE
+				${this.escapeIdentifier(this.id)} = ?
+		`, values);
+		return object;
+	}
+};
