@@ -1,3 +1,4 @@
+import * as autoguard from "@joelek/autoguard";
 import { ExpectedUnreachableCodeError } from "../../shared";
 import * as utils from "../utils";
 
@@ -368,6 +369,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	protected connection: ConnectionLike;
 	protected table: string;
 	protected id: string;
+	protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
 
 	protected async createId(): Promise<string> {
 		let id = utils.generateHexId(32);
@@ -385,10 +387,11 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return `"${identifier.replaceAll("\"", "\"\"")}"`;
 	}
 
-	constructor(connection: ConnectionLike, table: string, id: string) {
+	constructor(connection: ConnectionLike, table: string, id: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
 		this.connection = connection;
 		this.table = table;
 		this.id = id;
+		this.guard = guard;
 	}
 
 	async createObject(properties: A): Promise<Object<A>> {
@@ -416,31 +419,41 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		let values = [
 			id
 		];
-		let objects = await this.connection.query<Array<Object<A>>>(`
+		let objects = await this.connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(this.id)} = ?
 		`, values);
+		objects = objects.map((object) => {
+			object["id"] = object[this.id];
+			delete object[this.id];
+			return object;
+		});
 		if (objects.length === 0) {
 			throw new ExpectedObjectError(this.id, id);
 		}
-		return objects[0];
+		return this.guard.as(objects[0]);
 	}
 
 	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]> {
 		let values = [
 			value
 		];
-		let objects = await this.connection.query<Array<Object<A>>>(`
+		let objects = await this.connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(String(key))} ${operator} ?
 		`, values);
-		return objects;
+		objects = objects.map((object) => {
+			object["id"] = object[this.id];
+			delete object[this.id];
+			return object;
+		});
+		return autoguard.guards.Array.of(this.guard).as(objects);
 	}
 
 	async updateObject(object: Object<A>): Promise<Object<A>> {
