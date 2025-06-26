@@ -1,7 +1,7 @@
 guard UserProperties: {
 	email: string,
 	passdata: string,
-	username?: string
+	username?: string | null
 };
 
 guard RoleProperties: {
@@ -12,16 +12,16 @@ guard RoleProperties: {
 guard SessionProperties: ../api/server/State & {
 	expires_utc: integer,
 	wait_until_utc: integer,
-	username?: string,
-	username_attempts?: integer,
-	email?: string,
-	email_attempts?: integer,
-	token_hash?: string,
-	token_hash_attempts?: integer,
-	passdata?: string,
-	passdata_attempts?: integer,
-	authenticated_user_id?: string,
-	ticket_hash?: string
+	username?: string | null,
+	username_attempts?: integer | null,
+	email?: string | null,
+	email_attempts?: integer | null,
+	token_hash?: string | null,
+	token_hash_attempts?: integer | null,
+	passdata?: string | null,
+	passdata_attempts?: integer | null,
+	authenticated_user_id?: string | null,
+	ticket_hash?: string | null
 };
 
 guard OriginProperties: {

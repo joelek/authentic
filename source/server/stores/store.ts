@@ -414,16 +414,15 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async lookupObject(id: string): Promise<Object<A>> {
-		let values = [
-			id
-		];
 		let objects = await this.connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier("id")} = ?
-		`, values);
+		`, [
+			id
+		]);
 		if (objects.length === 0) {
 			throw new ExpectedObjectError("id", id);
 		}
@@ -431,49 +430,62 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]> {
-		let values = [
-			value
-		];
 		let objects = await this.connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(String(key))} ${operator} ?
-		`, values);
+		`, [
+			value
+		]);
 		return autoguard.guards.Array.of(this.guard).as(objects);
 	}
 
 	async updateObject(object: Object<A>): Promise<Object<A>> {
 		let id = object.id;
+		let existing_object = await this.lookupObject(id).catch(() => undefined);
+		if (existing_object == null) {
+			throw new ExpectedObjectError("id", id);
+		}
 		let columns = [
 			...Object.keys(object)
 		];
 		let values = [
-			...Object.values<ObjectValue>(object),
-			id
+			...Object.values<ObjectValue>(object)
 		];
+		for (let key in existing_object) {
+			if (!(key in object)) {
+				columns.push(key);
+				values.push(undefined);
+			}
+		}
 		await this.connection.query(`
 			UPDATE ${this.escapeIdentifier(this.table)}
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
 			WHERE
 				${this.escapeIdentifier("id")} = ?
-		`, values);
-		return this.lookupObject(object.id);
+		`, [
+			...values,
+			id
+		]);
+		return this.lookupObject(id);
 	}
 
 	async deleteObject(id: string): Promise<Object<A>> {
-		let object = await this.lookupObject(id);
-		let values = [
-			id
-		];
+		let object = await this.lookupObject(id).catch(() => undefined);
+		if (object == null) {
+			throw new ExpectedObjectError("id", id);
+		}
 		await this.connection.query(`
 			DELETE
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier("id")} = ?
-		`, values);
+		`, [
+			id
+		]);
 		return object;
 	}
 };

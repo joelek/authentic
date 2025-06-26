@@ -7,14 +7,20 @@ export const UserProperties: autoguard.serialization.MessageGuard<UserProperties
 	"email": autoguard.guards.String,
 	"passdata": autoguard.guards.String
 }, {
-	"username": autoguard.guards.String
+	"username": autoguard.guards.Union.of(
+		autoguard.guards.String,
+		autoguard.guards.Null
+	)
 });
 
 export type UserProperties = autoguard.guards.Object<{
 	"email": autoguard.guards.String,
 	"passdata": autoguard.guards.String
 }, {
-	"username": autoguard.guards.String
+	"username": autoguard.guards.Union<[
+		autoguard.guards.String,
+		autoguard.guards.Null
+	]>
 }>;
 
 export const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties> = autoguard.guards.Object.of({
@@ -33,16 +39,46 @@ export const SessionProperties: autoguard.serialization.MessageGuard<SessionProp
 		"expires_utc": autoguard.guards.Integer,
 		"wait_until_utc": autoguard.guards.Integer
 	}, {
-		"username": autoguard.guards.String,
-		"username_attempts": autoguard.guards.Integer,
-		"email": autoguard.guards.String,
-		"email_attempts": autoguard.guards.Integer,
-		"token_hash": autoguard.guards.String,
-		"token_hash_attempts": autoguard.guards.Integer,
-		"passdata": autoguard.guards.String,
-		"passdata_attempts": autoguard.guards.Integer,
-		"authenticated_user_id": autoguard.guards.String,
-		"ticket_hash": autoguard.guards.String
+		"username": autoguard.guards.Union.of(
+			autoguard.guards.String,
+			autoguard.guards.Null
+		),
+		"username_attempts": autoguard.guards.Union.of(
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		),
+		"email": autoguard.guards.Union.of(
+			autoguard.guards.String,
+			autoguard.guards.Null
+		),
+		"email_attempts": autoguard.guards.Union.of(
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		),
+		"token_hash": autoguard.guards.Union.of(
+			autoguard.guards.String,
+			autoguard.guards.Null
+		),
+		"token_hash_attempts": autoguard.guards.Union.of(
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		),
+		"passdata": autoguard.guards.Union.of(
+			autoguard.guards.String,
+			autoguard.guards.Null
+		),
+		"passdata_attempts": autoguard.guards.Union.of(
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		),
+		"authenticated_user_id": autoguard.guards.Union.of(
+			autoguard.guards.String,
+			autoguard.guards.Null
+		),
+		"ticket_hash": autoguard.guards.Union.of(
+			autoguard.guards.String,
+			autoguard.guards.Null
+		)
 	})
 );
 
@@ -52,16 +88,46 @@ export type SessionProperties = autoguard.guards.Intersection<[
 		"expires_utc": autoguard.guards.Integer,
 		"wait_until_utc": autoguard.guards.Integer
 	}, {
-		"username": autoguard.guards.String,
-		"username_attempts": autoguard.guards.Integer,
-		"email": autoguard.guards.String,
-		"email_attempts": autoguard.guards.Integer,
-		"token_hash": autoguard.guards.String,
-		"token_hash_attempts": autoguard.guards.Integer,
-		"passdata": autoguard.guards.String,
-		"passdata_attempts": autoguard.guards.Integer,
-		"authenticated_user_id": autoguard.guards.String,
-		"ticket_hash": autoguard.guards.String
+		"username": autoguard.guards.Union<[
+			autoguard.guards.String,
+			autoguard.guards.Null
+		]>,
+		"username_attempts": autoguard.guards.Union<[
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		]>,
+		"email": autoguard.guards.Union<[
+			autoguard.guards.String,
+			autoguard.guards.Null
+		]>,
+		"email_attempts": autoguard.guards.Union<[
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		]>,
+		"token_hash": autoguard.guards.Union<[
+			autoguard.guards.String,
+			autoguard.guards.Null
+		]>,
+		"token_hash_attempts": autoguard.guards.Union<[
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		]>,
+		"passdata": autoguard.guards.Union<[
+			autoguard.guards.String,
+			autoguard.guards.Null
+		]>,
+		"passdata_attempts": autoguard.guards.Union<[
+			autoguard.guards.Integer,
+			autoguard.guards.Null
+		]>,
+		"authenticated_user_id": autoguard.guards.Union<[
+			autoguard.guards.String,
+			autoguard.guards.Null
+		]>,
+		"ticket_hash": autoguard.guards.Union<[
+			autoguard.guards.String,
+			autoguard.guards.Null
+		]>
 	}>
 ]>;
 
