@@ -883,13 +883,9 @@ class Server {
     wrapRoute(route) {
         return async (request) => {
             let { session_id, ticket } = this.getCookieData(request) ?? {};
-            console.log({ session_id, ticket });
             let session = await this.getSession(session_id);
-            console.log({ session });
             let authenticated_user_id = await this.getAuthenticatedUserId(session, ticket);
-            console.log({ authenticated_user_id });
             let access_handler = await this.createAccessHandler(authenticated_user_id);
-            console.log({ access_handler });
             let response = await route(request, access_handler);
             return this.finalizeResponse(response, session, ticket);
         };
