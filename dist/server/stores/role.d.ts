@@ -11,7 +11,6 @@ export declare class VolatileRoleStore extends VolatileObjectStore<RolePropertie
 export declare const Role: autoguard.guards.IntersectionGuard<[{
     id: string;
 }, {
-    user_id: string;
     name: string;
 }]>;
 export declare class DatabaseRoleStore extends DatabaseObjectStore<RoleProperties> {

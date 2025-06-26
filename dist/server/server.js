@@ -11,6 +11,7 @@ const origin_1 = require("./stores/origin");
 const role_1 = require("./stores/role");
 const session_1 = require("./stores/session");
 const user_1 = require("./stores/user");
+const user_role_1 = require("./stores/user_role");
 const validator_1 = require("./validator");
 class AccessHandler {
     authenticated_user_id;
@@ -43,6 +44,7 @@ class Server {
     sessions;
     origins;
     roles;
+    user_roles;
     cookie;
     trusted_proxies;
     session_validity_minutes;
@@ -68,7 +70,8 @@ class Server {
             return new AccessHandler(authenticated_user_id, []);
         }
         else {
-            let roles = await this.roles.lookupObjects("user_id", "=", authenticated_user_id);
+            let user_roles = await this.user_roles.lookupObjects("user_id", "=", authenticated_user_id);
+            let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
             return new AccessHandler(authenticated_user_id, roles.map((role) => role.name));
         }
     }
@@ -850,6 +853,7 @@ class Server {
         this.sessions = options?.sessions ?? new session_1.VolatileSessionStore();
         this.origins = options?.origins ?? new origin_1.VolatileOriginStore();
         this.roles = options?.roles ?? new role_1.VolatileRoleStore();
+        this.user_roles = options?.user_roles ?? new user_role_1.VolatileUserRoleStore();
         this.cookie = options?.cookie ?? "session";
         this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];
         this.session_validity_minutes = options?.session_validity_minutes ?? 20;
@@ -879,9 +883,13 @@ class Server {
     wrapRoute(route) {
         return async (request) => {
             let { session_id, ticket } = this.getCookieData(request) ?? {};
+            console.log({ session_id, ticket });
             let session = await this.getSession(session_id);
+            console.log({ session });
             let authenticated_user_id = await this.getAuthenticatedUserId(session, ticket);
+            console.log({ authenticated_user_id });
             let access_handler = await this.createAccessHandler(authenticated_user_id);
+            console.log({ access_handler });
             let response = await route(request, access_handler);
             return this.finalizeResponse(response, session, ticket);
         };

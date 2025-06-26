@@ -12,8 +12,12 @@ export type UserProperties = autoguard.guards.Object<{
 }>;
 export declare const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties>;
 export type RoleProperties = autoguard.guards.Object<{
-    "user_id": autoguard.guards.String;
     "name": autoguard.guards.String;
+}, {}>;
+export declare const UserRoleProperties: autoguard.serialization.MessageGuard<UserRoleProperties>;
+export type UserRoleProperties = autoguard.guards.Object<{
+    "user_id": autoguard.guards.String;
+    "role_id": autoguard.guards.String;
 }, {}>;
 export declare const SessionProperties: autoguard.serialization.MessageGuard<SessionProperties>;
 export type SessionProperties = autoguard.guards.Intersection<[
@@ -78,8 +82,11 @@ export declare namespace Autoguard {
             username?: string | null | undefined;
         }>;
         RoleProperties: autoguard.guards.ReferenceGuard<{
-            user_id: string;
             name: string;
+        }>;
+        UserRoleProperties: autoguard.guards.ReferenceGuard<{
+            user_id: string;
+            role_id: string;
         }>;
         SessionProperties: autoguard.guards.ReferenceGuard<SessionProperties>;
         OriginProperties: autoguard.guards.ReferenceGuard<{

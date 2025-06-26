@@ -6,6 +6,7 @@ import { Origin, OriginStore } from "./stores/origin";
 import { RoleStore } from "./stores/role";
 import { Session, SessionStore } from "./stores/session";
 import { UserStore } from "./stores/user";
+import { UserRoleStore } from "./stores/user_role";
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
 type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
 export type ServerOptions = {
@@ -13,6 +14,7 @@ export type ServerOptions = {
     sessions?: SessionStore;
     origins?: OriginStore;
     roles?: RoleStore;
+    user_roles?: UserRoleStore;
     cookie?: string;
     trusted_proxies?: Array<string>;
     session_validity_minutes?: number;
@@ -49,6 +51,7 @@ export declare class Server {
     protected sessions: SessionStore;
     protected origins: OriginStore;
     protected roles: RoleStore;
+    protected user_roles: UserRoleStore;
     protected cookie: string;
     protected trusted_proxies: Array<string>;
     protected session_validity_minutes: number;
