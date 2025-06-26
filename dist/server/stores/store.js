@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VolatileObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
-const libcrypto = require("crypto");
+exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
 const shared_1 = require("../../shared");
+const utils = require("../utils");
 class ExpectedObjectError extends Error {
     key;
     value;
@@ -235,9 +235,9 @@ class VolatileObjectStore {
         };
     }
     createId() {
-        let id = libcrypto.randomBytes(16).toString("hex");
+        let id = utils.generateHexId(32);
         while (this.objects.has(id)) {
-            id = libcrypto.randomBytes(16).toString("hex");
+            id = utils.generateHexId(32);
         }
         return id;
     }
@@ -316,4 +316,110 @@ class VolatileObjectStore {
     }
 }
 exports.VolatileObjectStore = VolatileObjectStore;
+;
+class DatabaseObjectStore {
+    connection;
+    table;
+    id;
+    async createId() {
+        let id = utils.generateHexId(32);
+        while (true) {
+            let object = await this.lookupObject(id).catch(() => undefined);
+            if (object == null) {
+                break;
+            }
+            id = utils.generateHexId(32);
+        }
+        return id;
+    }
+    escapeIdentifier(identifier) {
+        return `"${identifier.replaceAll("\"", "\"\"")}"`;
+    }
+    constructor(connection, table, id) {
+        this.connection = connection;
+        this.table = table;
+        this.id = id;
+    }
+    async createObject(properties) {
+        let id = await this.createId();
+        let columns = [
+            this.id,
+            ...Object.keys(properties)
+        ];
+        let values = [
+            id,
+            ...Object.values(properties)
+        ];
+        await this.connection.query(`
+			INSERT INTO ${this.escapeIdentifier(this.table)} (
+				${columns.map((column) => `${this.escapeIdentifier(column)}`).join(",\r\n				")}
+			)
+			VALUES (
+				${"?".repeat(columns.length).split("").join(",\r\n				")}
+			)
+		`, values);
+        return this.lookupObject(id);
+    }
+    async lookupObject(id) {
+        let values = [
+            id
+        ];
+        let objects = await this.connection.query(`
+			SELECT
+				*
+			FROM ${this.escapeIdentifier(this.table)}
+			WHERE
+				${this.escapeIdentifier(this.id)} = ?
+		`, values);
+        if (objects.length === 0) {
+            throw new ExpectedObjectError(this.id, id);
+        }
+        return objects[0];
+    }
+    async lookupObjects(key, operator, value) {
+        let values = [
+            value
+        ];
+        let objects = await this.connection.query(`
+			SELECT
+				*
+			FROM ${this.escapeIdentifier(this.table)}
+			WHERE
+				${this.escapeIdentifier(String(key))} ${operator} ?
+		`, values);
+        return objects;
+    }
+    async updateObject(object) {
+        let id = object.id;
+        let columns = [
+            ...Object.keys(object)
+        ];
+        let values = [
+            ...Object.values(object),
+            id
+        ];
+        await this.connection.query(`
+			UPDATE ${this.escapeIdentifier(this.table)}
+			SET
+				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
+			WHERE
+				${this.escapeIdentifier(this.id)} = ?
+		`, values);
+        return this.lookupObject(object.id);
+    }
+    async deleteObject(id) {
+        let object = await this.lookupObject(id);
+        let values = [
+            id
+        ];
+        await this.connection.query(`
+			DELETE
+			FROM ${this.escapeIdentifier(this.table)}
+			WHERE
+				${this.escapeIdentifier(this.id)} = ?
+		`, values);
+        return object;
+    }
+}
+exports.DatabaseObjectStore = DatabaseObjectStore;
 ;

@@ -63,3 +63,19 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
     updateObject(object: Object<A>): Promise<Object<A>>;
     deleteObject(id: string): Promise<Object<A>>;
 }
+export type ConnectionLike = {
+    query<A>(sql: string, parameters?: Array<ObjectValue>): Promise<A>;
+};
+export declare class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
+    protected connection: ConnectionLike;
+    protected table: string;
+    protected id: string;
+    protected createId(): Promise<string>;
+    protected escapeIdentifier(identifier: string): string;
+    constructor(connection: ConnectionLike, table: string, id: string);
+    createObject(properties: A): Promise<Object<A>>;
+    lookupObject(id: string): Promise<Object<A>>;
+    lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]>;
+    updateObject(object: Object<A>): Promise<Object<A>>;
+    deleteObject(id: string): Promise<Object<A>>;
+}
