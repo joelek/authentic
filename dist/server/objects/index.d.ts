@@ -5,7 +5,10 @@ export type UserProperties = autoguard.guards.Object<{
     "email": autoguard.guards.String;
     "passdata": autoguard.guards.String;
 }, {
-    "username": autoguard.guards.String;
+    "username": autoguard.guards.Union<[
+        autoguard.guards.String,
+        autoguard.guards.Null
+    ]>;
 }>;
 export declare const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties>;
 export type RoleProperties = autoguard.guards.Object<{
@@ -19,16 +22,46 @@ export type SessionProperties = autoguard.guards.Intersection<[
         "expires_utc": autoguard.guards.Integer;
         "wait_until_utc": autoguard.guards.Integer;
     }, {
-        "username": autoguard.guards.String;
-        "username_attempts": autoguard.guards.Integer;
-        "email": autoguard.guards.String;
-        "email_attempts": autoguard.guards.Integer;
-        "token_hash": autoguard.guards.String;
-        "token_hash_attempts": autoguard.guards.Integer;
-        "passdata": autoguard.guards.String;
-        "passdata_attempts": autoguard.guards.Integer;
-        "authenticated_user_id": autoguard.guards.String;
-        "ticket_hash": autoguard.guards.String;
+        "username": autoguard.guards.Union<[
+            autoguard.guards.String,
+            autoguard.guards.Null
+        ]>;
+        "username_attempts": autoguard.guards.Union<[
+            autoguard.guards.Integer,
+            autoguard.guards.Null
+        ]>;
+        "email": autoguard.guards.Union<[
+            autoguard.guards.String,
+            autoguard.guards.Null
+        ]>;
+        "email_attempts": autoguard.guards.Union<[
+            autoguard.guards.Integer,
+            autoguard.guards.Null
+        ]>;
+        "token_hash": autoguard.guards.Union<[
+            autoguard.guards.String,
+            autoguard.guards.Null
+        ]>;
+        "token_hash_attempts": autoguard.guards.Union<[
+            autoguard.guards.Integer,
+            autoguard.guards.Null
+        ]>;
+        "passdata": autoguard.guards.Union<[
+            autoguard.guards.String,
+            autoguard.guards.Null
+        ]>;
+        "passdata_attempts": autoguard.guards.Union<[
+            autoguard.guards.Integer,
+            autoguard.guards.Null
+        ]>;
+        "authenticated_user_id": autoguard.guards.Union<[
+            autoguard.guards.String,
+            autoguard.guards.Null
+        ]>;
+        "ticket_hash": autoguard.guards.Union<[
+            autoguard.guards.String,
+            autoguard.guards.Null
+        ]>;
     }>
 ]>;
 export declare const OriginProperties: autoguard.serialization.MessageGuard<OriginProperties>;
@@ -42,7 +75,7 @@ export declare namespace Autoguard {
         UserProperties: autoguard.guards.ReferenceGuard<{
             email: string;
             passdata: string;
-            username?: string | undefined;
+            username?: string | null | undefined;
         }>;
         RoleProperties: autoguard.guards.ReferenceGuard<{
             user_id: string;

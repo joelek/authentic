@@ -121,7 +121,7 @@ class Server {
         return {
             id: user.id,
             email: user.email,
-            username: user.username
+            username: user.username ?? undefined
         };
     }
     async getAuthenticatedUserId(session, ticket) {

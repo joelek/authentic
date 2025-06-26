@@ -13,7 +13,7 @@ export declare const User: autoguard.guards.IntersectionGuard<[{
 }, {
     email: string;
     passdata: string;
-    username?: string | undefined;
+    username?: string | null | undefined;
 }]>;
 export declare class DatabaseUserStore extends DatabaseObjectStore<UserProperties> {
     constructor(connection: ConnectionLike, table: string);

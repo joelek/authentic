@@ -8,7 +8,7 @@ exports.UserProperties = autoguard.guards.Object.of({
     "email": autoguard.guards.String,
     "passdata": autoguard.guards.String
 }, {
-    "username": autoguard.guards.String
+    "username": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null)
 });
 exports.RoleProperties = autoguard.guards.Object.of({
     "user_id": autoguard.guards.String,
@@ -18,16 +18,16 @@ exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Re
     "expires_utc": autoguard.guards.Integer,
     "wait_until_utc": autoguard.guards.Integer
 }, {
-    "username": autoguard.guards.String,
-    "username_attempts": autoguard.guards.Integer,
-    "email": autoguard.guards.String,
-    "email_attempts": autoguard.guards.Integer,
-    "token_hash": autoguard.guards.String,
-    "token_hash_attempts": autoguard.guards.Integer,
-    "passdata": autoguard.guards.String,
-    "passdata_attempts": autoguard.guards.Integer,
-    "authenticated_user_id": autoguard.guards.String,
-    "ticket_hash": autoguard.guards.String
+    "username": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
+    "username_attempts": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
+    "email": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
+    "email_attempts": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
+    "token_hash": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
+    "token_hash_attempts": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
+    "passdata": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
+    "passdata_attempts": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
+    "authenticated_user_id": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
+    "ticket_hash": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null)
 }));
 exports.OriginProperties = autoguard.guards.Object.of({
     "address": autoguard.guards.String,
