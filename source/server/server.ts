@@ -6,7 +6,7 @@ import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer, TestMailer } from "../email";
 import { ExpectedUnreachableCodeError } from "../shared";
-import { Origin, OriginStore, VolatileOriginStore } from "./stores/origins";
+import { Origin, OriginStore, VolatileOriginStore } from "./stores/origin";
 import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
 import { UserStore, VolatileUserStore } from "./stores/user";
