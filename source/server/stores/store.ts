@@ -1,5 +1,5 @@
-import * as libcrypto from "crypto";
 import { ExpectedUnreachableCodeError } from "../../shared";
+import * as utils from "../utils";
 
 export class ExpectedObjectError extends Error {
 	readonly key: ObjectKey;
@@ -272,9 +272,9 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends Array<
 	}
 
 	protected createId(): string {
-		let id = libcrypto.randomBytes(16).toString("hex");
+		let id = utils.generateHexId(32);
 		while (this.objects.has(id)) {
-			id = libcrypto.randomBytes(16).toString("hex");
+			id = utils.generateHexId(32);
 		}
 		return id;
 	}
