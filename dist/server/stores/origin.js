@@ -17,8 +17,8 @@ exports.Origin = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
     id: autoguard.guards.String
 }), objects_1.OriginProperties);
 class DatabaseOriginStore extends store_1.DatabaseObjectStore {
-    constructor(connection, table) {
-        super(connection, table, exports.Origin);
+    constructor(connection_provider, table) {
+        super(connection_provider, table, exports.Origin);
     }
 }
 exports.DatabaseOriginStore = DatabaseOriginStore;

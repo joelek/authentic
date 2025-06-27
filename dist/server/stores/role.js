@@ -17,8 +17,8 @@ exports.Role = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
     id: autoguard.guards.String
 }), objects_1.RoleProperties);
 class DatabaseRoleStore extends store_1.DatabaseObjectStore {
-    constructor(connection, table) {
-        super(connection, table, exports.Role);
+    constructor(connection_provider, table) {
+        super(connection_provider, table, exports.Role);
     }
 }
 exports.DatabaseRoleStore = DatabaseRoleStore;

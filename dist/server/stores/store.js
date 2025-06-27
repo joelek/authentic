@@ -319,7 +319,7 @@ class VolatileObjectStore {
 exports.VolatileObjectStore = VolatileObjectStore;
 ;
 class DatabaseObjectStore {
-    connection;
+    connection_provider;
     table;
     guard;
     async createId() {
@@ -336,12 +336,13 @@ class DatabaseObjectStore {
     escapeIdentifier(identifier) {
         return `"${identifier.replaceAll("\"", "\"\"")}"`;
     }
-    constructor(connection, table, guard) {
-        this.connection = connection;
+    constructor(connection_provider, table, guard) {
+        this.connection_provider = connection_provider;
         this.table = table;
         this.guard = guard;
     }
     async createObject(properties) {
+        let connection = await this.connection_provider();
         let id = await this.createId();
         let columns = [
             "id",
@@ -351,7 +352,7 @@ class DatabaseObjectStore {
             id,
             ...Object.values(properties)
         ];
-        await this.connection.query(`
+        await connection.query(`
 			INSERT INTO ${this.escapeIdentifier(this.table)} (
 				${columns.map((column) => `${this.escapeIdentifier(column)}`).join(",\r\n				")}
 			)
@@ -362,7 +363,8 @@ class DatabaseObjectStore {
         return this.lookupObject(id);
     }
     async lookupObject(id) {
-        let objects = await this.connection.query(`
+        let connection = await this.connection_provider();
+        let objects = await connection.query(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
@@ -377,7 +379,8 @@ class DatabaseObjectStore {
         return this.guard.as(objects[0]);
     }
     async lookupObjects(key, operator, value) {
-        let objects = await this.connection.query(`
+        let connection = await this.connection_provider();
+        let objects = connection.query(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
@@ -389,6 +392,7 @@ class DatabaseObjectStore {
         return autoguard.guards.Array.of(this.guard).as(objects);
     }
     async updateObject(object) {
+        let connection = await this.connection_provider();
         let id = object.id;
         let existing_object = await this.lookupObject(id).catch(() => undefined);
         if (existing_object == null) {
@@ -406,7 +410,7 @@ class DatabaseObjectStore {
                 values.push(undefined);
             }
         }
-        await this.connection.query(`
+        await connection.query(`
 			UPDATE ${this.escapeIdentifier(this.table)}
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
@@ -419,11 +423,12 @@ class DatabaseObjectStore {
         return this.lookupObject(id);
     }
     async deleteObject(id) {
+        let connection = await this.connection_provider();
         let object = await this.lookupObject(id).catch(() => undefined);
         if (object == null) {
             throw new ExpectedObjectError("id", id);
         }
-        await this.connection.query(`
+        await connection.query(`
 			DELETE
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE

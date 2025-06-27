@@ -67,13 +67,16 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
 export type ConnectionLike = {
     query<A>(sql: string, parameters?: Array<ObjectValue>): Promise<A>;
 };
+export type ConnectionProvider = {
+    (): Promise<ConnectionLike>;
+};
 export declare class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
-    protected connection: ConnectionLike;
+    protected connection_provider: ConnectionProvider;
     protected table: string;
     protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
     protected createId(): Promise<string>;
     protected escapeIdentifier(identifier: string): string;
-    constructor(connection: ConnectionLike, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>);
+    constructor(connection_provider: ConnectionProvider, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>);
     createObject(properties: A): Promise<Object<A>>;
     lookupObject(id: string): Promise<Object<A>>;
     lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]>;

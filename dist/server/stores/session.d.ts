@@ -1,6 +1,6 @@
 import * as autoguard from "@joelek/autoguard";
 import { SessionProperties } from "../objects";
-import { ConnectionLike, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
+import { ConnectionProvider, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 export declare const UNIQUE_SESSION_PROPERTIES: [];
 export type Session = Object<SessionProperties>;
 export interface SessionStore extends ObjectStore<SessionProperties> {
@@ -12,5 +12,5 @@ export declare const Session: autoguard.guards.IntersectionGuard<[{
     id: string;
 }, SessionProperties]>;
 export declare class DatabaseSessionStore extends DatabaseObjectStore<SessionProperties> {
-    constructor(connection: ConnectionLike, table: string);
+    constructor(connection_provider: ConnectionProvider, table: string);
 }
