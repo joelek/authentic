@@ -380,7 +380,7 @@ class DatabaseObjectStore {
     }
     async lookupObjects(key, operator, value) {
         let connection = await this.connection_provider();
-        let objects = connection.query(`
+        let objects = await connection.query(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
