@@ -50,7 +50,7 @@ export class BackendManager implements api.Client {
 			})
 			.finally(() => {
 				this.editable.update(true);
-			})
+			});
 		return response;
 	}
 
@@ -78,7 +78,7 @@ export class BackendManager implements api.Client {
 			})
 			.finally(() => {
 				this.editable.update(true);
-			})
+			});
 		return response;
 	}
 
