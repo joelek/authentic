@@ -365,8 +365,12 @@ export type ConnectionLike = {
 	query<A>(sql: string, parameters?: Array<ObjectValue>): Promise<A>;
 };
 
+export type ConnectionProvider = {
+	(): Promise<ConnectionLike>;
+};
+
 export class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
-	protected connection: ConnectionLike;
+	protected connection_provider: ConnectionProvider;
 	protected table: string;
 	protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
 
@@ -386,13 +390,14 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return `"${identifier.replaceAll("\"", "\"\"")}"`;
 	}
 
-	constructor(connection: ConnectionLike, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
-		this.connection = connection;
+	constructor(connection_provider: ConnectionProvider, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
+		this.connection_provider = connection_provider;
 		this.table = table;
 		this.guard = guard;
 	}
 
 	async createObject(properties: A): Promise<Object<A>> {
+		let connection = await this.connection_provider();
 		let id = await this.createId();
 		let columns = [
 			"id",
@@ -402,7 +407,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 			id,
 			...Object.values<ObjectValue>(properties)
 		];
-		await this.connection.query(`
+		await connection.query(`
 			INSERT INTO ${this.escapeIdentifier(this.table)} (
 				${columns.map((column) => `${this.escapeIdentifier(column)}`).join(",\r\n				")}
 			)
@@ -414,7 +419,8 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async lookupObject(id: string): Promise<Object<A>> {
-		let objects = await this.connection.query<Array<Record<string, ObjectValue>>>(`
+		let connection = await this.connection_provider();
+		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
@@ -430,7 +436,8 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]> {
-		let objects = await this.connection.query<Array<Record<string, ObjectValue>>>(`
+		let connection = await this.connection_provider();
+		let objects = connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
@@ -443,6 +450,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async updateObject(object: Object<A>): Promise<Object<A>> {
+		let connection = await this.connection_provider();
 		let id = object.id;
 		let existing_object = await this.lookupObject(id).catch(() => undefined);
 		if (existing_object == null) {
@@ -460,7 +468,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 				values.push(undefined);
 			}
 		}
-		await this.connection.query(`
+		await connection.query(`
 			UPDATE ${this.escapeIdentifier(this.table)}
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
@@ -474,11 +482,12 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async deleteObject(id: string): Promise<Object<A>> {
+		let connection = await this.connection_provider();
 		let object = await this.lookupObject(id).catch(() => undefined);
 		if (object == null) {
 			throw new ExpectedObjectError("id", id);
 		}
-		await this.connection.query(`
+		await connection.query(`
 			DELETE
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE

@@ -1,6 +1,6 @@
 import * as autoguard from "@joelek/autoguard";
 import { UserRoleProperties } from "../objects";
-import { ConnectionLike, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
+import { ConnectionProvider, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 
 export const UNIQUE_USER_ROLE_PROPERTIES = (<A extends PropertyKey[]>(...values: A) => values)(
 
@@ -24,7 +24,7 @@ export const UserRole = autoguard.guards.Intersection.of(
 );
 
 export class DatabaseUserRoleStore extends DatabaseObjectStore<UserRoleProperties> {
-	constructor(connection: ConnectionLike, table: string) {
-		super(connection, table, UserRole);
+	constructor(connection_provider: ConnectionProvider, table: string) {
+		super(connection_provider, table, UserRole);
 	}
 };

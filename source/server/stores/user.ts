@@ -1,6 +1,6 @@
 import * as autoguard from "@joelek/autoguard";
 import { UserProperties } from "../objects";
-import { ConnectionLike, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
+import { ConnectionProvider, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 
 export const UNIQUE_USER_PROPERTIES = (<A extends PropertyKey[]>(...values: A) => values)(
 	"email",
@@ -25,7 +25,7 @@ export const User = autoguard.guards.Intersection.of(
 );
 
 export class DatabaseUserStore extends DatabaseObjectStore<UserProperties> {
-	constructor(connection: ConnectionLike, table: string) {
-		super(connection, table, User);
+	constructor(connection_provider: ConnectionProvider, table: string) {
+		super(connection_provider, table, User);
 	}
 };
