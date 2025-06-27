@@ -437,7 +437,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 
 	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]> {
 		let connection = await this.connection_provider();
-		let objects = connection.query<Array<Record<string, ObjectValue>>>(`
+		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
