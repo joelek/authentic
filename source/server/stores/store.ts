@@ -367,6 +367,7 @@ export type ConnectionLike = {
 
 export type DatabaseObjectStoreDetail = {
 	getConnection(): Promise<ConnectionLike>;
+	generateId?(): string;
 };
 
 export class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
@@ -375,13 +376,13 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
 
 	protected async createId(): Promise<string> {
-		let id = utils.generateHexId(32);
+		let id = this.detail.generateId?.() ?? utils.generateHexId(32);
 		while (true) {
 			let object = await this.lookupObject(id).catch(() => undefined);
 			if (object == null) {
 				break;
 			}
-			id = utils.generateHexId(32);
+			id = this.detail.generateId?.() ?? utils.generateHexId(32);
 		}
 		return id;
 	}
