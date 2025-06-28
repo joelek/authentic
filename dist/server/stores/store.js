@@ -319,7 +319,7 @@ class VolatileObjectStore {
 exports.VolatileObjectStore = VolatileObjectStore;
 ;
 class DatabaseObjectStore {
-    connection_provider;
+    detail;
     table;
     guard;
     async createId() {
@@ -336,13 +336,13 @@ class DatabaseObjectStore {
     escapeIdentifier(identifier) {
         return `"${identifier.replaceAll("\"", "\"\"")}"`;
     }
-    constructor(connection_provider, table, guard) {
-        this.connection_provider = connection_provider;
+    constructor(detail, table, guard) {
+        this.detail = detail;
         this.table = table;
         this.guard = guard;
     }
     async createObject(properties) {
-        let connection = await this.connection_provider();
+        let connection = await this.detail.getConnection();
         let id = await this.createId();
         let columns = [
             "id",
@@ -363,7 +363,7 @@ class DatabaseObjectStore {
         return this.lookupObject(id);
     }
     async lookupObject(id) {
-        let connection = await this.connection_provider();
+        let connection = await this.detail.getConnection();
         let objects = await connection.query(`
 			SELECT
 				*
@@ -379,7 +379,7 @@ class DatabaseObjectStore {
         return this.guard.as(objects[0]);
     }
     async lookupObjects(key, operator, value) {
-        let connection = await this.connection_provider();
+        let connection = await this.detail.getConnection();
         let objects = await connection.query(`
 			SELECT
 				*
@@ -392,7 +392,7 @@ class DatabaseObjectStore {
         return autoguard.guards.Array.of(this.guard).as(objects);
     }
     async updateObject(object) {
-        let connection = await this.connection_provider();
+        let connection = await this.detail.getConnection();
         let id = object.id;
         let existing_object = await this.lookupObject(id).catch(() => undefined);
         if (existing_object == null) {
@@ -423,7 +423,7 @@ class DatabaseObjectStore {
         return this.lookupObject(id);
     }
     async deleteObject(id) {
-        let connection = await this.connection_provider();
+        let connection = await this.detail.getConnection();
         let object = await this.lookupObject(id).catch(() => undefined);
         if (object == null) {
             throw new ExpectedObjectError("id", id);

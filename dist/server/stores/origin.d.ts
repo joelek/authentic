@@ -1,6 +1,6 @@
 import * as autoguard from "@joelek/autoguard";
 import { OriginProperties } from "../objects";
-import { ConnectionProvider, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
+import { DatabaseObjectStoreDetail, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 export declare const UNIQUE_ORIGIN_PROPERTIES: ["address"];
 export type Origin = Object<OriginProperties>;
 export interface OriginStore extends ObjectStore<OriginProperties> {
@@ -16,5 +16,5 @@ export declare const Origin: autoguard.guards.IntersectionGuard<[{
     wait_until_utc: number;
 }]>;
 export declare class DatabaseOriginStore extends DatabaseObjectStore<OriginProperties> {
-    constructor(connection_provider: ConnectionProvider, table: string);
+    constructor(detail: DatabaseObjectStoreDetail, table: string);
 }

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const libhttp = require("http");
-const server = require("./");
-const SERVER = new server.Server();
+const authentic = require("./");
+const SERVER = new authentic.server.Server();
 const REQUEST_LISTENER = SERVER.createRequestListener();
 const HTTP_SERVER = libhttp.createServer({}, REQUEST_LISTENER);
 const HTTP_HOSTNAME = "localhost";

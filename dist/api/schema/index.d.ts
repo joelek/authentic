@@ -259,6 +259,7 @@ export declare const User: autoguard.serialization.MessageGuard<User>;
 export type User = autoguard.guards.Object<{
     "id": autoguard.guards.String;
     "email": autoguard.guards.String;
+    "roles": autoguard.guards.Array<autoguard.guards.String>;
 }, {
     "username": autoguard.guards.String;
 }>;
@@ -555,6 +556,7 @@ export declare namespace Autoguard {
         User: autoguard.guards.ReferenceGuard<{
             id: string;
             email: string;
+            roles: autoguard.guards.Array<string>;
             username?: string | undefined;
         }>;
     };
@@ -684,6 +686,7 @@ export declare namespace Autoguard {
                 user?: {
                     id: string;
                     email: string;
+                    roles: autoguard.guards.Array<string>;
                     username?: string | undefined;
                 } | undefined;
             };
@@ -742,6 +745,7 @@ export declare namespace Autoguard {
                 user?: {
                     id: string;
                     email: string;
+                    roles: autoguard.guards.Array<string>;
                     username?: string | undefined;
                 } | undefined;
             };

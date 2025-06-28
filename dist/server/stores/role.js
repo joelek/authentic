@@ -4,7 +4,7 @@ exports.DatabaseRoleStore = exports.Role = exports.VolatileRoleStore = exports.U
 const autoguard = require("@joelek/autoguard");
 const objects_1 = require("../objects");
 const store_1 = require("./store");
-exports.UNIQUE_ROLE_PROPERTIES = ((...values) => values)();
+exports.UNIQUE_ROLE_PROPERTIES = ((...values) => values)("name");
 ;
 class VolatileRoleStore extends store_1.VolatileObjectStore {
     constructor() {
@@ -17,8 +17,8 @@ exports.Role = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
     id: autoguard.guards.String
 }), objects_1.RoleProperties);
 class DatabaseRoleStore extends store_1.DatabaseObjectStore {
-    constructor(connection_provider, table) {
-        super(connection_provider, table, exports.Role);
+    constructor(detail, table) {
+        super(detail, table, exports.Role);
     }
 }
 exports.DatabaseRoleStore = DatabaseRoleStore;
