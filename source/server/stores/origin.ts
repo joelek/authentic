@@ -1,6 +1,6 @@
 import * as autoguard from "@joelek/autoguard";
 import { OriginProperties } from "../objects";
-import { ConnectionProvider, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
+import { DatabaseObjectStoreDetail, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 
 export const UNIQUE_ORIGIN_PROPERTIES = (<A extends PropertyKey[]>(...values: A) => values)(
 	"address"
@@ -24,7 +24,7 @@ export const Origin = autoguard.guards.Intersection.of(
 );
 
 export class DatabaseOriginStore extends DatabaseObjectStore<OriginProperties> {
-	constructor(connection_provider: ConnectionProvider, table: string) {
-		super(connection_provider, table, Origin);
+	constructor(detail: DatabaseObjectStoreDetail, table: string) {
+		super(detail, table, Origin);
 	}
 };

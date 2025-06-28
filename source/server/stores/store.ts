@@ -365,12 +365,12 @@ export type ConnectionLike = {
 	query<A>(sql: string, parameters?: Array<ObjectValue>): Promise<A>;
 };
 
-export type ConnectionProvider = {
-	(): Promise<ConnectionLike>;
+export type DatabaseObjectStoreDetail = {
+	getConnection(): Promise<ConnectionLike>;
 };
 
 export class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
-	protected connection_provider: ConnectionProvider;
+	protected detail: DatabaseObjectStoreDetail;
 	protected table: string;
 	protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
 
@@ -390,14 +390,14 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return `"${identifier.replaceAll("\"", "\"\"")}"`;
 	}
 
-	constructor(connection_provider: ConnectionProvider, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
-		this.connection_provider = connection_provider;
+	constructor(detail: DatabaseObjectStoreDetail, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
+		this.detail = detail;
 		this.table = table;
 		this.guard = guard;
 	}
 
 	async createObject(properties: A): Promise<Object<A>> {
-		let connection = await this.connection_provider();
+		let connection = await this.detail.getConnection();
 		let id = await this.createId();
 		let columns = [
 			"id",
@@ -419,7 +419,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async lookupObject(id: string): Promise<Object<A>> {
-		let connection = await this.connection_provider();
+		let connection = await this.detail.getConnection();
 		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
@@ -436,7 +436,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]> {
-		let connection = await this.connection_provider();
+		let connection = await this.detail.getConnection();
 		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
@@ -450,7 +450,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async updateObject(object: Object<A>): Promise<Object<A>> {
-		let connection = await this.connection_provider();
+		let connection = await this.detail.getConnection();
 		let id = object.id;
 		let existing_object = await this.lookupObject(id).catch(() => undefined);
 		if (existing_object == null) {
@@ -482,7 +482,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 	}
 
 	async deleteObject(id: string): Promise<Object<A>> {
-		let connection = await this.connection_provider();
+		let connection = await this.detail.getConnection();
 		let object = await this.lookupObject(id).catch(() => undefined);
 		if (object == null) {
 			throw new ExpectedObjectError("id", id);
