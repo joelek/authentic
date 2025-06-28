@@ -323,13 +323,13 @@ class DatabaseObjectStore {
     table;
     guard;
     async createId() {
-        let id = utils.generateHexId(32);
+        let id = this.detail.generateId?.() ?? utils.generateHexId(32);
         while (true) {
             let object = await this.lookupObject(id).catch(() => undefined);
             if (object == null) {
                 break;
             }
-            id = utils.generateHexId(32);
+            id = this.detail.generateId?.() ?? utils.generateHexId(32);
         }
         return id;
     }

@@ -69,6 +69,7 @@ export type ConnectionLike = {
 };
 export type DatabaseObjectStoreDetail = {
     getConnection(): Promise<ConnectionLike>;
+    generateId?(): string;
 };
 export declare class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
     protected detail: DatabaseObjectStoreDetail;
