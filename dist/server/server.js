@@ -13,6 +13,18 @@ const session_1 = require("./stores/session");
 const user_1 = require("./stores/user");
 const user_role_1 = require("./stores/user_role");
 const validator_1 = require("./validator");
+const WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATES = {
+    en: "The verification code is: {token}",
+    sv: "Verifieringskoden är: {token}"
+};
+const WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATES = {
+    en: "The verification code is: {token}",
+    sv: "Verifieringskoden är: {token}"
+};
+const WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATES = {
+    en: "The verification code is: {token}",
+    sv: "Verifieringskoden är: {token}"
+};
 class AccessHandler {
     authenticated_user_id;
     roles;
@@ -59,6 +71,9 @@ class Server {
     tolerable_token_hash_attempts;
     tolerable_passdata_attempts;
     clean_expired_interval_minutes;
+    waiting_for_register_token_email_templates;
+    waiting_for_authenticate_token_email_templates;
+    waiting_for_recover_token_email_templates;
     computeHash(string) {
         return libcrypto.createHash("sha256").update(string).digest("hex");
     }
@@ -179,6 +194,19 @@ class Server {
         }
         return headers.filter((header) => typeof header === "string");
     }
+    getUserLanguage(request) {
+        let headers = this.getHeaders(request.headers(), "accept-language");
+        for (let header of headers) {
+            let header_parts = header.split(",").map((part) => part.trim());
+            for (let header_part of header_parts) {
+                let language = header_part.split(";")[0].split("-")[0];
+                if (shared_1.Language.is(language)) {
+                    return language;
+                }
+            }
+        }
+        return "en";
+    }
     getCookieData(request) {
         let headers = this.getHeaders(request.headers(), "cookie");
         for (let header of headers.reverse()) {
@@ -276,6 +304,7 @@ class Server {
         });
     }
     async getNextRegisterSession(session, request) {
+        let language = this.getUserLanguage(request);
         if (this.require_username) {
             if (session.username == null) {
                 return {
@@ -327,7 +356,10 @@ class Server {
         if (this.require_token || !this.require_passphrase) {
             if (session.token_hash == null) {
                 let token = this.generateToken();
-                await this.sendEmail(session.email, token, request);
+                let message = this.processEmailTemplate(this.waiting_for_register_token_email_templates[language], {
+                    token
+                });
+                await this.sendEmail(session.email, message, request);
                 return {
                     ...session,
                     token_hash: this.computeHash(token),
@@ -364,6 +396,7 @@ class Server {
         };
     }
     async getNextAuthenticateSession(session, request) {
+        let language = this.getUserLanguage(request);
         if (this.require_username) {
             if (session.username != null) {
                 let users = await this.users.lookupObjects("username", "=", session.username);
@@ -410,7 +443,10 @@ class Server {
         if (this.require_token || !this.require_passphrase) {
             if (session.token_hash == null) {
                 let token = this.generateToken();
-                await this.sendEmail(session.email, token, request);
+                let message = this.processEmailTemplate(this.waiting_for_authenticate_token_email_templates[language], {
+                    token
+                });
+                await this.sendEmail(session.email, message, request);
                 return {
                     ...session,
                     token_hash: this.computeHash(token),
@@ -443,6 +479,7 @@ class Server {
         };
     }
     async getNextRecoverSession(session, request) {
+        let language = this.getUserLanguage(request);
         if (session.username != null) {
             let users = await this.users.lookupObjects("username", "=", session.username);
             if (users.length === 0) {
@@ -486,7 +523,10 @@ class Server {
         }
         if (session.token_hash == null) {
             let token = this.generateToken();
-            await this.sendEmail(session.email, token, request);
+            let message = this.processEmailTemplate(this.waiting_for_recover_token_email_templates[language], {
+                token
+            });
+            await this.sendEmail(session.email, message, request);
             return {
                 ...session,
                 token_hash: this.computeHash(token),
@@ -774,6 +814,11 @@ class Server {
             wait_until_utc: this.getExpiresInMilliseconds(250)
         };
     }
+    processEmailTemplate(template, variables) {
+        return template.replaceAll(/[{]([^}]*)[}]/g, (_, key) => {
+            return variables[key] ?? "?";
+        });
+    }
     async sendEmail(to_address, message, request) {
         let spoofable_host = this.getHeaders(request.headers(), "host").pop() ?? "localhost";
         await this.mailer.send({
@@ -871,6 +916,9 @@ class Server {
         this.tolerable_token_hash_attempts = options?.tolerable_token_hash_attempts ?? 1;
         this.tolerable_passdata_attempts = options?.tolerable_passdata_attempts ?? 1;
         this.clean_expired_interval_minutes = options?.clean_expired_interval_minutes ?? 1;
+        this.waiting_for_register_token_email_templates = options?.waiting_for_register_token_email_templates ?? WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATES;
+        this.waiting_for_authenticate_token_email_templates = options?.waiting_for_authenticate_token_email_templates ?? WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATES;
+        this.waiting_for_recover_token_email_templates = options?.waiting_for_recover_token_email_templates ?? WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATES;
         setInterval(async () => {
             let now = Date.now();
             let sessions = await this.sessions.lookupObjects("expires_utc", "<=", now);

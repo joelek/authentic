@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TranslationManager = void 0;
-const autoguard_1 = require("@joelek/autoguard");
+const shared_1 = require("../../shared");
 const bonsai_1 = require("@joelek/bonsai");
-const Language = autoguard_1.guards.Union.of(autoguard_1.guards.StringLiteral.of("en"), autoguard_1.guards.StringLiteral.of("sv"));
 const WAITING_FOR_REGISTER_USERNAME = {
     "WAITING_FOR_REGISTER_USERNAME": {
         en: "Please enter your desired username. The username may contain letters A-Z, numbers 0-9 as well as the \"_\" character.",
@@ -308,7 +307,7 @@ class TranslationManager {
     updateLanguage() {
         for (let language of navigator.languages) {
             language = language.split("-")[0];
-            if (Language.is(language)) {
+            if (shared_1.Language.is(language)) {
                 this.language.update(language);
                 break;
             }

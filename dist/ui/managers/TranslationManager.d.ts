@@ -1,7 +1,5 @@
-import { guards } from "@joelek/autoguard";
+import { Language } from "../../shared";
 import { Attribute, State } from "@joelek/bonsai";
-declare const Language: guards.UnionGuard<["en", "sv"]>;
-type Language = ReturnType<typeof Language["as"]>;
 declare const STATES: {
     AUTHENTICATED: {
         en: string;
