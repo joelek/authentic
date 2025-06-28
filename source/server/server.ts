@@ -5,7 +5,7 @@ import * as libnet from "net";
 import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer, TestMailer } from "../email";
-import { ExpectedUnreachableCodeError } from "../shared";
+import { ExpectedUnreachableCodeError, Language } from "../shared";
 import { Origin, OriginStore, VolatileOriginStore } from "./stores/origin";
 import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
@@ -16,6 +16,25 @@ import { Validator } from "./validator";
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
 
 type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
+
+type Templates = {
+	[A in Language]: string;
+};
+
+const WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATES: Templates = {
+	en: "The verification code is: {token}",
+	sv: "Verifieringskoden är: {token}"
+};
+
+const WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATES: Templates = {
+	en: "The verification code is: {token}",
+	sv: "Verifieringskoden är: {token}"
+};
+
+const WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATES: Templates = {
+	en: "The verification code is: {token}",
+	sv: "Verifieringskoden är: {token}"
+};
 
 export type ServerOptions = {
 	users?: UserStore;
@@ -37,6 +56,18 @@ export type ServerOptions = {
 	tolerable_token_hash_attempts?: number;
 	tolerable_passdata_attempts?: number;
 	clean_expired_interval_minutes?: number;
+	waiting_for_register_token_email_templates?: {
+		en: string;
+		sv: string;
+	};
+	waiting_for_authenticate_token_email_templates?: {
+		en: string;
+		sv: string;
+	};
+	waiting_for_recover_token_email_templates?: {
+		en: string;
+		sv: string;
+	};
 };
 
 export class AccessHandler {
@@ -95,6 +126,18 @@ export class Server {
 	protected tolerable_token_hash_attempts: number;
 	protected tolerable_passdata_attempts: number;
 	protected clean_expired_interval_minutes: number;
+	protected waiting_for_register_token_email_templates: {
+		en: string;
+		sv: string;
+	};
+	protected waiting_for_authenticate_token_email_templates: {
+		en: string;
+		sv: string;
+	};
+	protected waiting_for_recover_token_email_templates: {
+		en: string;
+		sv: string;
+	};
 
 	protected computeHash(string: string): string {
 		return libcrypto.createHash("sha256").update(string).digest("hex");
@@ -229,6 +272,20 @@ export class Server {
 		return headers.filter((header): header is string => typeof header === "string");
 	}
 
+	protected getUserLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Language {
+		let headers = this.getHeaders(request.headers(), "accept-language");
+		for (let header of headers) {
+			let header_parts = header.split(",").map((part) => part.trim());
+			for (let header_part of header_parts) {
+				let language = header_part.split(";")[0].split("-")[0];
+				if (Language.is(language)) {
+					return language;
+				}
+			}
+		}
+		return "en";
+	}
+
 	protected getCookieData(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): CookieData | undefined {
 		let headers = this.getHeaders(request.headers(), "cookie");
 		for (let header of headers.reverse()) {
@@ -331,6 +388,7 @@ export class Server {
 	}
 
 	protected async getNextRegisterSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session> {
+		let language = this.getUserLanguage(request);
 		if (this.require_username) {
 			if (session.username == null) {
 				return {
@@ -381,7 +439,10 @@ export class Server {
 		if (this.require_token || !this.require_passphrase) {
 			if (session.token_hash == null) {
 				let token = this.generateToken();
-				await this.sendEmail(session.email, token, request);
+				let message = this.processEmailTemplate(this.waiting_for_register_token_email_templates[language], {
+					token
+				});
+				await this.sendEmail(session.email, message, request);
 				return {
 					...session,
 					token_hash: this.computeHash(token),
@@ -419,6 +480,7 @@ export class Server {
 	}
 
 	protected async getNextAuthenticateSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session> {
+		let language = this.getUserLanguage(request);
 		if (this.require_username) {
 			if (session.username != null) {
 				let users = await this.users.lookupObjects("username", "=", session.username);
@@ -465,7 +527,10 @@ export class Server {
 		if (this.require_token || !this.require_passphrase) {
 			if (session.token_hash == null) {
 				let token = this.generateToken();
-				await this.sendEmail(session.email, token, request);
+				let message = this.processEmailTemplate(this.waiting_for_authenticate_token_email_templates[language], {
+					token
+				});
+				await this.sendEmail(session.email, message, request);
 				return {
 					...session,
 					token_hash: this.computeHash(token),
@@ -499,6 +564,7 @@ export class Server {
 	}
 
 	protected async getNextRecoverSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session> {
+		let language = this.getUserLanguage(request);
 		if (session.username != null) {
 			let users = await this.users.lookupObjects("username", "=", session.username);
 			if (users.length === 0) {
@@ -542,7 +608,10 @@ export class Server {
 		}
 		if (session.token_hash == null) {
 			let token = this.generateToken();
-			await this.sendEmail(session.email, token, request);
+			let message = this.processEmailTemplate(this.waiting_for_recover_token_email_templates[language], {
+				token
+			});
+			await this.sendEmail(session.email, message, request);
 			return {
 				...session,
 				token_hash: this.computeHash(token),
@@ -819,6 +888,12 @@ export class Server {
 		};
 	}
 
+	protected processEmailTemplate(template: string, variables: Record<string, string | undefined>): string {
+		return template.replaceAll(/[{]([^}]*)[}]/g, (_, key) => {
+			return variables[key] ?? "?";
+		});
+	}
+
 	protected async sendEmail(to_address: string, message: string, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<void> {
 		let spoofable_host = this.getHeaders(request.headers(), "host").pop() ?? "localhost";
 		await this.mailer.send({
@@ -919,6 +994,9 @@ export class Server {
 		this.tolerable_token_hash_attempts = options?.tolerable_token_hash_attempts ?? 1;
 		this.tolerable_passdata_attempts = options?.tolerable_passdata_attempts ?? 1;
 		this.clean_expired_interval_minutes = options?.clean_expired_interval_minutes ?? 1;
+		this.waiting_for_register_token_email_templates = options?.waiting_for_register_token_email_templates ?? WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATES;
+		this.waiting_for_authenticate_token_email_templates = options?.waiting_for_authenticate_token_email_templates ?? WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATES;
+		this.waiting_for_recover_token_email_templates = options?.waiting_for_recover_token_email_templates ?? WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATES;
 		setInterval(async () => {
 			let now = Date.now();
 			let sessions = await this.sessions.lookupObjects("expires_utc", "<=", now);
