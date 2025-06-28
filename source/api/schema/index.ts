@@ -516,14 +516,16 @@ export type State = autoguard.guards.Union<[
 
 export const User: autoguard.serialization.MessageGuard<User> = autoguard.guards.Object.of({
 	"id": autoguard.guards.String,
-	"email": autoguard.guards.String
+	"email": autoguard.guards.String,
+	"roles": autoguard.guards.Array.of(autoguard.guards.String)
 }, {
 	"username": autoguard.guards.String
 });
 
 export type User = autoguard.guards.Object<{
 	"id": autoguard.guards.String,
-	"email": autoguard.guards.String
+	"email": autoguard.guards.String,
+	"roles": autoguard.guards.Array<autoguard.guards.String>
 }, {
 	"username": autoguard.guards.String
 }>;

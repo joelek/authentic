@@ -164,10 +164,13 @@ export class Server {
 			return;
 		}
 		let user = await this.users.lookupObject(session.authenticated_user_id);
+		let user_roles = await this.user_roles.lookupObjects("user_id", "=", session.authenticated_user_id);
+		let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
 		return {
 			id: user.id,
 			email: user.email,
-			username: user.username ?? undefined
+			username: user.username ?? undefined,
+			roles: roles.map((role) => role.name)
 		};
 	}
 
