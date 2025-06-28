@@ -4,7 +4,7 @@
 import * as libhttp from "http";
 import * as authentic from "@joelek/authentic/dist/lib/node";
 
-const SERVER = new authentic.server.Server();
+const SERVER = new authentic.server.server.Server();
 
 const REQUEST_LISTENER = SERVER.createRequestListener({
 	urlPrefix: "/auth"
