@@ -46,4 +46,3 @@ controller.toggle();
 * Add customizable and localizable HTML emails.
 * Expose AccessHandler to plain NodeJS request handlers.
 * Automatically create and update database tables.
-* Return DOM and controller from injector.
