@@ -4,9 +4,12 @@ import { Client } from "../client";
 export type UIOptions = {
     client?: Client;
 };
-export interface InterfaceManager {
+export interface Controller {
     logout(): Promise<void>;
     toggle(): void;
     getUser(): State<api.User | undefined>;
 }
-export declare function injectUserInterface(options?: UIOptions): InterfaceManager;
+export declare function createElementAndController(options?: UIOptions): {
+    element: HTMLElement;
+    controller: Controller;
+};
