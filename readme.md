@@ -43,7 +43,6 @@ manager.toggle();
 * Rename token to code.
 * Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
 * Add customizable and localizable HTML emails.
-* Make id generator customizable in ObjectStore.
 * Expose AccessHandler to plain NodeJS request handlers.
 * Automatically create and update database tables.
 * Return DOM and controller from injector.
