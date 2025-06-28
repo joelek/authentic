@@ -1,12 +1,5 @@
-import { guards } from "@joelek/autoguard";
+import { Language } from "../../shared";
 import { Attribute, computed, State, stateify } from "@joelek/bonsai";
-
-const Language = guards.Union.of(
-	guards.StringLiteral.of("en"),
-	guards.StringLiteral.of("sv")
-);
-
-type Language = ReturnType<typeof Language["as"]>;
 
 const WAITING_FOR_REGISTER_USERNAME = {
 	"WAITING_FOR_REGISTER_USERNAME": {
