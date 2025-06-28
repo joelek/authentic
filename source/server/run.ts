@@ -1,7 +1,7 @@
 import * as libhttp from "http";
-import * as server from "./";
+import * as authentic from "./";
 
-const SERVER = new server.Server();
+const SERVER = new authentic.server.Server();
 const REQUEST_LISTENER = SERVER.createRequestListener();
 const HTTP_SERVER = libhttp.createServer({}, REQUEST_LISTENER);
 const HTTP_HOSTNAME = "localhost";
