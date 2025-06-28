@@ -8,18 +8,21 @@ export type UIOptions = {
 	client?: Client;
 };
 
-export interface InterfaceManager {
+export interface Controller {
 	logout(): Promise<void>;
 	toggle(): void;
 	getUser(): State<api.User | undefined>;
 };
 
-export function injectUserInterface(options?: UIOptions): InterfaceManager {
+export function createElementAndController(options?: UIOptions): {
+	element: HTMLElement;
+	controller: Controller;
+} {
 	let client = options?.client ?? createClient();
 	let managers = Managers.create(client);
 	let visible = stateify(false as boolean);
-	document.body.appendChild(Modal(managers, { visible }));
-	return {
+	let element = Modal(managers, { visible });
+	let controller: Controller = {
 		logout: async () => {
 			await managers.backend.sendCommand({
 				payload: {
@@ -35,5 +38,9 @@ export function injectUserInterface(options?: UIOptions): InterfaceManager {
 		getUser: () => {
 			return managers.backend.getUser();
 		}
+	};
+	return {
+		element,
+		controller
 	};
 };

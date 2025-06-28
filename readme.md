@@ -24,12 +24,13 @@ HTTP_SERVER.listen();
 ```ts
 import * as authentic from "@joelek/authentic/dist/lib/browser";
 
-let manager = authentic.ui.injectUserInterface({
+let { element, controller } = authentic.ui.createElementAndController({
 	client: authentic.client.createClient({
 		urlPrefix: "/auth"
 	})
 });
-manager.toggle();
+document.body.appendChild(element);
+controller.toggle();
 ```
 
 ## Roadmap
