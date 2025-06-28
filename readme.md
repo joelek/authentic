@@ -46,3 +46,4 @@ manager.toggle();
 * Make id generator customizable in ObjectStore.
 * Expose AccessHandler to plain NodeJS request handlers.
 * Automatically create and update database tables.
+* Return DOM and controller from injector.
