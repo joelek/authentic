@@ -3,7 +3,7 @@ import { RoleProperties } from "../objects";
 import { ConnectionProvider, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 
 export const UNIQUE_ROLE_PROPERTIES = (<A extends PropertyKey[]>(...values: A) => values)(
-
+	"name"
 );
 
 export type Role = Object<RoleProperties>
