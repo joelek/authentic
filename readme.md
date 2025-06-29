@@ -43,6 +43,5 @@ controller.toggle();
 * Consider adding secrets.
 * Rename token to code.
 * Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
-* Add support for HTML emails.
 * Expose AccessHandler to plain NodeJS request handlers.
 * Automatically create and update database tables.
