@@ -2,6 +2,18 @@
 
 import * as autoguard from "@joelek/autoguard/dist/lib-shared";
 
+export const Attachment: autoguard.serialization.MessageGuard<Attachment> = autoguard.guards.Object.of({
+	"filename": autoguard.guards.String,
+	"mime": autoguard.guards.String,
+	"data": autoguard.guards.Binary
+}, {});
+
+export type Attachment = autoguard.guards.Object<{
+	"filename": autoguard.guards.String,
+	"mime": autoguard.guards.String,
+	"data": autoguard.guards.Binary
+}, {}>;
+
 export const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions> = autoguard.guards.Object.of({
 	"smtp": autoguard.guards.Object.of({
 		"hostname": autoguard.guards.String,
@@ -40,6 +52,7 @@ export type MailerOptions = autoguard.guards.Object<{
 
 export namespace Autoguard {
 	export const Guards = {
+		"Attachment": autoguard.guards.Reference.of(() => Attachment),
 		"MailerOptions": autoguard.guards.Reference.of(() => MailerOptions)
 	};
 

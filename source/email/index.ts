@@ -2,7 +2,7 @@ import * as libcrypto from "crypto";
 import * as libfs from "fs";
 import * as libnet from "net";
 import * as libtls from "tls";
-import { MailerOptions } from "./config";
+import { Attachment, MailerOptions } from "./config";
 
 export type State =
 	"WAITING_FOR_GREETING" |
@@ -40,6 +40,7 @@ export interface Mailer {
 		from_name?: string;
 		reply_address?: string,
 		reply_name?: string;
+		attachments?: Array<Attachment>;
 	}): Promise<void>;
 };
 
@@ -55,6 +56,7 @@ export class TestMailer implements Mailer {
 		from_name?: string;
 		reply_address?: string,
 		reply_name?: string;
+		attachments?: Array<Attachment>;
 	}): Promise<void> {
 		console.log(options);
 	}
@@ -161,10 +163,12 @@ export class SMTPMailer implements Mailer {
 		from_name?: string;
 		reply_address?: string,
 		reply_name?: string;
+		attachments?: Array<Attachment>;
 	}): Promise<void> {
 		let to = this.getTo(options);
 		let from = this.getFrom(options);
 		let reply = this.getReply(options);
+		let attachments = options.attachments ?? [];
 		return new Promise((resolve, reject) => {
 			let tls_socket = libtls.connect({
 				host: this.options.smtp.hostname,
@@ -223,11 +227,10 @@ export class SMTPMailer implements Mailer {
 					}
 					if (state === "WAITING_FOR_DATA_REPLY") {
 						if (lines[0].startsWith("354")) {
+							let boundary = libcrypto.randomBytes(16).toString("hex");
 							let lines = [
 								`MIME-Version: 1.0`,
 								`Date: ${new Date().toUTCString()}`,
-								`Content-Type: text/plain; charset=utf-8`,
-								`Content-Transfer-Encoding: base64`,
 								`Message-ID: <${this.generateMessageIDAddress(from.address)}>`
 							];
 							if (typeof from.name !== "undefined") {
@@ -246,8 +249,24 @@ export class SMTPMailer implements Mailer {
 								lines.push(`Reply-To: <${reply.address}>`);
 							}
 							lines.push(`Subject: ${encode(options.subject)}`);
+							lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
+							lines.push(``);
+							lines.push(`--${boundary}`);
+							lines.push(`Content-Type: text/plain; charset=utf-8`);
+							lines.push(`Content-Transfer-Encoding: base64`);
 							lines.push(``);
 							lines.push(...split(Buffer.from(options.message).toString("base64"), 76));
+							for (let attachment of attachments) {
+								lines.push(``);
+								lines.push(`--${boundary}`);
+								lines.push(`Content-Type: ${attachment.mime}; name=${attachment.filename}`);
+								lines.push(`Content-Transfer-Encoding: base64`);
+								lines.push(`Content-Disposition: attachment; filename=${attachment.filename}`);
+								lines.push(``);
+								lines.push(...split(Buffer.from(attachment.data).toString("base64"), 76));
+							}
+							lines.push(``);
+							lines.push(`--${boundary}--`);
 							lines.push(`.`);
 							for (let line of lines) {
 								socket.write(`${line}\r\n`);
