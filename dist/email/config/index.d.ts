@@ -1,4 +1,10 @@
 import * as autoguard from "@joelek/autoguard/dist/lib-shared";
+export declare const Attachment: autoguard.serialization.MessageGuard<Attachment>;
+export type Attachment = autoguard.guards.Object<{
+    "filename": autoguard.guards.String;
+    "mime": autoguard.guards.String;
+    "data": autoguard.guards.Binary;
+}, {}>;
 export declare const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions>;
 export type MailerOptions = autoguard.guards.Object<{
     "smtp": autoguard.guards.Object<{
@@ -19,6 +25,11 @@ export type MailerOptions = autoguard.guards.Object<{
 }>;
 export declare namespace Autoguard {
     const Guards: {
+        Attachment: autoguard.guards.ReferenceGuard<{
+            filename: string;
+            mime: string;
+            data: Uint8Array;
+        }>;
         MailerOptions: autoguard.guards.ReferenceGuard<{
             smtp: {
                 hostname: string;
