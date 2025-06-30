@@ -11,6 +11,7 @@ import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
 import { UserStore, VolatileUserStore } from "./stores/user";
 import { UserRoleStore, VolatileUserRoleStore } from "./stores/user_role";
+import * as utils from "./utils";
 import { Validator } from "./validator";
 
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
@@ -194,8 +195,12 @@ export class Server {
 		};
 	}
 
-	protected generateToken(): string {
-		return libcrypto.randomBytes(16).toString("hex");
+	protected generateToken(length: number): string {
+		return utils.generateDigitId(length);
+	}
+
+	protected generateTicket(length: number): string {
+		return utils.generateHexId(length);
 	}
 
 	protected getApiState(session: Session): api.State {
@@ -441,7 +446,7 @@ export class Server {
 		}
 		if (this.require_token || !this.require_passphrase) {
 			if (session.token_hash == null) {
-				let token = this.generateToken();
+				let token = this.generateToken(15);
 				let subject = this.processEmailTemplateString(this.waiting_for_register_token_email_template[language].subject, {
 					token
 				});
@@ -473,7 +478,7 @@ export class Server {
 		let user = await this.users.createObject({
 			email: session.email,
 			username: session.username,
-			passdata: session.passdata ?? Validator.fromPassphrase(this.generateToken()).toChunk()
+			passdata: session.passdata ?? Validator.fromPassphrase(this.generateTicket(32)).toChunk()
 		});
 		return {
 			id: session.id,
@@ -532,7 +537,7 @@ export class Server {
 		}
 		if (this.require_token || !this.require_passphrase) {
 			if (session.token_hash == null) {
-				let token = this.generateToken();
+				let token = this.generateToken(6);
 				let subject = this.processEmailTemplateString(this.waiting_for_authenticate_token_email_template[language].subject, {
 					token
 				});
@@ -616,7 +621,7 @@ export class Server {
 			throw new ExpectedUnreachableCodeError();
 		}
 		if (session.token_hash == null) {
-			let token = this.generateToken();
+			let token = this.generateToken(15);
 				let subject = this.processEmailTemplateString(this.waiting_for_recover_token_email_template[language].subject, {
 					token
 				});
@@ -961,7 +966,7 @@ export class Server {
 			let payload = await request.payload(1024);
 			session = await this.getNextSession(session, payload.command, request);
 			if (api.AuthenticatedState.is(session)) {
-				ticket = this.generateToken();
+				ticket = this.generateTicket(32);
 				session.ticket_hash = this.computeHash(ticket);
 			} else {
 				ticket = undefined;
