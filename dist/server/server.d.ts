@@ -10,6 +10,12 @@ import { UserStore } from "./stores/user";
 import { UserRoleStore } from "./stores/user_role";
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
 type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
+type EmailTemplate = {
+    [A in Language]: {
+        subject: string;
+        message: string;
+    };
+};
 export type ServerOptions = {
     users?: UserStore;
     sessions?: SessionStore;
@@ -30,18 +36,9 @@ export type ServerOptions = {
     tolerable_token_hash_attempts?: number;
     tolerable_passdata_attempts?: number;
     clean_expired_interval_minutes?: number;
-    waiting_for_register_token_email_templates?: {
-        en: string;
-        sv: string;
-    };
-    waiting_for_authenticate_token_email_templates?: {
-        en: string;
-        sv: string;
-    };
-    waiting_for_recover_token_email_templates?: {
-        en: string;
-        sv: string;
-    };
+    waiting_for_register_token_email_template?: EmailTemplate;
+    waiting_for_authenticate_token_email_template?: EmailTemplate;
+    waiting_for_recover_token_email_template?: EmailTemplate;
 };
 export declare class AccessHandler {
     protected authenticated_user_id: string | undefined;
@@ -79,24 +76,16 @@ export declare class Server {
     protected tolerable_token_hash_attempts: number;
     protected tolerable_passdata_attempts: number;
     protected clean_expired_interval_minutes: number;
-    protected waiting_for_register_token_email_templates: {
-        en: string;
-        sv: string;
-    };
-    protected waiting_for_authenticate_token_email_templates: {
-        en: string;
-        sv: string;
-    };
-    protected waiting_for_recover_token_email_templates: {
-        en: string;
-        sv: string;
-    };
+    protected waiting_for_register_token_email_template: EmailTemplate;
+    protected waiting_for_authenticate_token_email_template: EmailTemplate;
+    protected waiting_for_recover_token_email_template: EmailTemplate;
     protected computeHash(string: string): string;
     protected computePassdata(passphrase: string): string;
     protected createAccessHandler(authenticated_user_id: string | undefined): Promise<AccessHandler>;
     protected createSetCookieValues(session: Session, ticket: string | undefined): Array<string>;
     protected finalizeResponse<A extends autoguard.api.EndpointResponse>(response: A, session: Session, ticket: string | undefined): A;
-    protected generateToken(): string;
+    protected generateToken(length: number): string;
+    protected generateTicket(length: number): string;
     protected getApiState(session: Session): api.State;
     protected getApiUser(session: Session): Promise<api.User | undefined>;
     protected getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined>;
@@ -117,8 +106,8 @@ export declare class Server {
     protected getNextAuthenticateSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
     protected getNextRecoverSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
     protected getNextSession(session: Session, command: Command, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
-    protected processEmailTemplate(template: string, variables: Record<string, string | undefined>): string;
-    protected sendEmail(to_address: string, message: string, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<void>;
+    protected processEmailTemplateString(template: string, variables: Record<string, string | undefined>): string;
+    protected sendEmail(to_address: string, subject: string, message: string): Promise<void>;
     protected validateEmailFormat(email: string): boolean;
     protected validatePassphraseFormat(passphrase: string): boolean;
     protected validateUsernameFormat(username: string): boolean;

@@ -12,18 +12,37 @@ const role_1 = require("./stores/role");
 const session_1 = require("./stores/session");
 const user_1 = require("./stores/user");
 const user_role_1 = require("./stores/user_role");
+const utils = require("./utils");
 const validator_1 = require("./validator");
-const WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATES = {
-    en: "The verification code is: {token}",
-    sv: "Verifieringskoden är: {token}"
+const WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATE = {
+    en: {
+        subject: "Verification code",
+        message: "The verification code is: {token}"
+    },
+    sv: {
+        subject: "Verifieringskod",
+        message: "Verifieringskoden är: {token}"
+    }
 };
-const WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATES = {
-    en: "The verification code is: {token}",
-    sv: "Verifieringskoden är: {token}"
+const WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATE = {
+    en: {
+        subject: "Verification code",
+        message: "The verification code is: {token}"
+    },
+    sv: {
+        subject: "Verifieringskod",
+        message: "Verifieringskoden är: {token}"
+    }
 };
-const WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATES = {
-    en: "The verification code is: {token}",
-    sv: "Verifieringskoden är: {token}"
+const WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATE = {
+    en: {
+        subject: "Verification code",
+        message: "The verification code is: {token}"
+    },
+    sv: {
+        subject: "Verifieringskod",
+        message: "Verifieringskoden är: {token}"
+    }
 };
 class AccessHandler {
     authenticated_user_id;
@@ -71,9 +90,9 @@ class Server {
     tolerable_token_hash_attempts;
     tolerable_passdata_attempts;
     clean_expired_interval_minutes;
-    waiting_for_register_token_email_templates;
-    waiting_for_authenticate_token_email_templates;
-    waiting_for_recover_token_email_templates;
+    waiting_for_register_token_email_template;
+    waiting_for_authenticate_token_email_template;
+    waiting_for_recover_token_email_template;
     computeHash(string) {
         return libcrypto.createHash("sha256").update(string).digest("hex");
     }
@@ -122,8 +141,11 @@ class Server {
             }
         };
     }
-    generateToken() {
-        return libcrypto.randomBytes(16).toString("hex");
+    generateToken(length) {
+        return utils.generateDigitId(length);
+    }
+    generateTicket(length) {
+        return utils.generateHexId(length);
     }
     getApiState(session) {
         return api.State.as({
@@ -355,11 +377,14 @@ class Server {
         }
         if (this.require_token || !this.require_passphrase) {
             if (session.token_hash == null) {
-                let token = this.generateToken();
-                let message = this.processEmailTemplate(this.waiting_for_register_token_email_templates[language], {
+                let token = this.generateToken(15);
+                let subject = this.processEmailTemplateString(this.waiting_for_register_token_email_template[language].subject, {
                     token
                 });
-                await this.sendEmail(session.email, message, request);
+                let message = this.processEmailTemplateString(this.waiting_for_register_token_email_template[language].message, {
+                    token
+                });
+                await this.sendEmail(session.email, subject, message);
                 return {
                     ...session,
                     token_hash: this.computeHash(token),
@@ -384,7 +409,7 @@ class Server {
         let user = await this.users.createObject({
             email: session.email,
             username: session.username,
-            passdata: session.passdata ?? validator_1.Validator.fromPassphrase(this.generateToken()).toChunk()
+            passdata: session.passdata ?? validator_1.Validator.fromPassphrase(this.generateTicket(32)).toChunk()
         });
         return {
             id: session.id,
@@ -442,11 +467,14 @@ class Server {
         }
         if (this.require_token || !this.require_passphrase) {
             if (session.token_hash == null) {
-                let token = this.generateToken();
-                let message = this.processEmailTemplate(this.waiting_for_authenticate_token_email_templates[language], {
+                let token = this.generateToken(6);
+                let subject = this.processEmailTemplateString(this.waiting_for_authenticate_token_email_template[language].subject, {
                     token
                 });
-                await this.sendEmail(session.email, message, request);
+                let message = this.processEmailTemplateString(this.waiting_for_authenticate_token_email_template[language].message, {
+                    token
+                });
+                await this.sendEmail(session.email, subject, message);
                 return {
                     ...session,
                     token_hash: this.computeHash(token),
@@ -522,11 +550,14 @@ class Server {
             throw new shared_1.ExpectedUnreachableCodeError();
         }
         if (session.token_hash == null) {
-            let token = this.generateToken();
-            let message = this.processEmailTemplate(this.waiting_for_recover_token_email_templates[language], {
+            let token = this.generateToken(15);
+            let subject = this.processEmailTemplateString(this.waiting_for_recover_token_email_template[language].subject, {
                 token
             });
-            await this.sendEmail(session.email, message, request);
+            let message = this.processEmailTemplateString(this.waiting_for_recover_token_email_template[language].message, {
+                token
+            });
+            await this.sendEmail(session.email, subject, message);
             return {
                 ...session,
                 token_hash: this.computeHash(token),
@@ -814,15 +845,14 @@ class Server {
             wait_until_utc: this.getExpiresInMilliseconds(250)
         };
     }
-    processEmailTemplate(template, variables) {
+    processEmailTemplateString(template, variables) {
         return template.replaceAll(/[{]([^}]*)[}]/g, (_, key) => {
             return variables[key] ?? "?";
         });
     }
-    async sendEmail(to_address, message, request) {
-        let spoofable_host = this.getHeaders(request.headers(), "host").pop() ?? "localhost";
+    async sendEmail(to_address, subject, message) {
         await this.mailer.send({
-            subject: spoofable_host,
+            subject: subject,
             message: message,
             to_address: to_address
         });
@@ -871,7 +901,7 @@ class Server {
             let payload = await request.payload(1024);
             session = await this.getNextSession(session, payload.command, request);
             if (api.AuthenticatedState.is(session)) {
-                ticket = this.generateToken();
+                ticket = this.generateTicket(32);
                 session.ticket_hash = this.computeHash(ticket);
             }
             else {
@@ -916,9 +946,9 @@ class Server {
         this.tolerable_token_hash_attempts = options?.tolerable_token_hash_attempts ?? 1;
         this.tolerable_passdata_attempts = options?.tolerable_passdata_attempts ?? 1;
         this.clean_expired_interval_minutes = options?.clean_expired_interval_minutes ?? 1;
-        this.waiting_for_register_token_email_templates = options?.waiting_for_register_token_email_templates ?? WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATES;
-        this.waiting_for_authenticate_token_email_templates = options?.waiting_for_authenticate_token_email_templates ?? WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATES;
-        this.waiting_for_recover_token_email_templates = options?.waiting_for_recover_token_email_templates ?? WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATES;
+        this.waiting_for_register_token_email_template = options?.waiting_for_register_token_email_template ?? WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATE;
+        this.waiting_for_authenticate_token_email_template = options?.waiting_for_authenticate_token_email_template ?? WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATE;
+        this.waiting_for_recover_token_email_template = options?.waiting_for_recover_token_email_template ?? WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATE;
         setInterval(async () => {
             let now = Date.now();
             let sessions = await this.sessions.lookupObjects("expires_utc", "<=", now);
