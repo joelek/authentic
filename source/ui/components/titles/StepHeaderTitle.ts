@@ -7,6 +7,7 @@ document.head.appendChild(html.style({}, `
 		color: rgb(255, 255, 255);
 		font-family: sans-serif;
 		font-size: 18px;
+		height: auto;
 		line-height: 24px;
 		overflow: visible;
 		text-align: center;
