@@ -20,8 +20,8 @@ export function createElementAndController(options?: UIOptions): {
 } {
 	let client = options?.client ?? createClient();
 	let managers = Managers.create(client);
-	let visible = stateify(false as boolean);
-	let element = Modal(managers, { visible });
+	let element = Modal(managers, {});
+	let visible = managers.state.visible;
 	let controller: Controller = {
 		logout: async () => {
 			await managers.backend.sendCommand({

@@ -1,4 +1,4 @@
-import { html, State, stateify } from "@joelek/bonsai";
+import { html } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
 import { Block } from "./Block";
 import { IconButton } from "./buttons/IconButton";
@@ -96,11 +96,11 @@ document.head.appendChild(html.style({}, `
 `));
 
 export type Modal = {
-	visible: State<boolean>;
+
 };
 
 export function Modal(managers: Managers, attributes: Modal) {
-	let visible = stateify(attributes.visible);
+	let visible = managers.state.visible;
 	return (
 		Block("div", {
 			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
