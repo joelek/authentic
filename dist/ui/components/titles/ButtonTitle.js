@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ButtonTitle = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
+const CLASS_NAME = "authentic-button-title";
 document.head.appendChild(bonsai_1.html.style({}, `
-	.button-title {
+	.${CLASS_NAME} {
 		color: rgb(255, 255, 255);
 		font-family: sans-serif;
 		font-size: 14px;
+		height: auto;
 		line-height: 18px;
 		overflow: hidden;
 		text-align: center;
@@ -19,7 +21,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 `));
 function ButtonTitle(managers, attributes, ...children) {
     return ((0, Block_1.Block)("p", {
-        class: ["button-title"]
+        class: [`${CLASS_NAME}`]
     }, ...children));
 }
 exports.ButtonTitle = ButtonTitle;

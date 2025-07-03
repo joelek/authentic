@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogOutButton = void 0;
 const FormButton_1 = require("../form/FormButton");
-const titles_1 = require("../titles");
+const ButtonTitle_1 = require("../titles/ButtonTitle");
 function LogOutButton(managers, attributes) {
     return ((0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
@@ -14,7 +14,7 @@ function LogOutButton(managers, attributes) {
                 }
             });
         }
-    }, (0, titles_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("LOG_OUT"))));
+    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("LOG_OUT"))));
 }
 exports.LogOutButton = LogOutButton;
 ;

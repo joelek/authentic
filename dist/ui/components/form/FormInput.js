@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FormInput = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
+const CLASS_NAME = "authentic-form-input";
 document.head.appendChild(bonsai_1.html.style({}, `
-	.form-input {
+	.${CLASS_NAME} {
 		background-color: rgb(63, 63, 63);
 		border-radius: 4px;
 		color: rgb(255, 255, 255);
@@ -15,22 +16,21 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		transition: all 0.125s;
 	}
 
-	.form-input:focus {
+	.${CLASS_NAME}:focus {
 		background-color: rgb(79, 79, 79);
 	}
 
-	.form-input[readonly] {
+	.${CLASS_NAME}[readonly] {
 		cursor: not-allowed;
 	}
 `));
-function FormInput(managers, attributes) {
+function FormInput(managers, { ...augmentations }) {
     let enabled = managers.backend.getEditable();
     return ((0, Block_1.Block)("input", {
-        class: ["form-input"],
+        class: [`${CLASS_NAME}`],
         readonly: enabled.compute((enabled) => enabled ? undefined : ""),
-        spellcheck: false,
-        ...attributes
-    }));
+        spellcheck: false
+    }).augment(augmentations));
 }
 exports.FormInput = FormInput;
 ;

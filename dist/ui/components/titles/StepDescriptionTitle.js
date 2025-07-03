@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StepDescriptionTitle = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
+const CLASS_NAME = "authentic-step-description-title";
 document.head.appendChild(bonsai_1.html.style({}, `
-	.step-description-title {
+	.${CLASS_NAME} {
 		color: rgb(191, 191, 191);
 		font-family: sans-serif;
 		font-size: 14px;
+		height: auto;
 		line-height: 18px;
 		overflow: visible;
 		text-align: left;
@@ -19,7 +21,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 `));
 function StepDescriptionTitle(managers, attributes, ...children) {
     return ((0, Block_1.Block)("p", {
-        class: ["step-description-title"]
+        class: [`${CLASS_NAME}`]
     }, ...children));
 }
 exports.StepDescriptionTitle = StepDescriptionTitle;

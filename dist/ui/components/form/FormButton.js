@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FormButton = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
+const CLASS_NAME = "authentic-form-button";
 document.head.appendChild(bonsai_1.html.style({}, `
-	.form-button {
+	.${CLASS_NAME} {
 		background-color: rgb(223, 159, 31);
 		border-radius: 4px;
 		color: rgb(255, 255, 255);
@@ -16,22 +17,21 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		transition: all 0.125s;
 	}
 
-	.form-button:hover {
+	.${CLASS_NAME}:hover {
 		background-color: rgb(239, 175, 47);
 	}
 
-	.form-button[disabled] {
+	.${CLASS_NAME}[disabled] {
 		background-color: rgb(95, 95, 95);
 		cursor: not-allowed;
 	}
 `));
-function FormButton(managers, attributes, ...children) {
+function FormButton(managers, { ...augmentations }, ...children) {
     let enabled = managers.backend.getSubmittable();
     return ((0, Block_1.Block)("button", {
-        class: ["form-button"],
-        disabled: enabled.compute((enabled) => enabled ? undefined : ""),
-        ...attributes
-    }, ...children));
+        class: [`${CLASS_NAME}`],
+        disabled: enabled.compute((enabled) => enabled ? undefined : "")
+    }, ...children).augment(augmentations));
 }
 exports.FormButton = FormButton;
 ;
