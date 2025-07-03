@@ -1,6 +1,7 @@
 import { html, State, stateify } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
 import { Block } from "./Block";
+import { IconButton } from "./buttons/IconButton";
 import { AuthenticatedStep, WaitingForAuthenticateEmailStep, WaitingForAuthenticatePassphraseStep, WaitingForAuthenticateTokenStep, WaitingForAuthenticateUsernameStep, WaitingForRecoverEmailStep, WaitingForRecoverPassphraseStep, WaitingForRecoverTokenStep, WaitingForRecoverUsernameStep, WaitingForRegisterEmailStep, WaitingForRegisterPassphraseStep, WaitingForRegisterTokenStep, WaitingForRegisterUsernameStep } from "./steps";
 import { WaitingForCommandStep } from "./steps/WaitingForCommandStep";
 
@@ -33,7 +34,25 @@ document.head.appendChild(html.style({}, `
 
 	.modal__window {
 		background-color: rgb(47, 47, 47);
-		border-radius: 2px;
+		border-radius: 4px;
+		display: grid;
+		grid-template-rows: auto minmax(0%, 100%) auto;
+	}
+
+	.modal__head {
+		align-items: center;
+		background-color: rgb(63, 63, 63);
+		display: grid;
+		grid-template-columns: auto;
+		justify-content: end;
+	}
+
+	.modal__body {
+
+	}
+
+	.modal__foot {
+
 	}
 
 	.modal__scroll {
@@ -82,26 +101,45 @@ export function Modal(managers: Managers, attributes: Modal) {
 						class: ["modal__window"]
 					},
 						Block("div", {
-							class: ["modal__scroll"]
+							class: ["modal__head"]
+						},
+							IconButton(managers, {
+								icon: "cross",
+								onclick: () => {
+									visible.update(!visible.value());
+								}
+							})
+						),
+						Block("div", {
+							class: ["modal__body"]
 						},
 							Block("div", {
-								class: ["modal__content"]
+								class: ["modal__scroll"]
 							},
-								AuthenticatedStep(managers, {}),
-								WaitingForCommandStep(managers, {}),
-								WaitingForAuthenticateEmailStep(managers, {}),
-								WaitingForAuthenticatePassphraseStep(managers, {}),
-								WaitingForAuthenticateTokenStep(managers, {}),
-								WaitingForAuthenticateUsernameStep(managers, {}),
-								WaitingForRecoverEmailStep(managers, {}),
-								WaitingForRecoverPassphraseStep(managers, {}),
-								WaitingForRecoverTokenStep(managers, {}),
-								WaitingForRecoverUsernameStep(managers, {}),
-								WaitingForRegisterEmailStep(managers, {}),
-								WaitingForRegisterPassphraseStep(managers, {}),
-								WaitingForRegisterTokenStep(managers, {}),
-								WaitingForRegisterUsernameStep(managers, {})
+								Block("div", {
+									class: ["modal__content"]
+								},
+									AuthenticatedStep(managers, {}),
+									WaitingForCommandStep(managers, {}),
+									WaitingForAuthenticateEmailStep(managers, {}),
+									WaitingForAuthenticatePassphraseStep(managers, {}),
+									WaitingForAuthenticateTokenStep(managers, {}),
+									WaitingForAuthenticateUsernameStep(managers, {}),
+									WaitingForRecoverEmailStep(managers, {}),
+									WaitingForRecoverPassphraseStep(managers, {}),
+									WaitingForRecoverTokenStep(managers, {}),
+									WaitingForRecoverUsernameStep(managers, {}),
+									WaitingForRegisterEmailStep(managers, {}),
+									WaitingForRegisterPassphraseStep(managers, {}),
+									WaitingForRegisterTokenStep(managers, {}),
+									WaitingForRegisterUsernameStep(managers, {})
+								)
 							)
+						),
+						Block("div", {
+							class: ["modal__foot"]
+						}
+
 						)
 					)
 				)
