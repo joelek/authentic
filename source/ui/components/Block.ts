@@ -21,9 +21,9 @@ document.head.appendChild(html.style({}, `
 
 export type Block<A extends keyof HTMLElementTagNameMap> = Augmentations<HTMLElementEventMap, HTMLElementTagNameMap[A]>;
 
-export function Block<A extends keyof HTMLElementTagNameMap>(type: A, attributes: Block<A>, ...children: Children) {
+export function Block<A extends keyof HTMLElementTagNameMap>(type: A, { ...augmentations }: Block<A>, ...children: Children) {
 	return (
-		html[type](attributes, ...children)
+		html[type](augmentations, ...children)
 			.attribute("class", (classes) => [`${CLASS_NAME}`, ...classes])
 	);
 };
