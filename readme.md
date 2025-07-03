@@ -48,5 +48,3 @@ controller.toggle();
 * Add language selector.
 * Add support for HTML emails.
 * Make UI colors configurable.
-* Fix attribute leakage where `...attributes` is used.
-* Consider using "block" class name only.
