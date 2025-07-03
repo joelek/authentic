@@ -1,8 +1,9 @@
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
-import { LogOutButton } from "../buttons";
-import { FormGroup } from "../form";
-import { StepDescriptionTitle, StepHeaderTitle } from "../titles";
+import { LogOutButton } from "../buttons/LogOutButton";
+import { FormGroup } from "../form/FormGroup";
+import { StepDescriptionTitle } from "../titles/StepDescriptionTitle";
+import { StepHeaderTitle } from "../titles/StepHeaderTitle";
 import { Step } from "./Step";
 
 export type AuthenticatedStep = {};

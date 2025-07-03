@@ -2,8 +2,20 @@ import { html, State, stateify } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
 import { Block } from "./Block";
 import { IconButton } from "./buttons/IconButton";
-import { AuthenticatedStep, WaitingForAuthenticateEmailStep, WaitingForAuthenticatePassphraseStep, WaitingForAuthenticateTokenStep, WaitingForAuthenticateUsernameStep, WaitingForRecoverEmailStep, WaitingForRecoverPassphraseStep, WaitingForRecoverTokenStep, WaitingForRecoverUsernameStep, WaitingForRegisterEmailStep, WaitingForRegisterPassphraseStep, WaitingForRegisterTokenStep, WaitingForRegisterUsernameStep } from "./steps";
+import { AuthenticatedStep } from "./steps/AuthenticatedStep";
+import { WaitingForAuthenticateEmailStep } from "./steps/WaitingForAuthenticateEmailStep";
+import { WaitingForAuthenticatePassphraseStep } from "./steps/WaitingForAuthenticatePassphraseStep";
+import { WaitingForAuthenticateTokenStep } from "./steps/WaitingForAuthenticateTokenStep";
+import { WaitingForAuthenticateUsernameStep } from "./steps/WaitingForAuthenticateUsernameStep";
 import { WaitingForCommandStep } from "./steps/WaitingForCommandStep";
+import { WaitingForRecoverEmailStep } from "./steps/WaitingForRecoverEmailStep";
+import { WaitingForRecoverPassphraseStep } from "./steps/WaitingForRecoverPassphraseStep";
+import { WaitingForRecoverTokenStep } from "./steps/WaitingForRecoverTokenStep";
+import { WaitingForRecoverUsernameStep } from "./steps/WaitingForRecoverUsernameStep";
+import { WaitingForRegisterEmailStep } from "./steps/WaitingForRegisterEmailStep";
+import { WaitingForRegisterPassphraseStep } from "./steps/WaitingForRegisterPassphraseStep";
+import { WaitingForRegisterTokenStep } from "./steps/WaitingForRegisterTokenStep";
+import { WaitingForRegisterUsernameStep } from "./steps/WaitingForRegisterUsernameStep";
 
 const CLASS_NAME = "authentic-modal";
 

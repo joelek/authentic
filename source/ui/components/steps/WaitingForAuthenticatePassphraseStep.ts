@@ -2,8 +2,12 @@ import { stateify } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
 import { CancelButton } from "../buttons/CancelButton";
-import { FormButton, FormGroup, FormInput } from "../form";
-import { ButtonTitle, StepDescriptionTitle, StepHeaderTitle } from "../titles";
+import { FormButton } from "../form/FormButton";
+import { FormGroup } from "../form/FormGroup";
+import { FormInput } from "../form/FormInput";
+import { ButtonTitle } from "../titles/ButtonTitle";
+import { StepDescriptionTitle } from "../titles/StepDescriptionTitle";
+import { StepHeaderTitle } from "../titles/StepHeaderTitle";
 import { Step } from "./Step";
 
 export type WaitingForAuthenticatePassphraseStep = {};

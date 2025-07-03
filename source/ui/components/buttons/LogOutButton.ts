@@ -1,6 +1,6 @@
 import { Managers } from "../../managers/Managers";
 import { FormButton } from "../form/FormButton";
-import { ButtonTitle } from "../titles";
+import { ButtonTitle } from "../titles/ButtonTitle";
 
 export type LogOutButton = {};
 

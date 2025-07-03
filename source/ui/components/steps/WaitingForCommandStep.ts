@@ -1,7 +1,8 @@
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
-import { FormButton, FormGroup } from "../form";
-import { ButtonTitle } from "../titles";
+import { FormButton } from "../form/FormButton";
+import { FormGroup } from "../form/FormGroup";
+import { ButtonTitle } from "../titles/ButtonTitle";
 import { Step } from "./Step";
 
 export type WaitingForCommandStep = {};

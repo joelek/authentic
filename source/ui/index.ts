@@ -1,7 +1,7 @@
 import { State, stateify } from "@joelek/bonsai";
 import * as api from "../api/client";
 import { Client, createClient } from "../client";
-import { Modal } from "./components";
+import { Modal } from "./components/Modal";
 import { Managers } from "./managers";
 
 export type UIOptions = {
