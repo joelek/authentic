@@ -2,8 +2,10 @@ import { Augmentations, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
+const CLASS_NAME = "authentic-form-input";
+
 document.head.appendChild(html.style({}, `
-	.form-input {
+	.${CLASS_NAME} {
 		background-color: rgb(63, 63, 63);
 		border-radius: 4px;
 		color: rgb(255, 255, 255);
@@ -14,11 +16,11 @@ document.head.appendChild(html.style({}, `
 		transition: all 0.125s;
 	}
 
-	.form-input:focus {
+	.${CLASS_NAME}:focus {
 		background-color: rgb(79, 79, 79);
 	}
 
-	.form-input[readonly] {
+	.${CLASS_NAME}[readonly] {
 		cursor: not-allowed;
 	}
 `));
@@ -31,7 +33,7 @@ export function FormInput(managers: Managers, attributes: FormInput) {
 	let enabled = managers.backend.getEditable();
 	return (
 		Block("input", {
-			class: ["form-input"],
+			class: [`${CLASS_NAME}`],
 			readonly: enabled.compute((enabled) => enabled ? undefined : ""),
 			spellcheck: false,
 			...attributes

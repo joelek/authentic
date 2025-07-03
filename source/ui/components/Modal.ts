@@ -5,41 +5,43 @@ import { IconButton } from "./buttons/IconButton";
 import { AuthenticatedStep, WaitingForAuthenticateEmailStep, WaitingForAuthenticatePassphraseStep, WaitingForAuthenticateTokenStep, WaitingForAuthenticateUsernameStep, WaitingForRecoverEmailStep, WaitingForRecoverPassphraseStep, WaitingForRecoverTokenStep, WaitingForRecoverUsernameStep, WaitingForRegisterEmailStep, WaitingForRegisterPassphraseStep, WaitingForRegisterTokenStep, WaitingForRegisterUsernameStep } from "./steps";
 import { WaitingForCommandStep } from "./steps/WaitingForCommandStep";
 
+const CLASS_NAME = "authentic-modal";
+
 document.head.appendChild(html.style({}, `
-	.modal {
+	.${CLASS_NAME} {
 		position: absolute;
 			top: 0%;
 			left: 0%;
 	}
 
-	.modal--visible {
+	.${CLASS_NAME}--visible {
 
 	}
 
-	.modal--hidden {
+	.${CLASS_NAME}--hidden {
 		display: none;
 	}
 
-	.modal__background {
+	.${CLASS_NAME}__background {
 		background-color: rgb(31, 31, 31);
 		padding: 24px;
 	}
 
-	.modal__positioner {
+	.${CLASS_NAME}__positioner {
 		align-content: center;
 		display: grid;
 		grid-template-columns: minmax(240px, 400px);
 		justify-content: center;
 	}
 
-	.modal__window {
+	.${CLASS_NAME}__window {
 		background-color: rgb(47, 47, 47);
 		border-radius: 4px;
 		display: grid;
 		grid-template-rows: auto minmax(0%, 100%) auto;
 	}
 
-	.modal__head {
+	.${CLASS_NAME}__head {
 		align-items: center;
 		background-color: rgb(63, 63, 63);
 		display: grid;
@@ -47,35 +49,35 @@ document.head.appendChild(html.style({}, `
 		justify-content: end;
 	}
 
-	.modal__body {
+	.${CLASS_NAME}__body {
 
 	}
 
-	.modal__foot {
+	.${CLASS_NAME}__foot {
 
 	}
 
-	.modal__scroll {
+	.${CLASS_NAME}__scroll {
 		overflow-x: auto;
 		overflow-y: auto;
 	}
 
-	.modal__scroll::-webkit-scrollbar {
+	.${CLASS_NAME}__scroll::-webkit-scrollbar {
 		background-color: transparent;
 		height: 12px;
 		width: 12px;
 	}
 
-	.modal__scroll::-webkit-scrollbar-corner {
+	.${CLASS_NAME}__scroll::-webkit-scrollbar-corner {
 		background-color: transparent;
 	}
 
-	.modal__scroll::-webkit-scrollbar-thumb {
+	.${CLASS_NAME}__scroll::-webkit-scrollbar-thumb {
 		background-color: rgb(63, 63, 63);
 		border-radius: 12px;
 	}
 
-	.modal__content {
+	.${CLASS_NAME}__content {
 		height: auto;
 		padding: 24px;
 	}
@@ -89,19 +91,19 @@ export function Modal(managers: Managers, attributes: Modal) {
 	let visible = stateify(attributes.visible);
 	return (
 		Block("div", {
-			class: ["modal", visible.compute((visible) => visible ? "modal--visible" : "modal--hidden")]
+			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
 		},
 			Block("div", {
-				class: ["modal__background"]
+				class: [`${CLASS_NAME}__background`]
 			},
 				Block("div", {
-					class: ["modal__positioner"]
+					class: [`${CLASS_NAME}__positioner`]
 				},
 					Block("div", {
-						class: ["modal__window"]
+						class: [`${CLASS_NAME}__window`]
 					},
 						Block("div", {
-							class: ["modal__head"]
+							class: [`${CLASS_NAME}__head`]
 						},
 							IconButton(managers, {
 								icon: "cross",
@@ -111,13 +113,13 @@ export function Modal(managers: Managers, attributes: Modal) {
 							})
 						),
 						Block("div", {
-							class: ["modal__body"]
+							class: [`${CLASS_NAME}__body`]
 						},
 							Block("div", {
-								class: ["modal__scroll"]
+								class: [`${CLASS_NAME}__scroll`]
 							},
 								Block("div", {
-									class: ["modal__content"]
+									class: [`${CLASS_NAME}__content`]
 								},
 									AuthenticatedStep(managers, {}),
 									WaitingForCommandStep(managers, {}),
@@ -137,7 +139,7 @@ export function Modal(managers: Managers, attributes: Modal) {
 							)
 						),
 						Block("div", {
-							class: ["modal__foot"]
+							class: [`${CLASS_NAME}__foot`]
 						}
 
 						)

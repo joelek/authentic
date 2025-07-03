@@ -23,12 +23,14 @@ function render(data: Data) {
 	return element;
 };
 
+const CLASS_NAME = "authentic-icon";
+
 document.head.appendChild(html.style({}, `
-	.authentic-icon {
+	.${CLASS_NAME} {
 
 	}
 
-	.authentic-icon__graphic {
+	.${CLASS_NAME}__graphic {
 		fill: currentColor;
 	}
 `));
@@ -43,11 +45,11 @@ export function Icon(attributes: Icon) {
 	let size = attributes.size;
 	return (
 		html.div({
-			class: ["block", "authentic-icon"],
+			class: ["block", `${CLASS_NAME}`],
 			...attributes
 		},
 			svg.svg({
-				class: ["block", "authentic-icon__graphic"],
+				class: ["block", `${CLASS_NAME}__graphic`],
 				width: size,
 				height: size,
 				viewBox: "0 0 24 24",

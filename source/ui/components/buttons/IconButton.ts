@@ -3,19 +3,21 @@ import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 import { Icon } from "../Icon";
 
+const CLASS_NAME = "authentic-icon-button";
+
 document.head.appendChild(html.style({}, `
-	.authentic-icon-button {
+	.${CLASS_NAME} {
 		background-color: transparent;
 		color: rgb(255, 255, 255);
 		cursor: pointer;
 		padding: 8px;
 	}
 
-	.authentic-icon-button:hover {
+	.${CLASS_NAME}:hover {
 		background-color: rgb(95, 95, 95);
 	}
 
-	.authentic-icon-button[disabled] {
+	.${CLASS_NAME}[disabled] {
 		background-color: transparent;
 		color: rgb(127, 127, 127);
 		cursor: not-allowed;
@@ -30,7 +32,7 @@ export function IconButton(managers: Managers, attributes: IconButton) {
 	let icon = attributes.icon;
 	return (
 		Block("button", {
-			class: ["authentic-icon-button"],
+			class: [`${CLASS_NAME}`],
 			...attributes
 		},
 			Icon({

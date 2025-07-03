@@ -3,24 +3,26 @@ import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
+const CLASS_NAME = "authentic-step";
+
 document.head.appendChild(html.style({}, `
-	.step {
+	.${CLASS_NAME} {
 		transition: all 0.50s;
 	}
 
-	.step--visible {
+	.${CLASS_NAME}--visible {
 		height: auto;
 		opacity: 1.0;
 		transform: translate(0px, 0px);
 	}
 
-	.step--hidden {
+	.${CLASS_NAME}--hidden {
 		height: 0px;
 		opacity: 0.0;
 		transform: translate(0px, 120px);
 	}
 
-	.step__content {
+	.${CLASS_NAME}__content {
 		display: grid;
 		gap: 24px;
 	}
@@ -37,10 +39,10 @@ export function Step<A extends api.State>(managers: Managers, attributes: Step<A
 	let visible = type.compute((type) => type != null);
 	return (
 		Block("div", {
-			class: ["step", visible.compute((visible) => visible ? "step--visible" : "step--hidden")]
+			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
 		},
 			Block("div", {
-				class: ["step__content"]
+				class: [`${CLASS_NAME}__content`]
 			},
 				...children
 			)

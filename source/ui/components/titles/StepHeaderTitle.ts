@@ -2,8 +2,10 @@ import {  Children, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
+const CLASS_NAME = "authentic-step-header-title";
+
 document.head.appendChild(html.style({}, `
-	.step-header-title {
+	.${CLASS_NAME} {
 		color: rgb(255, 255, 255);
 		font-family: sans-serif;
 		font-size: 18px;
@@ -23,7 +25,7 @@ export type StepHeaderTitle = {};
 export function StepHeaderTitle(managers: Managers, attributes: StepHeaderTitle, ...children: Children) {
 	return (
 		Block("p", {
-			class: ["step-header-title"]
+			class: [`${CLASS_NAME}`]
 		},
 			...children
 		)

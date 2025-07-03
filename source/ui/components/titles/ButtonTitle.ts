@@ -2,8 +2,10 @@ import {  Children, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
+const CLASS_NAME = "authentic-button-title";
+
 document.head.appendChild(html.style({}, `
-	.button-title {
+	.${CLASS_NAME} {
 		color: rgb(255, 255, 255);
 		font-family: sans-serif;
 		font-size: 14px;
@@ -23,7 +25,7 @@ export type ButtonTitle = {};
 export function ButtonTitle(managers: Managers, attributes: ButtonTitle, ...children: Children) {
 	return (
 		Block("p", {
-			class: ["button-title"]
+			class: [`${CLASS_NAME}`]
 		},
 			...children
 		)

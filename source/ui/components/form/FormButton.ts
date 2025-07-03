@@ -2,8 +2,10 @@ import { Augmentations, Children, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
+const CLASS_NAME = "authentic-form-button";
+
 document.head.appendChild(html.style({}, `
-	.form-button {
+	.${CLASS_NAME} {
 		background-color: rgb(223, 159, 31);
 		border-radius: 4px;
 		color: rgb(255, 255, 255);
@@ -15,11 +17,11 @@ document.head.appendChild(html.style({}, `
 		transition: all 0.125s;
 	}
 
-	.form-button:hover {
+	.${CLASS_NAME}:hover {
 		background-color: rgb(239, 175, 47);
 	}
 
-	.form-button[disabled] {
+	.${CLASS_NAME}[disabled] {
 		background-color: rgb(95, 95, 95);
 		cursor: not-allowed;
 	}
@@ -33,7 +35,7 @@ export function FormButton(managers: Managers, attributes: FormButton, ...childr
 	let enabled = managers.backend.getSubmittable();
 	return (
 		Block("button", {
-			class: ["form-button"],
+			class: [`${CLASS_NAME}`],
 			disabled: enabled.compute((enabled) => enabled ? undefined : ""),
 			...attributes
 		}, ...children)
