@@ -35,7 +35,7 @@ const WAITING_FOR_REGISTER_EMAIL = {
 	},
 	"REGISTER_EMAIL_NOT_AVAILABLE": {
 		en: "The email address is already taken. Please select another one and try again.",
-		sv: "E-postadressen är redan upptagen. Vänligen välj ett annan och försök igen."
+		sv: "E-postadressen är redan upptagen. Vänligen välj en annan och försök igen."
 	}
 };
 
