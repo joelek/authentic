@@ -31,13 +31,14 @@ export type FormButton = Augmentations<HTMLElementEventMap, HTMLButtonElement> &
 
 };
 
-export function FormButton(managers: Managers, attributes: FormButton, ...children: Children) {
+export function FormButton(managers: Managers, { ...augmentations }: FormButton, ...children: Children) {
 	let enabled = managers.backend.getSubmittable();
 	return (
 		Block("button", {
 			class: [`${CLASS_NAME}`],
-			disabled: enabled.compute((enabled) => enabled ? undefined : ""),
-			...attributes
-		}, ...children)
+			disabled: enabled.compute((enabled) => enabled ? undefined : "")
+		},
+			...children
+		).augment(augmentations)
 	);
 };

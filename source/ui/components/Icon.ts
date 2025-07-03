@@ -1,4 +1,5 @@
 import { Attribute, Augmentations, html, stateify, svg } from "@joelek/bonsai";
+import { Managers } from "../managers/Managers";
 
 type Data = [string, [string, string][], Data[]];
 
@@ -40,13 +41,12 @@ export type Icon = Augmentations<HTMLElementEventMap, HTMLDivElement> & {
 	size: Attribute<string>;
 };
 
-export function Icon(attributes: Icon) {
-	let graphic = stateify(attributes.graphic);
-	let size = attributes.size;
+export function Icon(managers: Managers, { graphic: $graphic, size: $size, ...augmentations }: Icon) {
+	let graphic = stateify($graphic);
+	let size = $size;
 	return (
 		html.div({
-			class: ["block", `${CLASS_NAME}`],
-			...attributes
+			class: ["block", `${CLASS_NAME}`]
 		},
 			svg.svg({
 				class: ["block", `${CLASS_NAME}__graphic`],
@@ -60,6 +60,6 @@ export function Icon(attributes: Icon) {
 			},
 				graphic.compute((graphic) => render(ICON_DATA[graphic]))
 			)
-		)
+		).augment(augmentations)
 	);
 };

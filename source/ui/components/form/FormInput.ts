@@ -29,14 +29,13 @@ export type FormInput = Augmentations<HTMLElementEventMap, HTMLInputElement> & {
 
 };
 
-export function FormInput(managers: Managers, attributes: FormInput) {
+export function FormInput(managers: Managers, { ...augmentations }: FormInput) {
 	let enabled = managers.backend.getEditable();
 	return (
 		Block("input", {
 			class: [`${CLASS_NAME}`],
 			readonly: enabled.compute((enabled) => enabled ? undefined : ""),
-			spellcheck: false,
-			...attributes
-		})
+			spellcheck: false
+		}).augment(augmentations)
 	);
 };

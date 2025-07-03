@@ -25,20 +25,19 @@ document.head.appendChild(html.style({}, `
 `));
 
 export type IconButton = Augmentations<HTMLElementEventMap, HTMLButtonElement> & {
-	icon: Icon["graphic"];
+	graphic: Icon["graphic"];
 };
 
-export function IconButton(managers: Managers, attributes: IconButton) {
-	let icon = attributes.icon;
+export function IconButton(managers: Managers, { graphic: $graphic, ...augmentations }: IconButton) {
+	let graphic = $graphic;
 	return (
 		Block("button", {
-			class: [`${CLASS_NAME}`],
-			...attributes
+			class: [`${CLASS_NAME}`]
 		},
-			Icon({
-				graphic: icon as any,
+			Icon(managers, {
+				graphic: graphic as any,
 				size: "24px"
 			})
-		)
+		).augment(augmentations)
 	);
 };

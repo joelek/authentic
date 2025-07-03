@@ -118,7 +118,7 @@ export function Modal(managers: Managers, attributes: Modal) {
 							class: [`${CLASS_NAME}__head`]
 						},
 							IconButton(managers, {
-								icon: "cross",
+								graphic: "cross",
 								onclick: () => {
 									visible.update(!visible.value());
 								}

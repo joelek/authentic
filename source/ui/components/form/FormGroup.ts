@@ -15,11 +15,12 @@ export type FormGroup = Augmentations<HTMLElementEventMap, HTMLFormElement> & {
 
 };
 
-export function FormGroup(managers: Managers, attributes: FormGroup, ...children: Children) {
+export function FormGroup(managers: Managers, { ...augmentations }: FormGroup, ...children: Children) {
 	return (
 		Block("form", {
-			class: [`${CLASS_NAME}`],
-			...attributes
-		}, ...children)
+			class: [`${CLASS_NAME}`]
+		},
+			...children
+		).augment(augmentations)
 	);
 };
