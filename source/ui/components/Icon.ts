@@ -47,7 +47,7 @@ export function Icon(managers: Managers, { graphic: $graphic, size: $size, ...au
 	return (
 		html.div({
 			...augmentations,
-			class: ["authentic-block", `${CLASS_NAME}`]
+			class: ["authentic-block", `${CLASS_NAME}`, ...(augmentations.class ?? [])]
 		},
 			svg.svg({
 				class: ["authentic-block", `${CLASS_NAME}__graphic`],
