@@ -34,9 +34,10 @@ function Icon(managers, { graphic: $graphic, size: $size, ...augmentations }) {
     let graphic = (0, bonsai_1.stateify)($graphic);
     let size = $size;
     return (bonsai_1.html.div({
-        class: ["block", `${CLASS_NAME}`]
+        ...augmentations,
+        class: ["authentic-block", `${CLASS_NAME}`]
     }, bonsai_1.svg.svg({
-        class: ["block", `${CLASS_NAME}__graphic`],
+        class: ["authentic-block", `${CLASS_NAME}__graphic`],
         width: size,
         height: size,
         viewBox: "0 0 24 24",
@@ -44,7 +45,7 @@ function Icon(managers, { graphic: $graphic, size: $size, ...augmentations }) {
             width: size,
             height: size
         }
-    }, graphic.compute((graphic) => render(ICON_DATA[graphic])))).augment(augmentations));
+    }, graphic.compute((graphic) => render(ICON_DATA[graphic])))));
 }
 exports.Icon = Icon;
 ;

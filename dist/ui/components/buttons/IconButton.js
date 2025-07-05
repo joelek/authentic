@@ -26,11 +26,12 @@ document.head.appendChild(bonsai_1.html.style({}, `
 function IconButton(managers, { graphic: $graphic, ...augmentations }) {
     let graphic = $graphic;
     return ((0, Block_1.Block)("button", {
-        class: [`${CLASS_NAME}`]
+        ...augmentations,
+        class: [`${CLASS_NAME}`, ...(augmentations.class ?? [])]
     }, (0, Icon_1.Icon)(managers, {
         graphic: graphic,
         size: "24px"
-    })).augment(augmentations));
+    })));
 }
 exports.IconButton = IconButton;
 ;

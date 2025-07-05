@@ -1,9 +1,9 @@
-import { Attribute, Augmentations } from "@joelek/bonsai";
+import { Attribute, HTMLElementAugmentations } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
 type Data = [string, [string, string][], Data[]];
 declare const ICON_DATA: Record<"cross" | "none", Data>;
 type Graphic = keyof typeof ICON_DATA;
-export type Icon = Augmentations<HTMLElementEventMap, HTMLDivElement> & {
+export type Icon = HTMLElementAugmentations<HTMLDivElement> & {
     graphic: Attribute<Graphic>;
     size: Attribute<string>;
 };

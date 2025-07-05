@@ -20,8 +20,10 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 `));
 function Block(type, { ...augmentations }, ...children) {
-    return (bonsai_1.html[type](augmentations, ...children)
-        .attribute("class", (classes) => [`${CLASS_NAME}`, ...classes]));
+    return (bonsai_1.html[type]({
+        ...augmentations,
+        class: [`${CLASS_NAME}`, ...(augmentations.class ?? [])]
+    }, ...children));
 }
 exports.Block = Block;
 ;
