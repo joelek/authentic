@@ -1,4 +1,4 @@
-import { Augmentations, html } from "@joelek/bonsai";
+import { HTMLElementAugmentations, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 import { Icon } from "../Icon";
@@ -24,7 +24,7 @@ document.head.appendChild(html.style({}, `
 	}
 `));
 
-export type IconButton = Augmentations<HTMLElementEventMap, HTMLButtonElement> & {
+export type IconButton = HTMLElementAugmentations<HTMLButtonElement> & {
 	graphic: Icon["graphic"];
 };
 
@@ -32,12 +32,13 @@ export function IconButton(managers: Managers, { graphic: $graphic, ...augmentat
 	let graphic = $graphic;
 	return (
 		Block("button", {
-			class: [`${CLASS_NAME}`]
+			...augmentations,
+			class: [`${CLASS_NAME}`, ...(augmentations.class ?? [])]
 		},
 			Icon(managers, {
 				graphic: graphic as any,
 				size: "24px"
 			})
-		).augment(augmentations)
+		)
 	);
 };

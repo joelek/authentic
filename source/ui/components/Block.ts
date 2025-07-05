@@ -1,4 +1,4 @@
-import { Augmentations, Children, html } from "@joelek/bonsai";
+import { Children, html, HTMLElementAugmentations } from "@joelek/bonsai";
 
 const CLASS_NAME = "authentic-block";
 
@@ -19,11 +19,15 @@ document.head.appendChild(html.style({}, `
 	}
 `));
 
-export type Block<A extends keyof HTMLElementTagNameMap> = Augmentations<HTMLElementEventMap, HTMLElementTagNameMap[A]>;
+export type Block<A extends keyof HTMLElementTagNameMap> = HTMLElementAugmentations<HTMLElementTagNameMap[A]>;
 
 export function Block<A extends keyof HTMLElementTagNameMap>(type: A, { ...augmentations }: Block<A>, ...children: Children) {
 	return (
-		html[type](augmentations, ...children)
-			.attribute("class", (classes) => [`${CLASS_NAME}`, ...classes])
+		html[type]({
+			...augmentations,
+			class: [`${CLASS_NAME}`, ...(augmentations.class ?? [])]
+		},
+			...children
+		)
 	);
 };

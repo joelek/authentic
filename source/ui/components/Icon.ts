@@ -1,4 +1,4 @@
-import { Attribute, Augmentations, html, stateify, svg } from "@joelek/bonsai";
+import { Attribute, HTMLElementAugmentations, html, stateify, svg } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
 
 type Data = [string, [string, string][], Data[]];
@@ -36,7 +36,7 @@ document.head.appendChild(html.style({}, `
 	}
 `));
 
-export type Icon = Augmentations<HTMLElementEventMap, HTMLDivElement> & {
+export type Icon = HTMLElementAugmentations<HTMLDivElement> & {
 	graphic: Attribute<Graphic>;
 	size: Attribute<string>;
 };
@@ -46,10 +46,11 @@ export function Icon(managers: Managers, { graphic: $graphic, size: $size, ...au
 	let size = $size;
 	return (
 		html.div({
-			class: ["block", `${CLASS_NAME}`]
+			...augmentations,
+			class: ["authentic-block", `${CLASS_NAME}`]
 		},
 			svg.svg({
-				class: ["block", `${CLASS_NAME}__graphic`],
+				class: ["authentic-block", `${CLASS_NAME}__graphic`],
 				width: size,
 				height: size,
 				viewBox: "0 0 24 24",
@@ -60,6 +61,6 @@ export function Icon(managers: Managers, { graphic: $graphic, size: $size, ...au
 			},
 				graphic.compute((graphic) => render(ICON_DATA[graphic]))
 			)
-		).augment(augmentations)
+		)
 	);
 };
