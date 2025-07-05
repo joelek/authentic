@@ -35,7 +35,7 @@ function Icon(managers, { graphic: $graphic, size: $size, ...augmentations }) {
     let size = $size;
     return (bonsai_1.html.div({
         ...augmentations,
-        class: ["authentic-block", `${CLASS_NAME}`]
+        class: ["authentic-block", `${CLASS_NAME}`, ...(augmentations.class ?? [])]
     }, bonsai_1.svg.svg({
         class: ["authentic-block", `${CLASS_NAME}__graphic`],
         width: size,
