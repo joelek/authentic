@@ -47,3 +47,4 @@ controller.toggle();
 * Add language selector.
 * Add support for HTML emails.
 * Make UI colors configurable.
+* Consider removing customized IDs.
