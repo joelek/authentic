@@ -116,6 +116,9 @@ export declare class Server {
     constructor(options?: ServerOptions);
     wrapRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse>(route: AuthenticatedRoute<A, B>): AutoguardRoute<A, B>;
     wrapRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>>(routes: AuthenticatedRoutes<A, B>): AutoguardRoutes<A, B>;
-    createRequestListener(options?: autoguard.api.ServerOptions): autoguard.api.RequestListener;
+    createAppRequestListener(route: (request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>, access_handler: AccessHandler) => Promise<autoguard.api.EndpointResponse & {
+        payload?: autoguard.api.JSON;
+    }>): autoguard.api.RequestListener;
+    createAuthRequestListener(options?: autoguard.api.ServerOptions): autoguard.api.RequestListener;
 }
 export {};

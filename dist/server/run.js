@@ -3,8 +3,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const libhttp = require("http");
 const authentic = require("./");
 const SERVER = new authentic.server.Server();
-const REQUEST_LISTENER = SERVER.createRequestListener();
-const HTTP_SERVER = libhttp.createServer({}, REQUEST_LISTENER);
+const AUTH_REQUEST_LISTENER = SERVER.createAuthRequestListener({
+    urlPrefix: "/auth"
+});
+const APP_REQUEST_LISTENER = SERVER.createAppRequestListener(async (request, access_handler) => {
+    let user_id = access_handler.requireAuthorization( /* Required roles... */);
+    return {
+        payload: {
+            user_id
+        }
+    };
+});
+const HTTP_SERVER = libhttp.createServer({}, async (request, response) => {
+    let url = request.url ?? "/";
+    if (url.startsWith("/auth/")) {
+        return AUTH_REQUEST_LISTENER(request, response);
+    }
+    else {
+        return APP_REQUEST_LISTENER(request, response);
+    }
+});
 const HTTP_HOSTNAME = "localhost";
 const HTTP_PORT = 8080;
 HTTP_SERVER.listen(HTTP_PORT, HTTP_HOSTNAME, () => {

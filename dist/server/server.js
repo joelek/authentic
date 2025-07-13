@@ -978,7 +978,42 @@ class Server {
         }
         return wrapped_routes;
     }
-    createRequestListener(options) {
+    createAppRequestListener(route) {
+        let wrapped_route = this.wrapRoute(route);
+        let endpoints = [];
+        endpoints.push((raw, auxillary) => {
+            return {
+                acceptsComponents() {
+                    return true;
+                },
+                acceptsMethod() {
+                    return true;
+                },
+                async validateRequest() {
+                    let options = autoguard.api.decodeUndeclaredParameters(raw.parameters, []);
+                    let headers = autoguard.api.decodeUndeclaredHeaders(raw.headers, []);
+                    let payload = raw.payload;
+                    let client_request = new autoguard.api.ClientRequest({ options, headers, payload }, false, auxillary);
+                    return {
+                        async handleRequest() {
+                            let endpoint_response = await wrapped_route(client_request);
+                            return {
+                                async validateResponse() {
+                                    let status = endpoint_response.status ?? 200;
+                                    let headers = autoguard.api.encodeUndeclaredHeaderPairs(endpoint_response.headers ?? {}, []);
+                                    let payload = autoguard.api.serializePayload(endpoint_response.payload ?? {});
+                                    let raw = await autoguard.api.finalizeResponse({ status, headers, payload }, []);
+                                    return raw;
+                                }
+                            };
+                        }
+                    };
+                }
+            };
+        });
+        return (request, response) => autoguard.api.route(endpoints, request, response);
+    }
+    createAuthRequestListener(options) {
         return api.makeServer({
             readState: this.readState,
             sendCommand: this.sendCommand,
