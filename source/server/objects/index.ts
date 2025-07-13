@@ -63,11 +63,11 @@ export const SessionProperties: autoguard.serialization.MessageGuard<SessionProp
 			autoguard.guards.Integer,
 			autoguard.guards.Null
 		),
-		"token_hash": autoguard.guards.Union.of(
+		"code_hash": autoguard.guards.Union.of(
 			autoguard.guards.String,
 			autoguard.guards.Null
 		),
-		"token_hash_attempts": autoguard.guards.Union.of(
+		"code_hash_attempts": autoguard.guards.Union.of(
 			autoguard.guards.Integer,
 			autoguard.guards.Null
 		),
@@ -112,11 +112,11 @@ export type SessionProperties = autoguard.guards.Intersection<[
 			autoguard.guards.Integer,
 			autoguard.guards.Null
 		]>,
-		"token_hash": autoguard.guards.Union<[
+		"code_hash": autoguard.guards.Union<[
 			autoguard.guards.String,
 			autoguard.guards.Null
 		]>,
-		"token_hash_attempts": autoguard.guards.Union<[
+		"code_hash_attempts": autoguard.guards.Union<[
 			autoguard.guards.Integer,
 			autoguard.guards.Null
 		]>,

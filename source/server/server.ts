@@ -25,36 +25,36 @@ type EmailTemplate = {
 	};
 };
 
-const WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATE: EmailTemplate = {
+const WAITING_FOR_REGISTER_CODE_EMAIL_TEMPLATE: EmailTemplate = {
 	en: {
 		subject: "Verification code",
-		message: "The verification code is: {token}"
+		message: "The verification code is: {code}"
 	},
 	sv: {
 		subject: "Verifieringskod",
-		message: "Verifieringskoden är: {token}"
+		message: "Verifieringskoden är: {code}"
 	}
 };
 
-const WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATE: EmailTemplate = {
+const WAITING_FOR_AUTHENTICATE_CODE_EMAIL_TEMPLATE: EmailTemplate = {
 	en: {
 		subject: "Verification code",
-		message: "The verification code is: {token}"
+		message: "The verification code is: {code}"
 	},
 	sv: {
 		subject: "Verifieringskod",
-		message: "Verifieringskoden är: {token}"
+		message: "Verifieringskoden är: {code}"
 	}
 };
 
-const WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATE: EmailTemplate = {
+const WAITING_FOR_RECOVER_CODE_EMAIL_TEMPLATE: EmailTemplate = {
 	en: {
 		subject: "Verification code",
-		message: "The verification code is: {token}"
+		message: "The verification code is: {code}"
 	},
 	sv: {
 		subject: "Verifieringskod",
-		message: "Verifieringskoden är: {token}"
+		message: "Verifieringskoden är: {code}"
 	}
 };
 
@@ -72,15 +72,15 @@ export type ServerOptions = {
 	mailer?: Mailer;
 	require_username?: boolean;
 	require_passphrase?: boolean;
-	require_token?: boolean;
+	require_code?: boolean;
 	tolerable_username_attempts?: number;
 	tolerable_email_attempts?: number;
-	tolerable_token_hash_attempts?: number;
+	tolerable_code_hash_attempts?: number;
 	tolerable_passdata_attempts?: number;
 	clean_expired_interval_minutes?: number;
-	waiting_for_register_token_email_template?: EmailTemplate;
-	waiting_for_authenticate_token_email_template?: EmailTemplate;
-	waiting_for_recover_token_email_template?: EmailTemplate;
+	waiting_for_register_code_email_template?: EmailTemplate;
+	waiting_for_authenticate_code_email_template?: EmailTemplate;
+	waiting_for_recover_code_email_template?: EmailTemplate;
 };
 
 export class AccessHandler {
@@ -133,15 +133,15 @@ export class Server {
 	protected mailer: Mailer;
 	protected require_username: boolean;
 	protected require_passphrase: boolean;
-	protected require_token: boolean;
+	protected require_code: boolean;
 	protected tolerable_username_attempts: number;
 	protected tolerable_email_attempts: number;
-	protected tolerable_token_hash_attempts: number;
+	protected tolerable_code_hash_attempts: number;
 	protected tolerable_passdata_attempts: number;
 	protected clean_expired_interval_minutes: number;
-	protected waiting_for_register_token_email_template: EmailTemplate;
-	protected waiting_for_authenticate_token_email_template: EmailTemplate;
-	protected waiting_for_recover_token_email_template: EmailTemplate;
+	protected waiting_for_register_code_email_template: EmailTemplate;
+	protected waiting_for_authenticate_code_email_template: EmailTemplate;
+	protected waiting_for_recover_code_email_template: EmailTemplate;
 
 	protected computeHash(string: string): string {
 		return libcrypto.createHash("sha256").update(string).digest("hex");
@@ -195,7 +195,7 @@ export class Server {
 		};
 	}
 
-	protected generateToken(length: number): string {
+	protected generateCode(length: number): string {
 		return utils.generateDigitId(length);
 	}
 
@@ -435,8 +435,8 @@ export class Server {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
-				token_hash: undefined,
-				token_hash_attempts: undefined,
+				code_hash: undefined,
+				code_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_REGISTER_EMAIL",
 				reason: "REGISTER_EMAIL_NOT_AVAILABLE",
@@ -444,21 +444,21 @@ export class Server {
 				wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
-		if (this.require_token || !this.require_passphrase) {
-			if (session.token_hash == null) {
-				let token = this.generateToken(15);
-				let subject = this.processEmailTemplateString(this.waiting_for_register_token_email_template[language].subject, {
-					token
+		if (this.require_code || !this.require_passphrase) {
+			if (session.code_hash == null) {
+				let code = this.generateCode(15);
+				let subject = this.processEmailTemplateString(this.waiting_for_register_code_email_template[language].subject, {
+					code
 				});
-				let message = this.processEmailTemplateString(this.waiting_for_register_token_email_template[language].message, {
-					token
+				let message = this.processEmailTemplateString(this.waiting_for_register_code_email_template[language].message, {
+					code
 				});
 				await this.sendEmail(session.email, subject, message);
 				return {
 					...session,
-					token_hash: this.computeHash(token),
-					type: "WAITING_FOR_REGISTER_TOKEN",
-					reason: "REGISTER_TOKEN_REQUIRED",
+					code_hash: this.computeHash(code),
+					type: "WAITING_FOR_REGISTER_CODE",
+					reason: "REGISTER_CODE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
@@ -522,8 +522,8 @@ export class Server {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
-				token_hash: undefined,
-				token_hash_attempts: undefined,
+				code_hash: undefined,
+				code_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 				reason: "AUTHENTICATE_EMAIL_NOT_AVAILABLE",
@@ -535,21 +535,21 @@ export class Server {
 		if (user == null) {
 			throw new ExpectedUnreachableCodeError();
 		}
-		if (this.require_token || !this.require_passphrase) {
-			if (session.token_hash == null) {
-				let token = this.generateToken(6);
-				let subject = this.processEmailTemplateString(this.waiting_for_authenticate_token_email_template[language].subject, {
-					token
+		if (this.require_code || !this.require_passphrase) {
+			if (session.code_hash == null) {
+				let code = this.generateCode(6);
+				let subject = this.processEmailTemplateString(this.waiting_for_authenticate_code_email_template[language].subject, {
+					code
 				});
-				let message = this.processEmailTemplateString(this.waiting_for_authenticate_token_email_template[language].message, {
-					token
+				let message = this.processEmailTemplateString(this.waiting_for_authenticate_code_email_template[language].message, {
+					code
 				});
 				await this.sendEmail(session.email, subject, message);
 				return {
 					...session,
-					token_hash: this.computeHash(token),
-					type: "WAITING_FOR_AUTHENTICATE_TOKEN",
-					reason: "AUTHENTICATE_TOKEN_REQUIRED",
+					code_hash: this.computeHash(code),
+					type: "WAITING_FOR_AUTHENTICATE_CODE",
+					reason: "AUTHENTICATE_CODE_REQUIRED",
 					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
@@ -607,8 +607,8 @@ export class Server {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
-				token_hash: undefined,
-				token_hash_attempts: undefined,
+				code_hash: undefined,
+				code_hash_attempts: undefined,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_RECOVER_EMAIL",
 				reason: "RECOVER_EMAIL_NOT_AVAILABLE",
@@ -620,20 +620,20 @@ export class Server {
 		if (user == null) {
 			throw new ExpectedUnreachableCodeError();
 		}
-		if (session.token_hash == null) {
-			let token = this.generateToken(15);
-				let subject = this.processEmailTemplateString(this.waiting_for_recover_token_email_template[language].subject, {
-					token
+		if (session.code_hash == null) {
+			let code = this.generateCode(15);
+				let subject = this.processEmailTemplateString(this.waiting_for_recover_code_email_template[language].subject, {
+					code
 				});
-				let message = this.processEmailTemplateString(this.waiting_for_recover_token_email_template[language].message, {
-					token
+				let message = this.processEmailTemplateString(this.waiting_for_recover_code_email_template[language].message, {
+					code
 				});
 				await this.sendEmail(session.email, subject, message);
 			return {
 				...session,
-				token_hash: this.computeHash(token),
-				type: "WAITING_FOR_RECOVER_TOKEN",
-				reason: "RECOVER_TOKEN_REQUIRED",
+				code_hash: this.computeHash(code),
+				type: "WAITING_FOR_RECOVER_CODE",
+				reason: "RECOVER_CODE_REQUIRED",
 				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
 				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
@@ -725,18 +725,18 @@ export class Server {
 					email: command.email
 				}, request);
 			}
-		} else if (api.WaitingForRegisterTokenState.is(session)) {
-			if (api.RegisterTokenCommand.is(command)) {
-				let token_hash = this.computeHash(command.token);
-				if (session.token_hash == null || session.token_hash !== token_hash) {
-					let token_hash_attempts = (session.token_hash_attempts ?? 0) + 1;
+		} else if (api.WaitingForRegisterCodeState.is(session)) {
+			if (api.RegisterCodeCommand.is(command)) {
+				let code_hash = this.computeHash(command.code);
+				if (session.code_hash == null || session.code_hash !== code_hash) {
+					let code_hash_attempts = (session.code_hash_attempts ?? 0) + 1;
 					return {
 						...session,
-						token_hash_attempts: token_hash_attempts,
-						type: "WAITING_FOR_REGISTER_TOKEN",
-						reason: "REGISTER_TOKEN_NOT_ACCEPTED",
+						code_hash_attempts: code_hash_attempts,
+						type: "WAITING_FOR_REGISTER_CODE",
+						reason: "REGISTER_CODE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, code_hash_attempts - this.tolerable_code_hash_attempts))
 					};
 				}
 				return this.getNextRegisterSession({
@@ -792,18 +792,18 @@ export class Server {
 					email: command.email
 				}, request);
 			}
-		} else if (api.WaitingForAuthenticateTokenState.is(session)) {
-			if (api.AuthenticateTokenCommand.is(command)) {
-				let token_hash = this.computeHash(command.token);
-				if (session.token_hash == null || session.token_hash !== token_hash) {
-					let token_hash_attempts = (session.token_hash_attempts ?? 0) + 1;
+		} else if (api.WaitingForAuthenticateCodeState.is(session)) {
+			if (api.AuthenticateCodeCommand.is(command)) {
+				let code_hash = this.computeHash(command.code);
+				if (session.code_hash == null || session.code_hash !== code_hash) {
+					let code_hash_attempts = (session.code_hash_attempts ?? 0) + 1;
 					return {
 						...session,
-						token_hash_attempts: token_hash_attempts,
-						type: "WAITING_FOR_AUTHENTICATE_TOKEN",
-						reason: "AUTHENTICATE_TOKEN_NOT_ACCEPTED",
+						code_hash_attempts: code_hash_attempts,
+						type: "WAITING_FOR_AUTHENTICATE_CODE",
+						reason: "AUTHENTICATE_CODE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, code_hash_attempts - this.tolerable_code_hash_attempts))
 					};
 				}
 				return this.getNextAuthenticateSession({
@@ -860,18 +860,18 @@ export class Server {
 					email: command.email
 				}, request);
 			}
-		} else if (api.WaitingForRecoverTokenState.is(session)) {
-			if (api.RecoverTokenCommand.is(command)) {
-				let token_hash = this.computeHash(command.token);
-				if (session.token_hash == null || session.token_hash !== token_hash) {
-					let token_hash_attempts = (session.token_hash_attempts ?? 0) + 1;
+		} else if (api.WaitingForRecoverCodeState.is(session)) {
+			if (api.RecoverCodeCommand.is(command)) {
+				let code_hash = this.computeHash(command.code);
+				if (session.code_hash == null || session.code_hash !== code_hash) {
+					let code_hash_attempts = (session.code_hash_attempts ?? 0) + 1;
 					return {
 						...session,
-						token_hash_attempts: token_hash_attempts,
-						type: "WAITING_FOR_RECOVER_TOKEN",
-						reason: "RECOVER_TOKEN_NOT_ACCEPTED",
+						code_hash_attempts: code_hash_attempts,
+						type: "WAITING_FOR_RECOVER_CODE",
+						reason: "RECOVER_CODE_NOT_ACCEPTED",
 						expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, token_hash_attempts - this.tolerable_token_hash_attempts))
+						wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, code_hash_attempts - this.tolerable_code_hash_attempts))
 					};
 				}
 				return this.getNextRecoverSession({
@@ -1004,15 +1004,15 @@ export class Server {
 		this.mailer = options?.mailer ?? new TestMailer();
 		this.require_username = options?.require_username ?? false;
 		this.require_passphrase = options?.require_passphrase ?? false;
-		this.require_token = options?.require_token ?? true;
+		this.require_code = options?.require_code ?? true;
 		this.tolerable_username_attempts = options?.tolerable_username_attempts ?? 5;
 		this.tolerable_email_attempts = options?.tolerable_email_attempts ?? 5;
-		this.tolerable_token_hash_attempts = options?.tolerable_token_hash_attempts ?? 1;
+		this.tolerable_code_hash_attempts = options?.tolerable_code_hash_attempts ?? 1;
 		this.tolerable_passdata_attempts = options?.tolerable_passdata_attempts ?? 1;
 		this.clean_expired_interval_minutes = options?.clean_expired_interval_minutes ?? 1;
-		this.waiting_for_register_token_email_template = options?.waiting_for_register_token_email_template ?? WAITING_FOR_REGISTER_TOKEN_EMAIL_TEMPLATE;
-		this.waiting_for_authenticate_token_email_template = options?.waiting_for_authenticate_token_email_template ?? WAITING_FOR_AUTHENTICATE_TOKEN_EMAIL_TEMPLATE;
-		this.waiting_for_recover_token_email_template = options?.waiting_for_recover_token_email_template ?? WAITING_FOR_RECOVER_TOKEN_EMAIL_TEMPLATE;
+		this.waiting_for_register_code_email_template = options?.waiting_for_register_code_email_template ?? WAITING_FOR_REGISTER_CODE_EMAIL_TEMPLATE;
+		this.waiting_for_authenticate_code_email_template = options?.waiting_for_authenticate_code_email_template ?? WAITING_FOR_AUTHENTICATE_CODE_EMAIL_TEMPLATE;
+		this.waiting_for_recover_code_email_template = options?.waiting_for_recover_code_email_template ?? WAITING_FOR_RECOVER_CODE_EMAIL_TEMPLATE;
 		setInterval(async () => {
 			let now = Date.now();
 			let sessions = await this.sessions.lookupObjects("expires_utc", "<=", now);

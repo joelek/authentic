@@ -102,8 +102,8 @@ export class SMTPMailer implements Mailer {
 	protected options: MailerOptions;
 
 	protected generateMessageIDAddress(from_address: string): string {
-		let token = libcrypto.randomBytes(16).toString("hex");
-		return `${token}@${from_address.slice(from_address.indexOf("@") + 1)}`;
+		let id = libcrypto.randomBytes(16).toString("hex");
+		return `${id}@${from_address.slice(from_address.indexOf("@") + 1)}`;
 	}
 
 	protected getTo(options: { to_address?: string; to_name?: string; }): { address: string; name?: string; } {

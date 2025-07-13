@@ -39,16 +39,16 @@ const WAITING_FOR_REGISTER_EMAIL = {
 	}
 };
 
-const WAITING_FOR_REGISTER_TOKEN = {
-	"WAITING_FOR_REGISTER_TOKEN": {
+const WAITING_FOR_REGISTER_CODE = {
+	"WAITING_FOR_REGISTER_CODE": {
 		en: "Please enter the verification code that was sent to your email address.",
 		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
 	},
-	"REGISTER_TOKEN_REQUIRED": {
+	"REGISTER_CODE_REQUIRED": {
 		en: "A verification code has not yet been entered.",
 		sv: "En verifieringskod har ännu inte angetts."
 	},
-	"REGISTER_TOKEN_NOT_ACCEPTED": {
+	"REGISTER_CODE_NOT_ACCEPTED": {
 		en: "The verification code was not accepted. Please make sure that it's correct and try again.",
 		sv: "Verifieringskoden accepterades inte. Vänligen kontrollera att den stämmer och försök sedan igen."
 	}
@@ -72,7 +72,7 @@ const WAITING_FOR_REGISTER_PASSPHRASE = {
 const REGISTER_STATES = {
 	...WAITING_FOR_REGISTER_USERNAME,
 	...WAITING_FOR_REGISTER_EMAIL,
-	...WAITING_FOR_REGISTER_TOKEN,
+	...WAITING_FOR_REGISTER_CODE,
 	...WAITING_FOR_REGISTER_PASSPHRASE
 };
 
@@ -114,16 +114,16 @@ const WAITING_FOR_AUTHENTICATE_EMAIL = {
 	}
 };
 
-const WAITING_FOR_AUTHENTICATE_TOKEN = {
-	"WAITING_FOR_AUTHENTICATE_TOKEN": {
+const WAITING_FOR_AUTHENTICATE_CODE = {
+	"WAITING_FOR_AUTHENTICATE_CODE": {
 		en: "Please enter the verification code that was sent to your email address.",
 		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
 	},
-	"AUTHENTICATE_TOKEN_REQUIRED": {
+	"AUTHENTICATE_CODE_REQUIRED": {
 		en: "A verification code has not yet been entered.",
 		sv: "En verifieringskod har ännu inte angetts."
 	},
-	"AUTHENTICATE_TOKEN_NOT_ACCEPTED": {
+	"AUTHENTICATE_CODE_NOT_ACCEPTED": {
 		en: "The verification code was not accepted. Please make sure that it's correct and try again.",
 		sv: "Verifieringskoden accepterades inte. Vänligen kontrollera att den stämmer och försök sedan igen."
 	}
@@ -147,7 +147,7 @@ const WAITING_FOR_AUTHENTICATE_PASSPHRASE = {
 const AUTHENTICATE_STATES = {
 	...WAITING_FOR_AUTHENTICATE_USERNAME,
 	...WAITING_FOR_AUTHENTICATE_EMAIL,
-	...WAITING_FOR_AUTHENTICATE_TOKEN,
+	...WAITING_FOR_AUTHENTICATE_CODE,
 	...WAITING_FOR_AUTHENTICATE_PASSPHRASE
 };
 
@@ -189,16 +189,16 @@ const WAITING_FOR_RECOVER_EMAIL = {
 	}
 };
 
-const WAITING_FOR_RECOVER_TOKEN = {
-	"WAITING_FOR_RECOVER_TOKEN": {
+const WAITING_FOR_RECOVER_CODE = {
+	"WAITING_FOR_RECOVER_CODE": {
 		en: "Please enter the verification code that was sent to your email address.",
 		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
 	},
-	"RECOVER_TOKEN_REQUIRED": {
+	"RECOVER_CODE_REQUIRED": {
 		en: "A verification code has not yet been entered.",
 		sv: "En verifieringskod har ännu inte angetts."
 	},
-	"RECOVER_TOKEN_NOT_ACCEPTED": {
+	"RECOVER_CODE_NOT_ACCEPTED": {
 		en: "The verification code was not accepted. Please make sure that it's correct and try again.",
 		sv: "Verifieringskoden accepterades inte. Vänligen kontrollera att den stämmer och försök sedan igen."
 	}
@@ -222,7 +222,7 @@ const WAITING_FOR_RECOVER_PASSPHRASE = {
 const RECOVER_STATES = {
 	...WAITING_FOR_RECOVER_USERNAME,
 	...WAITING_FOR_RECOVER_EMAIL,
-	...WAITING_FOR_RECOVER_TOKEN,
+	...WAITING_FOR_RECOVER_CODE,
 	...WAITING_FOR_RECOVER_PASSPHRASE
 };
 
@@ -308,7 +308,7 @@ const TRANSLATIONS = {
 		en: "Password...",
 		sv: "Lösenord..."
 	},
-	"TOKEN_PLACEHOLDER": {
+	"CODE_PLACEHOLDER": {
 		en: "Verification code...",
 		sv: "Verifieringskod..."
 	},

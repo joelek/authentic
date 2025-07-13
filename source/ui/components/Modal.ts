@@ -5,16 +5,16 @@ import { IconButton } from "./buttons/IconButton";
 import { AuthenticatedStep } from "./steps/AuthenticatedStep";
 import { WaitingForAuthenticateEmailStep } from "./steps/WaitingForAuthenticateEmailStep";
 import { WaitingForAuthenticatePassphraseStep } from "./steps/WaitingForAuthenticatePassphraseStep";
-import { WaitingForAuthenticateTokenStep } from "./steps/WaitingForAuthenticateTokenStep";
+import { WaitingForAuthenticateCodeStep } from "./steps/WaitingForAuthenticateCodeStep";
 import { WaitingForAuthenticateUsernameStep } from "./steps/WaitingForAuthenticateUsernameStep";
 import { WaitingForCommandStep } from "./steps/WaitingForCommandStep";
 import { WaitingForRecoverEmailStep } from "./steps/WaitingForRecoverEmailStep";
 import { WaitingForRecoverPassphraseStep } from "./steps/WaitingForRecoverPassphraseStep";
-import { WaitingForRecoverTokenStep } from "./steps/WaitingForRecoverTokenStep";
+import { WaitingForRecoverCodeStep } from "./steps/WaitingForRecoverCodeStep";
 import { WaitingForRecoverUsernameStep } from "./steps/WaitingForRecoverUsernameStep";
 import { WaitingForRegisterEmailStep } from "./steps/WaitingForRegisterEmailStep";
 import { WaitingForRegisterPassphraseStep } from "./steps/WaitingForRegisterPassphraseStep";
-import { WaitingForRegisterTokenStep } from "./steps/WaitingForRegisterTokenStep";
+import { WaitingForRegisterCodeStep } from "./steps/WaitingForRegisterCodeStep";
 import { WaitingForRegisterUsernameStep } from "./steps/WaitingForRegisterUsernameStep";
 
 const CLASS_NAME = "authentic-modal";
@@ -137,15 +137,15 @@ export function Modal(managers: Managers, attributes: Modal) {
 									WaitingForCommandStep(managers, {}),
 									WaitingForAuthenticateEmailStep(managers, {}),
 									WaitingForAuthenticatePassphraseStep(managers, {}),
-									WaitingForAuthenticateTokenStep(managers, {}),
+									WaitingForAuthenticateCodeStep(managers, {}),
 									WaitingForAuthenticateUsernameStep(managers, {}),
 									WaitingForRecoverEmailStep(managers, {}),
 									WaitingForRecoverPassphraseStep(managers, {}),
-									WaitingForRecoverTokenStep(managers, {}),
+									WaitingForRecoverCodeStep(managers, {}),
 									WaitingForRecoverUsernameStep(managers, {}),
 									WaitingForRegisterEmailStep(managers, {}),
 									WaitingForRegisterPassphraseStep(managers, {}),
-									WaitingForRegisterTokenStep(managers, {}),
+									WaitingForRegisterCodeStep(managers, {}),
 									WaitingForRegisterUsernameStep(managers, {})
 								)
 							)

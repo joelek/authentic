@@ -10,15 +10,15 @@ import { StepDescriptionTitle } from "../titles/StepDescriptionTitle";
 import { StepHeaderTitle } from "../titles/StepHeaderTitle";
 import { Step } from "./Step";
 
-export type WaitingForRecoverTokenStep = {};
+export type WaitingForRecoverCodeStep = {};
 
-export function WaitingForRecoverTokenStep(managers: Managers, attributes: WaitingForRecoverTokenStep) {
+export function WaitingForRecoverCodeStep(managers: Managers, attributes: WaitingForRecoverCodeStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForRecoverTokenState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForRecoverTokenState>);
+	let { type, reason } = state.compute((state) => api.WaitingForRecoverCodeState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForRecoverCodeState>);
 	let value = stateify("");
 	let input = FormInput(managers, {
 		type: "text",
-		placeholder: managers.translation.getTranslation("TOKEN_PLACEHOLDER"),
+		placeholder: managers.translation.getTranslation("CODE_PLACEHOLDER"),
 		value
 	});
 	type.compute((type) => {
@@ -42,8 +42,8 @@ export function WaitingForRecoverTokenStep(managers: Managers, attributes: Waiti
 						await managers.backend.sendCommand({
 							payload: {
 								command: {
-									type: "RECOVER_TOKEN",
-									token: value.value()
+									type: "RECOVER_CODE",
+									code: value.value()
 								}
 							}
 						});

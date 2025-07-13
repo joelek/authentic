@@ -10,15 +10,15 @@ import { StepDescriptionTitle } from "../titles/StepDescriptionTitle";
 import { StepHeaderTitle } from "../titles/StepHeaderTitle";
 import { Step } from "./Step";
 
-export type WaitingForRegisterTokenStep = {};
+export type WaitingForAuthenticateCodeStep = {};
 
-export function WaitingForRegisterTokenStep(managers: Managers, attributes: WaitingForRegisterTokenStep) {
+export function WaitingForAuthenticateCodeStep(managers: Managers, attributes: WaitingForAuthenticateCodeStep) {
 	let state = managers.backend.getState();
-	let { type, reason } = state.compute((state) => api.WaitingForRegisterTokenState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForRegisterTokenState>);
+	let { type, reason } = state.compute((state) => api.WaitingForAuthenticateCodeState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForAuthenticateCodeState>);
 	let value = stateify("");
 	let input = FormInput(managers, {
 		type: "text",
-		placeholder: managers.translation.getTranslation("TOKEN_PLACEHOLDER"),
+		placeholder: managers.translation.getTranslation("CODE_PLACEHOLDER"),
 		value
 	});
 	type.compute((type) => {
@@ -33,7 +33,7 @@ export function WaitingForRegisterTokenStep(managers: Managers, attributes: Wait
 			type,
 			reason
 		},
-			StepHeaderTitle(managers, {}, managers.translation.getTranslation("REGISTER_ACCOUNT")),
+			StepHeaderTitle(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT")),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
 				input,
@@ -42,8 +42,8 @@ export function WaitingForRegisterTokenStep(managers: Managers, attributes: Wait
 						await managers.backend.sendCommand({
 							payload: {
 								command: {
-									type: "REGISTER_TOKEN",
-									token: value.value()
+									type: "AUTHENTICATE_CODE",
+									code: value.value()
 								}
 							}
 						});

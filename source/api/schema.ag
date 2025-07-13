@@ -12,9 +12,9 @@ guard RegisterEmailCommand: {
 	email: string
 };
 
-guard RegisterTokenCommand: {
-	type: "REGISTER_TOKEN",
-	token: string
+guard RegisterCodeCommand: {
+	type: "REGISTER_CODE",
+	code: string
 };
 
 guard RegisterPassphraseCommand: {
@@ -26,7 +26,7 @@ guard RegisterCommands:
 	RegisterCommand |
 	RegisterUsernameCommand |
 	RegisterEmailCommand |
-	RegisterTokenCommand |
+	RegisterCodeCommand |
 	RegisterPassphraseCommand;
 
 # =============================================================================
@@ -41,9 +41,9 @@ guard WaitingForRegisterEmailState: {
 	reason: "REGISTER_EMAIL_REQUIRED" | "REGISTER_EMAIL_NOT_ACCEPTED" | "REGISTER_EMAIL_NOT_AVAILABLE"
 };
 
-guard WaitingForRegisterTokenState: {
-	type: "WAITING_FOR_REGISTER_TOKEN",
-	reason: "REGISTER_TOKEN_REQUIRED" | "REGISTER_TOKEN_NOT_ACCEPTED"
+guard WaitingForRegisterCodeState: {
+	type: "WAITING_FOR_REGISTER_CODE",
+	reason: "REGISTER_CODE_REQUIRED" | "REGISTER_CODE_NOT_ACCEPTED"
 };
 
 guard WaitingForRegisterPassphraseState: {
@@ -54,7 +54,7 @@ guard WaitingForRegisterPassphraseState: {
 guard RegisterStates:
 	WaitingForRegisterUsernameState |
 	WaitingForRegisterEmailState |
-	WaitingForRegisterTokenState |
+	WaitingForRegisterCodeState |
 	WaitingForRegisterPassphraseState;
 
 # =============================================================================
@@ -73,9 +73,9 @@ guard AuthenticateEmailCommand: {
 	email: string
 };
 
-guard AuthenticateTokenCommand: {
-	type: "AUTHENTICATE_TOKEN",
-	token: string
+guard AuthenticateCodeCommand: {
+	type: "AUTHENTICATE_CODE",
+	code: string
 };
 
 guard AuthenticatePassphraseCommand: {
@@ -87,7 +87,7 @@ guard AuthenticateCommands:
 	AuthenticateCommand |
 	AuthenticateUsernameCommand |
 	AuthenticateEmailCommand |
-	AuthenticateTokenCommand |
+	AuthenticateCodeCommand |
 	AuthenticatePassphraseCommand;
 
 # =============================================================================
@@ -102,9 +102,9 @@ guard WaitingForAuthenticateEmailState: {
 	reason: "AUTHENTICATE_EMAIL_REQUIRED" | "AUTHENTICATE_EMAIL_NOT_ACCEPTED" | "AUTHENTICATE_EMAIL_NOT_AVAILABLE"
 };
 
-guard WaitingForAuthenticateTokenState: {
-	type: "WAITING_FOR_AUTHENTICATE_TOKEN",
-	reason: "AUTHENTICATE_TOKEN_REQUIRED" | "AUTHENTICATE_TOKEN_NOT_ACCEPTED"
+guard WaitingForAuthenticateCodeState: {
+	type: "WAITING_FOR_AUTHENTICATE_CODE",
+	reason: "AUTHENTICATE_CODE_REQUIRED" | "AUTHENTICATE_CODE_NOT_ACCEPTED"
 };
 
 guard WaitingForAuthenticatePassphraseState: {
@@ -115,7 +115,7 @@ guard WaitingForAuthenticatePassphraseState: {
 guard AuthenticateStates:
 	WaitingForAuthenticateUsernameState |
 	WaitingForAuthenticateEmailState |
-	WaitingForAuthenticateTokenState |
+	WaitingForAuthenticateCodeState |
 	WaitingForAuthenticatePassphraseState;
 
 # =============================================================================
@@ -134,9 +134,9 @@ guard RecoverEmailCommand: {
 	email: string
 };
 
-guard RecoverTokenCommand: {
-	type: "RECOVER_TOKEN",
-	token: string
+guard RecoverCodeCommand: {
+	type: "RECOVER_CODE",
+	code: string
 };
 
 guard RecoverPassphraseCommand: {
@@ -148,7 +148,7 @@ guard RecoverCommands:
 	RecoverCommand |
 	RecoverUsernameCommand |
 	RecoverEmailCommand |
-	RecoverTokenCommand |
+	RecoverCodeCommand |
 	RecoverPassphraseCommand;
 
 # =============================================================================
@@ -163,9 +163,9 @@ guard WaitingForRecoverEmailState: {
 	reason: "RECOVER_EMAIL_REQUIRED" | "RECOVER_EMAIL_NOT_ACCEPTED" | "RECOVER_EMAIL_NOT_AVAILABLE"
 };
 
-guard WaitingForRecoverTokenState: {
-	type: "WAITING_FOR_RECOVER_TOKEN",
-	reason: "RECOVER_TOKEN_REQUIRED" | "RECOVER_TOKEN_NOT_ACCEPTED"
+guard WaitingForRecoverCodeState: {
+	type: "WAITING_FOR_RECOVER_CODE",
+	reason: "RECOVER_CODE_REQUIRED" | "RECOVER_CODE_NOT_ACCEPTED"
 };
 
 guard WaitingForRecoverPassphraseState: {
@@ -176,7 +176,7 @@ guard WaitingForRecoverPassphraseState: {
 guard RecoverStates:
 	WaitingForRecoverUsernameState |
 	WaitingForRecoverEmailState |
-	WaitingForRecoverTokenState |
+	WaitingForRecoverCodeState |
 	WaitingForRecoverPassphraseState;
 
 # =============================================================================
