@@ -45,15 +45,15 @@ declare const STATES: {
         en: string;
         sv: string;
     };
-    WAITING_FOR_RECOVER_TOKEN: {
+    WAITING_FOR_RECOVER_CODE: {
         en: string;
         sv: string;
     };
-    RECOVER_TOKEN_REQUIRED: {
+    RECOVER_CODE_REQUIRED: {
         en: string;
         sv: string;
     };
-    RECOVER_TOKEN_NOT_ACCEPTED: {
+    RECOVER_CODE_NOT_ACCEPTED: {
         en: string;
         sv: string;
     };
@@ -101,15 +101,15 @@ declare const STATES: {
         en: string;
         sv: string;
     };
-    WAITING_FOR_AUTHENTICATE_TOKEN: {
+    WAITING_FOR_AUTHENTICATE_CODE: {
         en: string;
         sv: string;
     };
-    AUTHENTICATE_TOKEN_REQUIRED: {
+    AUTHENTICATE_CODE_REQUIRED: {
         en: string;
         sv: string;
     };
-    AUTHENTICATE_TOKEN_NOT_ACCEPTED: {
+    AUTHENTICATE_CODE_NOT_ACCEPTED: {
         en: string;
         sv: string;
     };
@@ -157,15 +157,15 @@ declare const STATES: {
         en: string;
         sv: string;
     };
-    WAITING_FOR_REGISTER_TOKEN: {
+    WAITING_FOR_REGISTER_CODE: {
         en: string;
         sv: string;
     };
-    REGISTER_TOKEN_REQUIRED: {
+    REGISTER_CODE_REQUIRED: {
         en: string;
         sv: string;
     };
-    REGISTER_TOKEN_NOT_ACCEPTED: {
+    REGISTER_CODE_NOT_ACCEPTED: {
         en: string;
         sv: string;
     };
@@ -237,7 +237,7 @@ declare const TRANSLATIONS: {
         en: string;
         sv: string;
     };
-    TOKEN_PLACEHOLDER: {
+    CODE_PLACEHOLDER: {
         en: string;
         sv: string;
     };

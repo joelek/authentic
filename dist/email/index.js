@@ -73,8 +73,8 @@ exports.MissingReplyAddressError = MissingReplyAddressError;
 class SMTPMailer {
     options;
     generateMessageIDAddress(from_address) {
-        let token = libcrypto.randomBytes(16).toString("hex");
-        return `${token}@${from_address.slice(from_address.indexOf("@") + 1)}`;
+        let id = libcrypto.randomBytes(16).toString("hex");
+        return `${id}@${from_address.slice(from_address.indexOf("@") + 1)}`;
     }
     getTo(options) {
         let address = options.to_address ?? this.options.defaults?.to_address;

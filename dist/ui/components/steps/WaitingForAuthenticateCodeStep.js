@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WaitingForRecoverTokenStep = void 0;
+exports.WaitingForAuthenticateCodeStep = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const api = require("../../../api/client");
 const CancelButton_1 = require("../buttons/CancelButton");
@@ -11,13 +11,13 @@ const ButtonTitle_1 = require("../titles/ButtonTitle");
 const StepDescriptionTitle_1 = require("../titles/StepDescriptionTitle");
 const StepHeaderTitle_1 = require("../titles/StepHeaderTitle");
 const Step_1 = require("./Step");
-function WaitingForRecoverTokenStep(managers, attributes) {
+function WaitingForAuthenticateCodeStep(managers, attributes) {
     let state = managers.backend.getState();
-    let { type, reason } = state.compute((state) => api.WaitingForRecoverTokenState.is(state) ? state : { type: undefined, reason: undefined });
+    let { type, reason } = state.compute((state) => api.WaitingForAuthenticateCodeState.is(state) ? state : { type: undefined, reason: undefined });
     let value = (0, bonsai_1.stateify)("");
     let input = (0, FormInput_1.FormInput)(managers, {
         type: "text",
-        placeholder: managers.translation.getTranslation("TOKEN_PLACEHOLDER"),
+        placeholder: managers.translation.getTranslation("CODE_PLACEHOLDER"),
         value
     });
     type.compute((type) => {
@@ -31,13 +31,13 @@ function WaitingForRecoverTokenStep(managers, attributes) {
     return ((0, Step_1.Step)(managers, {
         type,
         reason
-    }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, input, (0, FormButton_1.FormButton)(managers, {
+    }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, input, (0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
                 payload: {
                     command: {
-                        type: "RECOVER_TOKEN",
-                        token: value.value()
+                        type: "AUTHENTICATE_CODE",
+                        code: value.value()
                     }
                 }
             });
@@ -47,5 +47,5 @@ function WaitingForRecoverTokenStep(managers, attributes) {
         }
     }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")))), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason)), (0, CancelButton_1.CancelButton)(managers, {})));
 }
-exports.WaitingForRecoverTokenStep = WaitingForRecoverTokenStep;
+exports.WaitingForAuthenticateCodeStep = WaitingForAuthenticateCodeStep;
 ;

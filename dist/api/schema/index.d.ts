@@ -13,10 +13,10 @@ export type RegisterEmailCommand = autoguard.guards.Object<{
     "type": autoguard.guards.StringLiteral<"REGISTER_EMAIL">;
     "email": autoguard.guards.String;
 }, {}>;
-export declare const RegisterTokenCommand: autoguard.serialization.MessageGuard<RegisterTokenCommand>;
-export type RegisterTokenCommand = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"REGISTER_TOKEN">;
-    "token": autoguard.guards.String;
+export declare const RegisterCodeCommand: autoguard.serialization.MessageGuard<RegisterCodeCommand>;
+export type RegisterCodeCommand = autoguard.guards.Object<{
+    "type": autoguard.guards.StringLiteral<"REGISTER_CODE">;
+    "code": autoguard.guards.String;
 }, {}>;
 export declare const RegisterPassphraseCommand: autoguard.serialization.MessageGuard<RegisterPassphraseCommand>;
 export type RegisterPassphraseCommand = autoguard.guards.Object<{
@@ -28,7 +28,7 @@ export type RegisterCommands = autoguard.guards.Union<[
     autoguard.guards.Reference<RegisterCommand>,
     autoguard.guards.Reference<RegisterUsernameCommand>,
     autoguard.guards.Reference<RegisterEmailCommand>,
-    autoguard.guards.Reference<RegisterTokenCommand>,
+    autoguard.guards.Reference<RegisterCodeCommand>,
     autoguard.guards.Reference<RegisterPassphraseCommand>
 ]>;
 export declare const WaitingForRegisterUsernameState: autoguard.serialization.MessageGuard<WaitingForRegisterUsernameState>;
@@ -49,12 +49,12 @@ export type WaitingForRegisterEmailState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"REGISTER_EMAIL_NOT_AVAILABLE">
     ]>;
 }, {}>;
-export declare const WaitingForRegisterTokenState: autoguard.serialization.MessageGuard<WaitingForRegisterTokenState>;
-export type WaitingForRegisterTokenState = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"WAITING_FOR_REGISTER_TOKEN">;
+export declare const WaitingForRegisterCodeState: autoguard.serialization.MessageGuard<WaitingForRegisterCodeState>;
+export type WaitingForRegisterCodeState = autoguard.guards.Object<{
+    "type": autoguard.guards.StringLiteral<"WAITING_FOR_REGISTER_CODE">;
     "reason": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"REGISTER_TOKEN_REQUIRED">,
-        autoguard.guards.StringLiteral<"REGISTER_TOKEN_NOT_ACCEPTED">
+        autoguard.guards.StringLiteral<"REGISTER_CODE_REQUIRED">,
+        autoguard.guards.StringLiteral<"REGISTER_CODE_NOT_ACCEPTED">
     ]>;
 }, {}>;
 export declare const WaitingForRegisterPassphraseState: autoguard.serialization.MessageGuard<WaitingForRegisterPassphraseState>;
@@ -69,7 +69,7 @@ export declare const RegisterStates: autoguard.serialization.MessageGuard<Regist
 export type RegisterStates = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForRegisterUsernameState>,
     autoguard.guards.Reference<WaitingForRegisterEmailState>,
-    autoguard.guards.Reference<WaitingForRegisterTokenState>,
+    autoguard.guards.Reference<WaitingForRegisterCodeState>,
     autoguard.guards.Reference<WaitingForRegisterPassphraseState>
 ]>;
 export declare const AuthenticateCommand: autoguard.serialization.MessageGuard<AuthenticateCommand>;
@@ -86,10 +86,10 @@ export type AuthenticateEmailCommand = autoguard.guards.Object<{
     "type": autoguard.guards.StringLiteral<"AUTHENTICATE_EMAIL">;
     "email": autoguard.guards.String;
 }, {}>;
-export declare const AuthenticateTokenCommand: autoguard.serialization.MessageGuard<AuthenticateTokenCommand>;
-export type AuthenticateTokenCommand = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"AUTHENTICATE_TOKEN">;
-    "token": autoguard.guards.String;
+export declare const AuthenticateCodeCommand: autoguard.serialization.MessageGuard<AuthenticateCodeCommand>;
+export type AuthenticateCodeCommand = autoguard.guards.Object<{
+    "type": autoguard.guards.StringLiteral<"AUTHENTICATE_CODE">;
+    "code": autoguard.guards.String;
 }, {}>;
 export declare const AuthenticatePassphraseCommand: autoguard.serialization.MessageGuard<AuthenticatePassphraseCommand>;
 export type AuthenticatePassphraseCommand = autoguard.guards.Object<{
@@ -101,7 +101,7 @@ export type AuthenticateCommands = autoguard.guards.Union<[
     autoguard.guards.Reference<AuthenticateCommand>,
     autoguard.guards.Reference<AuthenticateUsernameCommand>,
     autoguard.guards.Reference<AuthenticateEmailCommand>,
-    autoguard.guards.Reference<AuthenticateTokenCommand>,
+    autoguard.guards.Reference<AuthenticateCodeCommand>,
     autoguard.guards.Reference<AuthenticatePassphraseCommand>
 ]>;
 export declare const WaitingForAuthenticateUsernameState: autoguard.serialization.MessageGuard<WaitingForAuthenticateUsernameState>;
@@ -122,12 +122,12 @@ export type WaitingForAuthenticateEmailState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"AUTHENTICATE_EMAIL_NOT_AVAILABLE">
     ]>;
 }, {}>;
-export declare const WaitingForAuthenticateTokenState: autoguard.serialization.MessageGuard<WaitingForAuthenticateTokenState>;
-export type WaitingForAuthenticateTokenState = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"WAITING_FOR_AUTHENTICATE_TOKEN">;
+export declare const WaitingForAuthenticateCodeState: autoguard.serialization.MessageGuard<WaitingForAuthenticateCodeState>;
+export type WaitingForAuthenticateCodeState = autoguard.guards.Object<{
+    "type": autoguard.guards.StringLiteral<"WAITING_FOR_AUTHENTICATE_CODE">;
     "reason": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"AUTHENTICATE_TOKEN_REQUIRED">,
-        autoguard.guards.StringLiteral<"AUTHENTICATE_TOKEN_NOT_ACCEPTED">
+        autoguard.guards.StringLiteral<"AUTHENTICATE_CODE_REQUIRED">,
+        autoguard.guards.StringLiteral<"AUTHENTICATE_CODE_NOT_ACCEPTED">
     ]>;
 }, {}>;
 export declare const WaitingForAuthenticatePassphraseState: autoguard.serialization.MessageGuard<WaitingForAuthenticatePassphraseState>;
@@ -142,7 +142,7 @@ export declare const AuthenticateStates: autoguard.serialization.MessageGuard<Au
 export type AuthenticateStates = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForAuthenticateUsernameState>,
     autoguard.guards.Reference<WaitingForAuthenticateEmailState>,
-    autoguard.guards.Reference<WaitingForAuthenticateTokenState>,
+    autoguard.guards.Reference<WaitingForAuthenticateCodeState>,
     autoguard.guards.Reference<WaitingForAuthenticatePassphraseState>
 ]>;
 export declare const RecoverCommand: autoguard.serialization.MessageGuard<RecoverCommand>;
@@ -159,10 +159,10 @@ export type RecoverEmailCommand = autoguard.guards.Object<{
     "type": autoguard.guards.StringLiteral<"RECOVER_EMAIL">;
     "email": autoguard.guards.String;
 }, {}>;
-export declare const RecoverTokenCommand: autoguard.serialization.MessageGuard<RecoverTokenCommand>;
-export type RecoverTokenCommand = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"RECOVER_TOKEN">;
-    "token": autoguard.guards.String;
+export declare const RecoverCodeCommand: autoguard.serialization.MessageGuard<RecoverCodeCommand>;
+export type RecoverCodeCommand = autoguard.guards.Object<{
+    "type": autoguard.guards.StringLiteral<"RECOVER_CODE">;
+    "code": autoguard.guards.String;
 }, {}>;
 export declare const RecoverPassphraseCommand: autoguard.serialization.MessageGuard<RecoverPassphraseCommand>;
 export type RecoverPassphraseCommand = autoguard.guards.Object<{
@@ -174,7 +174,7 @@ export type RecoverCommands = autoguard.guards.Union<[
     autoguard.guards.Reference<RecoverCommand>,
     autoguard.guards.Reference<RecoverUsernameCommand>,
     autoguard.guards.Reference<RecoverEmailCommand>,
-    autoguard.guards.Reference<RecoverTokenCommand>,
+    autoguard.guards.Reference<RecoverCodeCommand>,
     autoguard.guards.Reference<RecoverPassphraseCommand>
 ]>;
 export declare const WaitingForRecoverUsernameState: autoguard.serialization.MessageGuard<WaitingForRecoverUsernameState>;
@@ -195,12 +195,12 @@ export type WaitingForRecoverEmailState = autoguard.guards.Object<{
         autoguard.guards.StringLiteral<"RECOVER_EMAIL_NOT_AVAILABLE">
     ]>;
 }, {}>;
-export declare const WaitingForRecoverTokenState: autoguard.serialization.MessageGuard<WaitingForRecoverTokenState>;
-export type WaitingForRecoverTokenState = autoguard.guards.Object<{
-    "type": autoguard.guards.StringLiteral<"WAITING_FOR_RECOVER_TOKEN">;
+export declare const WaitingForRecoverCodeState: autoguard.serialization.MessageGuard<WaitingForRecoverCodeState>;
+export type WaitingForRecoverCodeState = autoguard.guards.Object<{
+    "type": autoguard.guards.StringLiteral<"WAITING_FOR_RECOVER_CODE">;
     "reason": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"RECOVER_TOKEN_REQUIRED">,
-        autoguard.guards.StringLiteral<"RECOVER_TOKEN_NOT_ACCEPTED">
+        autoguard.guards.StringLiteral<"RECOVER_CODE_REQUIRED">,
+        autoguard.guards.StringLiteral<"RECOVER_CODE_NOT_ACCEPTED">
     ]>;
 }, {}>;
 export declare const WaitingForRecoverPassphraseState: autoguard.serialization.MessageGuard<WaitingForRecoverPassphraseState>;
@@ -215,7 +215,7 @@ export declare const RecoverStates: autoguard.serialization.MessageGuard<Recover
 export type RecoverStates = autoguard.guards.Union<[
     autoguard.guards.Reference<WaitingForRecoverUsernameState>,
     autoguard.guards.Reference<WaitingForRecoverEmailState>,
-    autoguard.guards.Reference<WaitingForRecoverTokenState>,
+    autoguard.guards.Reference<WaitingForRecoverCodeState>,
     autoguard.guards.Reference<WaitingForRecoverPassphraseState>
 ]>;
 export declare const ResetStateCommand: autoguard.serialization.MessageGuard<ResetStateCommand>;
@@ -276,9 +276,9 @@ export declare namespace Autoguard {
             type: "REGISTER_EMAIL";
             email: string;
         }>;
-        RegisterTokenCommand: autoguard.guards.ReferenceGuard<{
-            type: "REGISTER_TOKEN";
-            token: string;
+        RegisterCodeCommand: autoguard.guards.ReferenceGuard<{
+            type: "REGISTER_CODE";
+            code: string;
         }>;
         RegisterPassphraseCommand: autoguard.guards.ReferenceGuard<{
             type: "REGISTER_PASSPHRASE";
@@ -293,8 +293,8 @@ export declare namespace Autoguard {
             type: "REGISTER_EMAIL";
             email: string;
         } | {
-            type: "REGISTER_TOKEN";
-            token: string;
+            type: "REGISTER_CODE";
+            code: string;
         } | {
             type: "REGISTER_PASSPHRASE";
             passphrase: string;
@@ -307,9 +307,9 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_REGISTER_EMAIL";
             reason: "REGISTER_EMAIL_REQUIRED" | "REGISTER_EMAIL_NOT_ACCEPTED" | "REGISTER_EMAIL_NOT_AVAILABLE";
         }>;
-        WaitingForRegisterTokenState: autoguard.guards.ReferenceGuard<{
-            type: "WAITING_FOR_REGISTER_TOKEN";
-            reason: "REGISTER_TOKEN_REQUIRED" | "REGISTER_TOKEN_NOT_ACCEPTED";
+        WaitingForRegisterCodeState: autoguard.guards.ReferenceGuard<{
+            type: "WAITING_FOR_REGISTER_CODE";
+            reason: "REGISTER_CODE_REQUIRED" | "REGISTER_CODE_NOT_ACCEPTED";
         }>;
         WaitingForRegisterPassphraseState: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_REGISTER_PASSPHRASE";
@@ -322,8 +322,8 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_REGISTER_EMAIL";
             reason: "REGISTER_EMAIL_REQUIRED" | "REGISTER_EMAIL_NOT_ACCEPTED" | "REGISTER_EMAIL_NOT_AVAILABLE";
         } | {
-            type: "WAITING_FOR_REGISTER_TOKEN";
-            reason: "REGISTER_TOKEN_REQUIRED" | "REGISTER_TOKEN_NOT_ACCEPTED";
+            type: "WAITING_FOR_REGISTER_CODE";
+            reason: "REGISTER_CODE_REQUIRED" | "REGISTER_CODE_NOT_ACCEPTED";
         } | {
             type: "WAITING_FOR_REGISTER_PASSPHRASE";
             reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
@@ -339,9 +339,9 @@ export declare namespace Autoguard {
             type: "AUTHENTICATE_EMAIL";
             email: string;
         }>;
-        AuthenticateTokenCommand: autoguard.guards.ReferenceGuard<{
-            type: "AUTHENTICATE_TOKEN";
-            token: string;
+        AuthenticateCodeCommand: autoguard.guards.ReferenceGuard<{
+            type: "AUTHENTICATE_CODE";
+            code: string;
         }>;
         AuthenticatePassphraseCommand: autoguard.guards.ReferenceGuard<{
             type: "AUTHENTICATE_PASSPHRASE";
@@ -356,8 +356,8 @@ export declare namespace Autoguard {
             type: "AUTHENTICATE_EMAIL";
             email: string;
         } | {
-            type: "AUTHENTICATE_TOKEN";
-            token: string;
+            type: "AUTHENTICATE_CODE";
+            code: string;
         } | {
             type: "AUTHENTICATE_PASSPHRASE";
             passphrase: string;
@@ -370,9 +370,9 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_AUTHENTICATE_EMAIL";
             reason: "AUTHENTICATE_EMAIL_REQUIRED" | "AUTHENTICATE_EMAIL_NOT_ACCEPTED" | "AUTHENTICATE_EMAIL_NOT_AVAILABLE";
         }>;
-        WaitingForAuthenticateTokenState: autoguard.guards.ReferenceGuard<{
-            type: "WAITING_FOR_AUTHENTICATE_TOKEN";
-            reason: "AUTHENTICATE_TOKEN_REQUIRED" | "AUTHENTICATE_TOKEN_NOT_ACCEPTED";
+        WaitingForAuthenticateCodeState: autoguard.guards.ReferenceGuard<{
+            type: "WAITING_FOR_AUTHENTICATE_CODE";
+            reason: "AUTHENTICATE_CODE_REQUIRED" | "AUTHENTICATE_CODE_NOT_ACCEPTED";
         }>;
         WaitingForAuthenticatePassphraseState: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
@@ -385,8 +385,8 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_AUTHENTICATE_EMAIL";
             reason: "AUTHENTICATE_EMAIL_REQUIRED" | "AUTHENTICATE_EMAIL_NOT_ACCEPTED" | "AUTHENTICATE_EMAIL_NOT_AVAILABLE";
         } | {
-            type: "WAITING_FOR_AUTHENTICATE_TOKEN";
-            reason: "AUTHENTICATE_TOKEN_REQUIRED" | "AUTHENTICATE_TOKEN_NOT_ACCEPTED";
+            type: "WAITING_FOR_AUTHENTICATE_CODE";
+            reason: "AUTHENTICATE_CODE_REQUIRED" | "AUTHENTICATE_CODE_NOT_ACCEPTED";
         } | {
             type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
             reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
@@ -402,9 +402,9 @@ export declare namespace Autoguard {
             type: "RECOVER_EMAIL";
             email: string;
         }>;
-        RecoverTokenCommand: autoguard.guards.ReferenceGuard<{
-            type: "RECOVER_TOKEN";
-            token: string;
+        RecoverCodeCommand: autoguard.guards.ReferenceGuard<{
+            type: "RECOVER_CODE";
+            code: string;
         }>;
         RecoverPassphraseCommand: autoguard.guards.ReferenceGuard<{
             type: "RECOVER_PASSPHRASE";
@@ -419,8 +419,8 @@ export declare namespace Autoguard {
             type: "RECOVER_EMAIL";
             email: string;
         } | {
-            type: "RECOVER_TOKEN";
-            token: string;
+            type: "RECOVER_CODE";
+            code: string;
         } | {
             type: "RECOVER_PASSPHRASE";
             passphrase: string;
@@ -433,9 +433,9 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_RECOVER_EMAIL";
             reason: "RECOVER_EMAIL_REQUIRED" | "RECOVER_EMAIL_NOT_ACCEPTED" | "RECOVER_EMAIL_NOT_AVAILABLE";
         }>;
-        WaitingForRecoverTokenState: autoguard.guards.ReferenceGuard<{
-            type: "WAITING_FOR_RECOVER_TOKEN";
-            reason: "RECOVER_TOKEN_REQUIRED" | "RECOVER_TOKEN_NOT_ACCEPTED";
+        WaitingForRecoverCodeState: autoguard.guards.ReferenceGuard<{
+            type: "WAITING_FOR_RECOVER_CODE";
+            reason: "RECOVER_CODE_REQUIRED" | "RECOVER_CODE_NOT_ACCEPTED";
         }>;
         WaitingForRecoverPassphraseState: autoguard.guards.ReferenceGuard<{
             type: "WAITING_FOR_RECOVER_PASSPHRASE";
@@ -448,8 +448,8 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_RECOVER_EMAIL";
             reason: "RECOVER_EMAIL_REQUIRED" | "RECOVER_EMAIL_NOT_ACCEPTED" | "RECOVER_EMAIL_NOT_AVAILABLE";
         } | {
-            type: "WAITING_FOR_RECOVER_TOKEN";
-            reason: "RECOVER_TOKEN_REQUIRED" | "RECOVER_TOKEN_NOT_ACCEPTED";
+            type: "WAITING_FOR_RECOVER_CODE";
+            reason: "RECOVER_CODE_REQUIRED" | "RECOVER_CODE_NOT_ACCEPTED";
         } | {
             type: "WAITING_FOR_RECOVER_PASSPHRASE";
             reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
@@ -466,8 +466,8 @@ export declare namespace Autoguard {
             type: "REGISTER_EMAIL";
             email: string;
         } | {
-            type: "REGISTER_TOKEN";
-            token: string;
+            type: "REGISTER_CODE";
+            code: string;
         } | {
             type: "REGISTER_PASSPHRASE";
             passphrase: string;
@@ -480,8 +480,8 @@ export declare namespace Autoguard {
             type: "AUTHENTICATE_EMAIL";
             email: string;
         } | {
-            type: "AUTHENTICATE_TOKEN";
-            token: string;
+            type: "AUTHENTICATE_CODE";
+            code: string;
         } | {
             type: "AUTHENTICATE_PASSPHRASE";
             passphrase: string;
@@ -494,8 +494,8 @@ export declare namespace Autoguard {
             type: "RECOVER_EMAIL";
             email: string;
         } | {
-            type: "RECOVER_TOKEN";
-            token: string;
+            type: "RECOVER_CODE";
+            code: string;
         } | {
             type: "RECOVER_PASSPHRASE";
             passphrase: string;
@@ -517,8 +517,8 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_REGISTER_EMAIL";
             reason: "REGISTER_EMAIL_REQUIRED" | "REGISTER_EMAIL_NOT_ACCEPTED" | "REGISTER_EMAIL_NOT_AVAILABLE";
         } | {
-            type: "WAITING_FOR_REGISTER_TOKEN";
-            reason: "REGISTER_TOKEN_REQUIRED" | "REGISTER_TOKEN_NOT_ACCEPTED";
+            type: "WAITING_FOR_REGISTER_CODE";
+            reason: "REGISTER_CODE_REQUIRED" | "REGISTER_CODE_NOT_ACCEPTED";
         } | {
             type: "WAITING_FOR_REGISTER_PASSPHRASE";
             reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
@@ -529,8 +529,8 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_AUTHENTICATE_EMAIL";
             reason: "AUTHENTICATE_EMAIL_REQUIRED" | "AUTHENTICATE_EMAIL_NOT_ACCEPTED" | "AUTHENTICATE_EMAIL_NOT_AVAILABLE";
         } | {
-            type: "WAITING_FOR_AUTHENTICATE_TOKEN";
-            reason: "AUTHENTICATE_TOKEN_REQUIRED" | "AUTHENTICATE_TOKEN_NOT_ACCEPTED";
+            type: "WAITING_FOR_AUTHENTICATE_CODE";
+            reason: "AUTHENTICATE_CODE_REQUIRED" | "AUTHENTICATE_CODE_NOT_ACCEPTED";
         } | {
             type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
             reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
@@ -541,8 +541,8 @@ export declare namespace Autoguard {
             type: "WAITING_FOR_RECOVER_EMAIL";
             reason: "RECOVER_EMAIL_REQUIRED" | "RECOVER_EMAIL_NOT_ACCEPTED" | "RECOVER_EMAIL_NOT_AVAILABLE";
         } | {
-            type: "WAITING_FOR_RECOVER_TOKEN";
-            reason: "RECOVER_TOKEN_REQUIRED" | "RECOVER_TOKEN_NOT_ACCEPTED";
+            type: "WAITING_FOR_RECOVER_CODE";
+            reason: "RECOVER_CODE_REQUIRED" | "RECOVER_CODE_NOT_ACCEPTED";
         } | {
             type: "WAITING_FOR_RECOVER_PASSPHRASE";
             reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
@@ -584,8 +584,8 @@ export declare namespace Autoguard {
                     type: "REGISTER_EMAIL";
                     email: string;
                 } | {
-                    type: "REGISTER_TOKEN";
-                    token: string;
+                    type: "REGISTER_CODE";
+                    code: string;
                 } | {
                     type: "REGISTER_PASSPHRASE";
                     passphrase: string;
@@ -598,8 +598,8 @@ export declare namespace Autoguard {
                     type: "AUTHENTICATE_EMAIL";
                     email: string;
                 } | {
-                    type: "AUTHENTICATE_TOKEN";
-                    token: string;
+                    type: "AUTHENTICATE_CODE";
+                    code: string;
                 } | {
                     type: "AUTHENTICATE_PASSPHRASE";
                     passphrase: string;
@@ -612,8 +612,8 @@ export declare namespace Autoguard {
                     type: "RECOVER_EMAIL";
                     email: string;
                 } | {
-                    type: "RECOVER_TOKEN";
-                    token: string;
+                    type: "RECOVER_CODE";
+                    code: string;
                 } | {
                     type: "RECOVER_PASSPHRASE";
                     passphrase: string;
@@ -647,8 +647,8 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_REGISTER_EMAIL";
                     reason: "REGISTER_EMAIL_REQUIRED" | "REGISTER_EMAIL_NOT_ACCEPTED" | "REGISTER_EMAIL_NOT_AVAILABLE";
                 } | {
-                    type: "WAITING_FOR_REGISTER_TOKEN";
-                    reason: "REGISTER_TOKEN_REQUIRED" | "REGISTER_TOKEN_NOT_ACCEPTED";
+                    type: "WAITING_FOR_REGISTER_CODE";
+                    reason: "REGISTER_CODE_REQUIRED" | "REGISTER_CODE_NOT_ACCEPTED";
                 } | {
                     type: "WAITING_FOR_REGISTER_PASSPHRASE";
                     reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
@@ -659,8 +659,8 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_AUTHENTICATE_EMAIL";
                     reason: "AUTHENTICATE_EMAIL_REQUIRED" | "AUTHENTICATE_EMAIL_NOT_ACCEPTED" | "AUTHENTICATE_EMAIL_NOT_AVAILABLE";
                 } | {
-                    type: "WAITING_FOR_AUTHENTICATE_TOKEN";
-                    reason: "AUTHENTICATE_TOKEN_REQUIRED" | "AUTHENTICATE_TOKEN_NOT_ACCEPTED";
+                    type: "WAITING_FOR_AUTHENTICATE_CODE";
+                    reason: "AUTHENTICATE_CODE_REQUIRED" | "AUTHENTICATE_CODE_NOT_ACCEPTED";
                 } | {
                     type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
                     reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
@@ -671,8 +671,8 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_RECOVER_EMAIL";
                     reason: "RECOVER_EMAIL_REQUIRED" | "RECOVER_EMAIL_NOT_ACCEPTED" | "RECOVER_EMAIL_NOT_AVAILABLE";
                 } | {
-                    type: "WAITING_FOR_RECOVER_TOKEN";
-                    reason: "RECOVER_TOKEN_REQUIRED" | "RECOVER_TOKEN_NOT_ACCEPTED";
+                    type: "WAITING_FOR_RECOVER_CODE";
+                    reason: "RECOVER_CODE_REQUIRED" | "RECOVER_CODE_NOT_ACCEPTED";
                 } | {
                     type: "WAITING_FOR_RECOVER_PASSPHRASE";
                     reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";
@@ -706,8 +706,8 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_REGISTER_EMAIL";
                     reason: "REGISTER_EMAIL_REQUIRED" | "REGISTER_EMAIL_NOT_ACCEPTED" | "REGISTER_EMAIL_NOT_AVAILABLE";
                 } | {
-                    type: "WAITING_FOR_REGISTER_TOKEN";
-                    reason: "REGISTER_TOKEN_REQUIRED" | "REGISTER_TOKEN_NOT_ACCEPTED";
+                    type: "WAITING_FOR_REGISTER_CODE";
+                    reason: "REGISTER_CODE_REQUIRED" | "REGISTER_CODE_NOT_ACCEPTED";
                 } | {
                     type: "WAITING_FOR_REGISTER_PASSPHRASE";
                     reason: "REGISTER_PASSPHRASE_REQUIRED" | "REGISTER_PASSPHRASE_NOT_ACCEPTED";
@@ -718,8 +718,8 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_AUTHENTICATE_EMAIL";
                     reason: "AUTHENTICATE_EMAIL_REQUIRED" | "AUTHENTICATE_EMAIL_NOT_ACCEPTED" | "AUTHENTICATE_EMAIL_NOT_AVAILABLE";
                 } | {
-                    type: "WAITING_FOR_AUTHENTICATE_TOKEN";
-                    reason: "AUTHENTICATE_TOKEN_REQUIRED" | "AUTHENTICATE_TOKEN_NOT_ACCEPTED";
+                    type: "WAITING_FOR_AUTHENTICATE_CODE";
+                    reason: "AUTHENTICATE_CODE_REQUIRED" | "AUTHENTICATE_CODE_NOT_ACCEPTED";
                 } | {
                     type: "WAITING_FOR_AUTHENTICATE_PASSPHRASE";
                     reason: "AUTHENTICATE_PASSPHRASE_REQUIRED" | "AUTHENTICATE_PASSPHRASE_NOT_ACCEPTED";
@@ -730,8 +730,8 @@ export declare namespace Autoguard {
                     type: "WAITING_FOR_RECOVER_EMAIL";
                     reason: "RECOVER_EMAIL_REQUIRED" | "RECOVER_EMAIL_NOT_ACCEPTED" | "RECOVER_EMAIL_NOT_AVAILABLE";
                 } | {
-                    type: "WAITING_FOR_RECOVER_TOKEN";
-                    reason: "RECOVER_TOKEN_REQUIRED" | "RECOVER_TOKEN_NOT_ACCEPTED";
+                    type: "WAITING_FOR_RECOVER_CODE";
+                    reason: "RECOVER_CODE_REQUIRED" | "RECOVER_CODE_NOT_ACCEPTED";
                 } | {
                     type: "WAITING_FOR_RECOVER_PASSPHRASE";
                     reason: "RECOVER_PASSPHRASE_REQUIRED" | "RECOVER_PASSPHRASE_NOT_ACCEPTED";

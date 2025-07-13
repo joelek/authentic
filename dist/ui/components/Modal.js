@@ -7,16 +7,16 @@ const IconButton_1 = require("./buttons/IconButton");
 const AuthenticatedStep_1 = require("./steps/AuthenticatedStep");
 const WaitingForAuthenticateEmailStep_1 = require("./steps/WaitingForAuthenticateEmailStep");
 const WaitingForAuthenticatePassphraseStep_1 = require("./steps/WaitingForAuthenticatePassphraseStep");
-const WaitingForAuthenticateTokenStep_1 = require("./steps/WaitingForAuthenticateTokenStep");
+const WaitingForAuthenticateCodeStep_1 = require("./steps/WaitingForAuthenticateCodeStep");
 const WaitingForAuthenticateUsernameStep_1 = require("./steps/WaitingForAuthenticateUsernameStep");
 const WaitingForCommandStep_1 = require("./steps/WaitingForCommandStep");
 const WaitingForRecoverEmailStep_1 = require("./steps/WaitingForRecoverEmailStep");
 const WaitingForRecoverPassphraseStep_1 = require("./steps/WaitingForRecoverPassphraseStep");
-const WaitingForRecoverTokenStep_1 = require("./steps/WaitingForRecoverTokenStep");
+const WaitingForRecoverCodeStep_1 = require("./steps/WaitingForRecoverCodeStep");
 const WaitingForRecoverUsernameStep_1 = require("./steps/WaitingForRecoverUsernameStep");
 const WaitingForRegisterEmailStep_1 = require("./steps/WaitingForRegisterEmailStep");
 const WaitingForRegisterPassphraseStep_1 = require("./steps/WaitingForRegisterPassphraseStep");
-const WaitingForRegisterTokenStep_1 = require("./steps/WaitingForRegisterTokenStep");
+const WaitingForRegisterCodeStep_1 = require("./steps/WaitingForRegisterCodeStep");
 const WaitingForRegisterUsernameStep_1 = require("./steps/WaitingForRegisterUsernameStep");
 const CLASS_NAME = "authentic-modal";
 document.head.appendChild(bonsai_1.html.style({}, `
@@ -117,7 +117,7 @@ function Modal(managers, attributes) {
         class: [`${CLASS_NAME}__scroll`]
     }, (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__content`]
-    }, (0, AuthenticatedStep_1.AuthenticatedStep)(managers, {}), (0, WaitingForCommandStep_1.WaitingForCommandStep)(managers, {}), (0, WaitingForAuthenticateEmailStep_1.WaitingForAuthenticateEmailStep)(managers, {}), (0, WaitingForAuthenticatePassphraseStep_1.WaitingForAuthenticatePassphraseStep)(managers, {}), (0, WaitingForAuthenticateTokenStep_1.WaitingForAuthenticateTokenStep)(managers, {}), (0, WaitingForAuthenticateUsernameStep_1.WaitingForAuthenticateUsernameStep)(managers, {}), (0, WaitingForRecoverEmailStep_1.WaitingForRecoverEmailStep)(managers, {}), (0, WaitingForRecoverPassphraseStep_1.WaitingForRecoverPassphraseStep)(managers, {}), (0, WaitingForRecoverTokenStep_1.WaitingForRecoverTokenStep)(managers, {}), (0, WaitingForRecoverUsernameStep_1.WaitingForRecoverUsernameStep)(managers, {}), (0, WaitingForRegisterEmailStep_1.WaitingForRegisterEmailStep)(managers, {}), (0, WaitingForRegisterPassphraseStep_1.WaitingForRegisterPassphraseStep)(managers, {}), (0, WaitingForRegisterTokenStep_1.WaitingForRegisterTokenStep)(managers, {}), (0, WaitingForRegisterUsernameStep_1.WaitingForRegisterUsernameStep)(managers, {})))), (0, Block_1.Block)("div", {
+    }, (0, AuthenticatedStep_1.AuthenticatedStep)(managers, {}), (0, WaitingForCommandStep_1.WaitingForCommandStep)(managers, {}), (0, WaitingForAuthenticateEmailStep_1.WaitingForAuthenticateEmailStep)(managers, {}), (0, WaitingForAuthenticatePassphraseStep_1.WaitingForAuthenticatePassphraseStep)(managers, {}), (0, WaitingForAuthenticateCodeStep_1.WaitingForAuthenticateCodeStep)(managers, {}), (0, WaitingForAuthenticateUsernameStep_1.WaitingForAuthenticateUsernameStep)(managers, {}), (0, WaitingForRecoverEmailStep_1.WaitingForRecoverEmailStep)(managers, {}), (0, WaitingForRecoverPassphraseStep_1.WaitingForRecoverPassphraseStep)(managers, {}), (0, WaitingForRecoverCodeStep_1.WaitingForRecoverCodeStep)(managers, {}), (0, WaitingForRecoverUsernameStep_1.WaitingForRecoverUsernameStep)(managers, {}), (0, WaitingForRegisterEmailStep_1.WaitingForRegisterEmailStep)(managers, {}), (0, WaitingForRegisterPassphraseStep_1.WaitingForRegisterPassphraseStep)(managers, {}), (0, WaitingForRegisterCodeStep_1.WaitingForRegisterCodeStep)(managers, {}), (0, WaitingForRegisterUsernameStep_1.WaitingForRegisterUsernameStep)(managers, {})))), (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__foot`]
     }))))));
 }
