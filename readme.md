@@ -44,13 +44,10 @@ controller.toggle();
 ## Roadmap
 
 * Use AVL-tree for indices in VolatileObjectStore class.
-* Add automatic backoff to Autoguard when receiving Retry-After header in response.
-* Add automatic retries with exponential backoff on error to Autoguard.
 * Consider adding display name.
 * Consider adding registration keys.
 * Consider adding secrets.
 * Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
-* Expose AccessHandler to plain NodeJS request handlers.
 * Automatically create and update database tables.
 * Add language selector.
 * Add support for HTML emails.
