@@ -4,18 +4,26 @@
 import * as libhttp from "http";
 import * as authentic from "@joelek/authentic/dist/lib/node";
 
-const SERVER = new authentic.server.server.Server();
+const SERVER = new authentic.server.Server();
 
-const REQUEST_LISTENER = SERVER.createRequestListener({
+const AUTH_REQUEST_LISTENER = SERVER.createAuthRequestListener({
 	urlPrefix: "/auth"
 });
 
-const HTTP_SERVER = libhttp.createServer((request, response) => {
+const APP_REQUEST_LISTENER = SERVER.createAppRequestListener(async (request, access_handler) => {
+	let user_id = access_handler.requireAuthorization(/* Required roles... */);
+	return {
+		payload: user_id
+	};
+});
+
+const HTTP_SERVER = libhttp.createServer({}, async (request, response) => {
 	let url = request.url ?? "/";
 	if (url.startsWith("/auth/")) {
-		return REQUEST_LISTENER(request, response);
+		return AUTH_REQUEST_LISTENER(request, response);
+	} else {
+		return APP_REQUEST_LISTENER(request, response);
 	}
-	response.writeHead(404);
 });
 
 HTTP_SERVER.listen();

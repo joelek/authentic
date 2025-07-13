@@ -1045,7 +1045,43 @@ export class Server {
 		return wrapped_routes;
 	}
 
-	createRequestListener(options?: autoguard.api.ServerOptions): autoguard.api.RequestListener {
+	createAppRequestListener(route: (request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>, access_handler: AccessHandler) => Promise<autoguard.api.EndpointResponse & { payload?: autoguard.api.JSON; }>): autoguard.api.RequestListener {
+		let wrapped_route = this.wrapRoute(route);
+		let endpoints: Array<autoguard.api.Endpoint> = [];
+		endpoints.push((raw, auxillary) => {
+			return {
+				acceptsComponents() {
+					return true;
+				},
+				acceptsMethod() {
+					return true;
+				},
+				async validateRequest() {
+					let options = autoguard.api.decodeUndeclaredParameters(raw.parameters, []);
+					let headers = autoguard.api.decodeUndeclaredHeaders(raw.headers, []);
+					let payload = raw.payload;
+					let client_request = new autoguard.api.ClientRequest({ options, headers, payload }, false, auxillary);
+					return {
+						async handleRequest() {
+							let endpoint_response = await wrapped_route(client_request);
+							return {
+								async validateResponse() {
+									let status = endpoint_response.status ?? 200;
+									let headers = autoguard.api.encodeUndeclaredHeaderPairs(endpoint_response.headers ?? {}, []);
+									let payload = autoguard.api.serializePayload(endpoint_response.payload ?? {});
+									let raw = await autoguard.api.finalizeResponse({ status, headers, payload }, []);
+									return raw;
+								}
+							};
+						}
+					};
+				}
+			};
+		});
+		return (request, response) => autoguard.api.route(endpoints, request, response);
+	}
+
+	createAuthRequestListener(options?: autoguard.api.ServerOptions): autoguard.api.RequestListener {
 		return api.makeServer({
 			readState: this.readState,
 			sendCommand: this.sendCommand,
