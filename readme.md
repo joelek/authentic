@@ -54,4 +54,3 @@ controller.toggle();
 * Add support for HTML emails.
 * Make UI colors configurable.
 * Consider removing customized IDs.
-* Provide User object through AccessHandler.
