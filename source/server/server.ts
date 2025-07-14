@@ -84,24 +84,25 @@ export type ServerOptions = {
 };
 
 export class AccessHandler {
-	protected authenticated_user_id: string | undefined;
-	protected roles: Array<string>;
+	protected user: api.User | undefined;
 
-	constructor(authenticated_user_id: string | undefined, roles: Array<string>) {
-		this.authenticated_user_id = authenticated_user_id;
-		this.roles = roles;
+	constructor(user: api.User | undefined) {
+		this.user = user;
 	}
 
-	requireAuthorization(...roles: Array<string>): string {
-		if (this.authenticated_user_id == null) {
+	requireAuthorization(...roles: Array<string>): api.User {
+		if (this.user == null) {
 			throw 401;
 		}
 		for (let role of roles) {
-			if (!this.roles.includes(role)) {
+			if (!this.user.roles.includes(role)) {
 				throw 401;
 			}
 		}
-		return this.authenticated_user_id;
+		return {
+			...this.user,
+			roles: [...this.user.roles]
+		};
 	}
 };
 
@@ -149,16 +150,6 @@ export class Server {
 
 	protected computePassdata(passphrase: string): string {
 		return Validator.fromPassphrase(passphrase).toChunk();
-	}
-
-	protected async createAccessHandler(authenticated_user_id: string | undefined): Promise<AccessHandler> {
-		if (authenticated_user_id == null) {
-			return new AccessHandler(authenticated_user_id, []);
-		} else {
-			let user_roles = await this.user_roles.lookupObjects("user_id", "=", authenticated_user_id);
-			let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
-			return new AccessHandler(authenticated_user_id, roles.map((role) => role.name));
-		}
 	}
 
 	protected createSetCookieValues(session: Session, ticket: string | undefined): Array<string> {
@@ -218,22 +209,7 @@ export class Server {
 		});
 	}
 
-	protected async getApiUser(session: Session): Promise<api.User | undefined> {
-		if (session.authenticated_user_id == null) {
-			return;
-		}
-		let user = await this.users.lookupObject(session.authenticated_user_id);
-		let user_roles = await this.user_roles.lookupObjects("user_id", "=", session.authenticated_user_id);
-		let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
-		return {
-			id: user.id,
-			email: user.email,
-			username: user.username ?? undefined,
-			roles: roles.map((role) => role.name)
-		};
-	}
-
-	protected async getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined> {
+	protected async getApiUser(session: Session, ticket: string | undefined): Promise<api.User | undefined> {
 		if (ticket == null) {
 			return;
 		}
@@ -252,7 +228,15 @@ export class Server {
 		}
 		session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
 		await this.sessions.updateObject(session);
-		return session.authenticated_user_id;
+		let user = await this.users.lookupObject(session.authenticated_user_id);
+		let user_roles = await this.user_roles.lookupObjects("user_id", "=", session.authenticated_user_id);
+		let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
+		return {
+			id: user.id,
+			email: user.email,
+			username: user.username ?? undefined,
+			roles: roles.map((role) => role.name)
+		};
 	}
 
 	protected getExpiresInDays(valid_for_days: number): number {
@@ -949,7 +933,7 @@ export class Server {
 			let session = await this.getSession(session_id);
 			this.checkRateLimit(session.wait_until_utc);
 			let state = this.getApiState(session);
-			let user = await this.getApiUser(session);
+			let user = await this.getApiUser(session, ticket);
 			return this.finalizeResponse({
 				payload: {
 					state,
@@ -982,7 +966,7 @@ export class Server {
 			}
 			await this.sessions.updateObject(session);
 			let state = this.getApiState(session);
-			let user = await this.getApiUser(session);
+			let user = await this.getApiUser(session, ticket);
 			return this.finalizeResponse({
 				payload: {
 					state,
@@ -1038,8 +1022,8 @@ export class Server {
 		return async (request) => {
 			let { session_id, ticket } = this.getCookieData(request) ?? {};
 			let session = await this.getSession(session_id);
-			let authenticated_user_id = await this.getAuthenticatedUserId(session, ticket);
-			let access_handler = await this.createAccessHandler(authenticated_user_id);
+			let user = await this.getApiUser(session, ticket);
+			let access_handler = new AccessHandler(user);
 			let response = await route(request, access_handler);
 			return this.finalizeResponse(response, session, ticket);
 		};
