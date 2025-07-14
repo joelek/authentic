@@ -48,7 +48,7 @@ controller.toggle();
 * Consider adding registration keys.
 * Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
 * Automatically create and update database tables.
-* Add language selector.
+* Add language selector that propagates to server side.
 * Add support for HTML emails.
 * Make UI colors configurable.
 * Consider removing customized IDs.
