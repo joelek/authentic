@@ -46,7 +46,6 @@ controller.toggle();
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Consider adding display name.
 * Consider adding registration keys.
-* Consider adding secrets.
 * Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
 * Automatically create and update database tables.
 * Add language selector.
