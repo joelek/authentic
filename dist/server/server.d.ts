@@ -41,10 +41,9 @@ export type ServerOptions = {
     waiting_for_recover_code_email_template?: EmailTemplate;
 };
 export declare class AccessHandler {
-    protected authenticated_user_id: string | undefined;
-    protected roles: Array<string>;
-    constructor(authenticated_user_id: string | undefined, roles: Array<string>);
-    requireAuthorization(...roles: Array<string>): string;
+    protected user: api.User | undefined;
+    constructor(user: api.User | undefined);
+    requireAuthorization(...roles: Array<string>): api.User;
 }
 export type AuthenticatedRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>, access_handler: AccessHandler) => Promise<B>;
 export type AuthenticatedRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = {
@@ -81,7 +80,6 @@ export declare class Server {
     protected waiting_for_recover_code_email_template: EmailTemplate;
     protected computeHash(string: string): string;
     protected computePassdata(passphrase: string): string;
-    protected createAccessHandler(authenticated_user_id: string | undefined): Promise<AccessHandler>;
     protected createSetCookieValues(session: Session, ticket: string | undefined): Array<string>;
     protected finalizeResponse<A extends autoguard.api.EndpointResponse>(response: A, session: Session, ticket: string | undefined): A;
     protected formatCode(code: string): string;
@@ -89,8 +87,7 @@ export declare class Server {
     protected generateCode(length: number): string;
     protected generateTicket(length: number): string;
     protected getApiState(session: Session): api.State;
-    protected getApiUser(session: Session): Promise<api.User | undefined>;
-    protected getAuthenticatedUserId(session: Session, ticket: string | undefined): Promise<string | undefined>;
+    protected getApiUser(session: Session, ticket: string | undefined): Promise<api.User | undefined>;
     protected getExpiresInDays(valid_for_days: number): number;
     protected getExpiresInHours(valid_for_hours: number): number;
     protected getExpiresInMinutes(valid_for_minutes: number): number;

@@ -7,10 +7,10 @@ const AUTH_REQUEST_LISTENER = SERVER.createAuthRequestListener({
     urlPrefix: "/auth"
 });
 const APP_REQUEST_LISTENER = SERVER.createAppRequestListener(async (request, access_handler) => {
-    let user_id = access_handler.requireAuthorization( /* Required roles... */);
+    let user = access_handler.requireAuthorization( /* Required roles... */);
     return {
         payload: {
-            user_id
+            user
         }
     };
 });

@@ -45,22 +45,23 @@ const WAITING_FOR_RECOVER_CODE_EMAIL_TEMPLATE = {
     }
 };
 class AccessHandler {
-    authenticated_user_id;
-    roles;
-    constructor(authenticated_user_id, roles) {
-        this.authenticated_user_id = authenticated_user_id;
-        this.roles = roles;
+    user;
+    constructor(user) {
+        this.user = user;
     }
     requireAuthorization(...roles) {
-        if (this.authenticated_user_id == null) {
+        if (this.user == null) {
             throw 401;
         }
         for (let role of roles) {
-            if (!this.roles.includes(role)) {
+            if (!this.user.roles.includes(role)) {
                 throw 401;
             }
         }
-        return this.authenticated_user_id;
+        return {
+            ...this.user,
+            roles: [...this.user.roles]
+        };
     }
 }
 exports.AccessHandler = AccessHandler;
@@ -98,16 +99,6 @@ class Server {
     }
     computePassdata(passphrase) {
         return validator_1.Validator.fromPassphrase(passphrase).toChunk();
-    }
-    async createAccessHandler(authenticated_user_id) {
-        if (authenticated_user_id == null) {
-            return new AccessHandler(authenticated_user_id, []);
-        }
-        else {
-            let user_roles = await this.user_roles.lookupObjects("user_id", "=", authenticated_user_id);
-            let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
-            return new AccessHandler(authenticated_user_id, roles.map((role) => role.name));
-        }
     }
     createSetCookieValues(session, ticket) {
         let cookie_data = {
@@ -159,21 +150,7 @@ class Server {
             reason: session.reason
         });
     }
-    async getApiUser(session) {
-        if (session.authenticated_user_id == null) {
-            return;
-        }
-        let user = await this.users.lookupObject(session.authenticated_user_id);
-        let user_roles = await this.user_roles.lookupObjects("user_id", "=", session.authenticated_user_id);
-        let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
-        return {
-            id: user.id,
-            email: user.email,
-            username: user.username ?? undefined,
-            roles: roles.map((role) => role.name)
-        };
-    }
-    async getAuthenticatedUserId(session, ticket) {
+    async getApiUser(session, ticket) {
         if (ticket == null) {
             return;
         }
@@ -192,7 +169,15 @@ class Server {
         }
         session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
         await this.sessions.updateObject(session);
-        return session.authenticated_user_id;
+        let user = await this.users.lookupObject(session.authenticated_user_id);
+        let user_roles = await this.user_roles.lookupObjects("user_id", "=", session.authenticated_user_id);
+        let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
+        return {
+            id: user.id,
+            email: user.email,
+            username: user.username ?? undefined,
+            roles: roles.map((role) => role.name)
+        };
     }
     getExpiresInDays(valid_for_days) {
         return Date.now() + valid_for_days * 24 * 60 * 60 * 1000;
@@ -882,7 +867,7 @@ class Server {
             let session = await this.getSession(session_id);
             this.checkRateLimit(session.wait_until_utc);
             let state = this.getApiState(session);
-            let user = await this.getApiUser(session);
+            let user = await this.getApiUser(session, ticket);
             return this.finalizeResponse({
                 payload: {
                     state,
@@ -916,7 +901,7 @@ class Server {
             }
             await this.sessions.updateObject(session);
             let state = this.getApiState(session);
-            let user = await this.getApiUser(session);
+            let user = await this.getApiUser(session, ticket);
             return this.finalizeResponse({
                 payload: {
                     state,
@@ -971,8 +956,8 @@ class Server {
         return async (request) => {
             let { session_id, ticket } = this.getCookieData(request) ?? {};
             let session = await this.getSession(session_id);
-            let authenticated_user_id = await this.getAuthenticatedUserId(session, ticket);
-            let access_handler = await this.createAccessHandler(authenticated_user_id);
+            let user = await this.getApiUser(session, ticket);
+            let access_handler = new AccessHandler(user);
             let response = await route(request, access_handler);
             return this.finalizeResponse(response, session, ticket);
         };
