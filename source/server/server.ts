@@ -28,33 +28,33 @@ type EmailTemplate = {
 const WAITING_FOR_REGISTER_CODE_EMAIL_TEMPLATE: EmailTemplate = {
 	en: {
 		subject: "Verification code",
-		message: "The verification code is: {code}"
+		message: "The verification code is: {{code}}"
 	},
 	sv: {
 		subject: "Verifieringskod",
-		message: "Verifieringskoden är: {code}"
+		message: "Verifieringskoden är: {{code}}"
 	}
 };
 
 const WAITING_FOR_AUTHENTICATE_CODE_EMAIL_TEMPLATE: EmailTemplate = {
 	en: {
 		subject: "Verification code",
-		message: "The verification code is: {code}"
+		message: "The verification code is: {{code}}"
 	},
 	sv: {
 		subject: "Verifieringskod",
-		message: "Verifieringskoden är: {code}"
+		message: "Verifieringskoden är: {{code}}"
 	}
 };
 
 const WAITING_FOR_RECOVER_CODE_EMAIL_TEMPLATE: EmailTemplate = {
 	en: {
 		subject: "Verification code",
-		message: "The verification code is: {code}"
+		message: "The verification code is: {{code}}"
 	},
 	sv: {
 		subject: "Verifieringskod",
-		message: "Verifieringskoden är: {code}"
+		message: "Verifieringskoden är: {{code}}"
 	}
 };
 
@@ -906,7 +906,7 @@ export class Server {
 	}
 
 	protected processEmailTemplateString(template: string, variables: Record<string, string | undefined>): string {
-		return template.replaceAll(/[{]([^}]*)[}]/g, (_, key) => {
+		return template.replaceAll(/[{][{]([^}]*)[}][}]/g, (_, key) => {
 			return variables[key] ?? "?";
 		});
 	}
