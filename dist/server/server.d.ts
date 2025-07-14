@@ -84,6 +84,8 @@ export declare class Server {
     protected createAccessHandler(authenticated_user_id: string | undefined): Promise<AccessHandler>;
     protected createSetCookieValues(session: Session, ticket: string | undefined): Array<string>;
     protected finalizeResponse<A extends autoguard.api.EndpointResponse>(response: A, session: Session, ticket: string | undefined): A;
+    protected formatCode(code: string): string;
+    protected filterCode(formatted_code: string): string;
     protected generateCode(length: number): string;
     protected generateTicket(length: number): string;
     protected getApiState(session: Session): api.State;

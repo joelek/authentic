@@ -17,31 +17,31 @@ const validator_1 = require("./validator");
 const WAITING_FOR_REGISTER_CODE_EMAIL_TEMPLATE = {
     en: {
         subject: "Verification code",
-        message: "The verification code is: {code}"
+        message: "The verification code is: {{code}}"
     },
     sv: {
         subject: "Verifieringskod",
-        message: "Verifieringskoden är: {code}"
+        message: "Verifieringskoden är: {{code}}"
     }
 };
 const WAITING_FOR_AUTHENTICATE_CODE_EMAIL_TEMPLATE = {
     en: {
         subject: "Verification code",
-        message: "The verification code is: {code}"
+        message: "The verification code is: {{code}}"
     },
     sv: {
         subject: "Verifieringskod",
-        message: "Verifieringskoden är: {code}"
+        message: "Verifieringskoden är: {{code}}"
     }
 };
 const WAITING_FOR_RECOVER_CODE_EMAIL_TEMPLATE = {
     en: {
         subject: "Verification code",
-        message: "The verification code is: {code}"
+        message: "The verification code is: {{code}}"
     },
     sv: {
         subject: "Verifieringskod",
-        message: "Verifieringskoden är: {code}"
+        message: "Verifieringskoden är: {{code}}"
     }
 };
 class AccessHandler {
@@ -140,6 +140,12 @@ class Server {
                 ]
             }
         };
+    }
+    formatCode(code) {
+        return Array.from(code.match(/(.{1,3})/iug) ?? []).join(" ");
+    }
+    filterCode(formatted_code) {
+        return formatted_code.split(" ").join("");
     }
     generateCode(length) {
         return utils.generateDigitId(length);
@@ -379,10 +385,10 @@ class Server {
             if (session.code_hash == null) {
                 let code = this.generateCode(15);
                 let subject = this.processEmailTemplateString(this.waiting_for_register_code_email_template[language].subject, {
-                    code
+                    code: this.formatCode(code)
                 });
                 let message = this.processEmailTemplateString(this.waiting_for_register_code_email_template[language].message, {
-                    code
+                    code: this.formatCode(code)
                 });
                 await this.sendEmail(session.email, subject, message);
                 return {
@@ -469,10 +475,10 @@ class Server {
             if (session.code_hash == null) {
                 let code = this.generateCode(6);
                 let subject = this.processEmailTemplateString(this.waiting_for_authenticate_code_email_template[language].subject, {
-                    code
+                    code: this.formatCode(code)
                 });
                 let message = this.processEmailTemplateString(this.waiting_for_authenticate_code_email_template[language].message, {
-                    code
+                    code: this.formatCode(code)
                 });
                 await this.sendEmail(session.email, subject, message);
                 return {
@@ -552,10 +558,10 @@ class Server {
         if (session.code_hash == null) {
             let code = this.generateCode(15);
             let subject = this.processEmailTemplateString(this.waiting_for_recover_code_email_template[language].subject, {
-                code
+                code: this.formatCode(code)
             });
             let message = this.processEmailTemplateString(this.waiting_for_recover_code_email_template[language].message, {
-                code
+                code: this.formatCode(code)
             });
             await this.sendEmail(session.email, subject, message);
             return {
@@ -659,7 +665,7 @@ class Server {
         }
         else if (api.WaitingForRegisterCodeState.is(session)) {
             if (api.RegisterCodeCommand.is(command)) {
-                let code_hash = this.computeHash(command.code);
+                let code_hash = this.computeHash(this.filterCode(command.code));
                 if (session.code_hash == null || session.code_hash !== code_hash) {
                     let code_hash_attempts = (session.code_hash_attempts ?? 0) + 1;
                     return {
@@ -730,7 +736,7 @@ class Server {
         }
         else if (api.WaitingForAuthenticateCodeState.is(session)) {
             if (api.AuthenticateCodeCommand.is(command)) {
-                let code_hash = this.computeHash(command.code);
+                let code_hash = this.computeHash(this.filterCode(command.code));
                 if (session.code_hash == null || session.code_hash !== code_hash) {
                     let code_hash_attempts = (session.code_hash_attempts ?? 0) + 1;
                     return {
@@ -802,7 +808,7 @@ class Server {
         }
         else if (api.WaitingForRecoverCodeState.is(session)) {
             if (api.RecoverCodeCommand.is(command)) {
-                let code_hash = this.computeHash(command.code);
+                let code_hash = this.computeHash(this.filterCode(command.code));
                 if (session.code_hash == null || session.code_hash !== code_hash) {
                     let code_hash_attempts = (session.code_hash_attempts ?? 0) + 1;
                     return {
@@ -846,8 +852,8 @@ class Server {
         };
     }
     processEmailTemplateString(template, variables) {
-        return template.replaceAll(/[{]([^}]*)[}]/g, (_, key) => {
-            return variables[key] ?? "?";
+        return template.replaceAll(/[{][{]([^}]*)[}][}]/iug, (match, ...groups) => {
+            return variables[groups[0]] ?? "?";
         });
     }
     async sendEmail(to_address, subject, message) {
