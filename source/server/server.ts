@@ -906,8 +906,8 @@ export class Server {
 	}
 
 	protected processEmailTemplateString(template: string, variables: Record<string, string | undefined>): string {
-		return template.replaceAll(/[{][{]([^}]*)[}][}]/g, (_, key) => {
-			return variables[key] ?? "?";
+		return template.replaceAll(/[{][{]([^}]*)[}][}]/g, (match, ...groups) => {
+			return variables[groups[0]] ?? "?";
 		});
 	}
 
