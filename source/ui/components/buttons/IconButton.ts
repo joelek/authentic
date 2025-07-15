@@ -10,7 +10,7 @@ document.head.appendChild(html.style({}, `
 		background-color: transparent;
 		color: rgb(255, 255, 255);
 		cursor: pointer;
-		padding: 8px;
+		padding: 6px;
 	}
 
 	.${CLASS_NAME}:hover {
@@ -37,7 +37,7 @@ export function IconButton(managers: Managers, { graphic: $graphic, ...augmentat
 		},
 			Icon(managers, {
 				graphic: graphic as any,
-				size: "24px"
+				size: "20px"
 			})
 		)
 	);

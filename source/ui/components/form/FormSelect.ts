@@ -20,9 +20,9 @@ document.head.appendChild(html.style({}, `
 	.${CLASS_NAME}__box {
 		align-items: center;
 		display: grid;
-		gap: 8px;
+		gap: 6px;
 		grid-template-columns: minmax(0%, 100%) auto;
-		padding: 8px;
+		padding: 6px;
 	}
 
 	.${CLASS_NAME}__box-title {
@@ -91,7 +91,7 @@ export function FormSelect<A extends string>(managers: Managers, { enabled: $ena
 				Icon(managers, {
 					class: [`${CLASS_NAME}__box-icon`],
 					graphic: "chevron-down",
-					size: "24px"
+					size: "20px"
 				})
 			),
 			Block("select", {

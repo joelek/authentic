@@ -10,7 +10,7 @@ document.head.appendChild(html.style({}, `
 		font-family: sans-serif;
 		font-size: 14px;
 		height: auto;
-		line-height: 18px;
+		line-height: 20px;
 		overflow: hidden;
 		text-align: left;
 		text-overflow: ellipsis;
