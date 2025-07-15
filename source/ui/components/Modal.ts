@@ -16,6 +16,8 @@ import { WaitingForRegisterEmailStep } from "./steps/WaitingForRegisterEmailStep
 import { WaitingForRegisterPassphraseStep } from "./steps/WaitingForRegisterPassphraseStep";
 import { WaitingForRegisterCodeStep } from "./steps/WaitingForRegisterCodeStep";
 import { WaitingForRegisterUsernameStep } from "./steps/WaitingForRegisterUsernameStep";
+import { Language } from "../../shared";
+import { FormSelect } from "./form/FormSelect";
 
 const CLASS_NAME = "authentic-modal";
 
@@ -66,7 +68,7 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}__foot {
-
+		padding: 24px;
 	}
 
 	.${CLASS_NAME}__scroll {
@@ -152,8 +154,25 @@ export function Modal(managers: Managers, attributes: Modal) {
 						),
 						Block("div", {
 							class: [`${CLASS_NAME}__foot`]
-						}
-
+						},
+							FormSelect<Language>(managers, {
+								groups: [
+									{
+										title: managers.translation.getTranslation("LANGUAGES"),
+										options: [
+											{
+												title: managers.translation.getTranslation("LANGUAGE_EN"),
+												option: "en"
+											},
+											{
+												title: managers.translation.getTranslation("LANGUAGE_SV"),
+												option: "sv"
+											}
+										]
+									}
+								],
+								value: managers.translation.getLanguage()
+							})
 						)
 					)
 				)

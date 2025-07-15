@@ -319,6 +319,18 @@ const TRANSLATIONS = {
 	"LOGGED_IN_AS": {
 		en: "Logged in as",
 		sv: "Inloggad som"
+	},
+	"LANGUAGES": {
+		en: "Languages",
+		sv: "Språk"
+	},
+	"LANGUAGE_EN": {
+		en: "English",
+		sv: "Engelska"
+	},
+	"LANGUAGE_SV": {
+		en: "Swedish",
+		sv: "Svenska"
 	}
 };
 
@@ -344,6 +356,10 @@ export class TranslationManager {
 			this.updateLanguage();
 		});
 		this.updateLanguage();
+	}
+
+	getLanguage(): State<Language> {
+		return this.language;
 	}
 
 	getTranslation(attribute: Attribute<TranslationsKey | undefined>): State<string> {

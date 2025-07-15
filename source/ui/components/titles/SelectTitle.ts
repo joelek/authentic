@@ -1,0 +1,33 @@
+import {  Children, html } from "@joelek/bonsai";
+import { Managers } from "../../managers/Managers";
+import { Block } from "../Block";
+
+const CLASS_NAME = "authentic-select-title";
+
+document.head.appendChild(html.style({}, `
+	.${CLASS_NAME} {
+		color: rgb(255, 255, 255);
+		font-family: sans-serif;
+		font-size: 14px;
+		height: auto;
+		line-height: 18px;
+		overflow: hidden;
+		text-align: left;
+		text-overflow: ellipsis;
+		user-select: none;
+		white-space: nowrap;
+		word-break: break-word;
+	}
+`));
+
+export type SelectTitle = {};
+
+export function SelectTitle(managers: Managers, attributes: SelectTitle, ...children: Children) {
+	return (
+		Block("p", {
+			class: [`${CLASS_NAME}`]
+		},
+			...children
+		)
+	);
+};
