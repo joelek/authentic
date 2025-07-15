@@ -1,7 +1,7 @@
 import { Attribute, HTMLElementAugmentations } from "@joelek/bonsai";
 import { Managers } from "../managers/Managers";
 type Data = [string, [string, string][], Data[]];
-declare const ICON_DATA: Record<"cross" | "none", Data>;
+declare const ICON_DATA: Record<"cross" | "chevron-down" | "none", Data>;
 type Graphic = keyof typeof ICON_DATA;
 export type Icon = HTMLElementAugmentations<HTMLDivElement> & {
     graphic: Attribute<Graphic>;

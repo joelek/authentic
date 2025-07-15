@@ -249,6 +249,18 @@ declare const TRANSLATIONS: {
         en: string;
         sv: string;
     };
+    LANGUAGES: {
+        en: string;
+        sv: string;
+    };
+    LANGUAGE_EN: {
+        en: string;
+        sv: string;
+    };
+    LANGUAGE_SV: {
+        en: string;
+        sv: string;
+    };
 };
 type Translations = typeof TRANSLATIONS;
 type TranslationsKey = keyof Translations;
@@ -256,6 +268,7 @@ export declare class TranslationManager {
     protected language: State<Language>;
     protected updateLanguage(): void;
     constructor();
+    getLanguage(): State<Language>;
     getTranslation(attribute: Attribute<TranslationsKey | undefined>): State<string>;
     getStateTranslation(attribute: Attribute<StatesKey | undefined>): State<string>;
 }

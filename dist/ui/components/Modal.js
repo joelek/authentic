@@ -18,6 +18,7 @@ const WaitingForRegisterEmailStep_1 = require("./steps/WaitingForRegisterEmailSt
 const WaitingForRegisterPassphraseStep_1 = require("./steps/WaitingForRegisterPassphraseStep");
 const WaitingForRegisterCodeStep_1 = require("./steps/WaitingForRegisterCodeStep");
 const WaitingForRegisterUsernameStep_1 = require("./steps/WaitingForRegisterUsernameStep");
+const FormSelect_1 = require("./form/FormSelect");
 const CLASS_NAME = "authentic-modal";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
@@ -66,7 +67,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}__foot {
-
+		padding: 24px;
 	}
 
 	.${CLASS_NAME}__scroll {
@@ -119,7 +120,24 @@ function Modal(managers, attributes) {
         class: [`${CLASS_NAME}__content`]
     }, (0, AuthenticatedStep_1.AuthenticatedStep)(managers, {}), (0, WaitingForCommandStep_1.WaitingForCommandStep)(managers, {}), (0, WaitingForAuthenticateEmailStep_1.WaitingForAuthenticateEmailStep)(managers, {}), (0, WaitingForAuthenticatePassphraseStep_1.WaitingForAuthenticatePassphraseStep)(managers, {}), (0, WaitingForAuthenticateCodeStep_1.WaitingForAuthenticateCodeStep)(managers, {}), (0, WaitingForAuthenticateUsernameStep_1.WaitingForAuthenticateUsernameStep)(managers, {}), (0, WaitingForRecoverEmailStep_1.WaitingForRecoverEmailStep)(managers, {}), (0, WaitingForRecoverPassphraseStep_1.WaitingForRecoverPassphraseStep)(managers, {}), (0, WaitingForRecoverCodeStep_1.WaitingForRecoverCodeStep)(managers, {}), (0, WaitingForRecoverUsernameStep_1.WaitingForRecoverUsernameStep)(managers, {}), (0, WaitingForRegisterEmailStep_1.WaitingForRegisterEmailStep)(managers, {}), (0, WaitingForRegisterPassphraseStep_1.WaitingForRegisterPassphraseStep)(managers, {}), (0, WaitingForRegisterCodeStep_1.WaitingForRegisterCodeStep)(managers, {}), (0, WaitingForRegisterUsernameStep_1.WaitingForRegisterUsernameStep)(managers, {})))), (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__foot`]
-    }))))));
+    }, (0, FormSelect_1.FormSelect)(managers, {
+        groups: [
+            {
+                title: managers.translation.getTranslation("LANGUAGES"),
+                options: [
+                    {
+                        title: managers.translation.getTranslation("LANGUAGE_EN"),
+                        option: "en"
+                    },
+                    {
+                        title: managers.translation.getTranslation("LANGUAGE_SV"),
+                        option: "sv"
+                    }
+                ]
+            }
+        ],
+        value: managers.translation.getLanguage()
+    })))))));
 }
 exports.Modal = Modal;
 ;

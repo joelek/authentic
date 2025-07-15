@@ -300,6 +300,18 @@ const TRANSLATIONS = {
     "LOGGED_IN_AS": {
         en: "Logged in as",
         sv: "Inloggad som"
+    },
+    "LANGUAGES": {
+        en: "Languages",
+        sv: "Språk"
+    },
+    "LANGUAGE_EN": {
+        en: "English",
+        sv: "Engelska"
+    },
+    "LANGUAGE_SV": {
+        en: "Swedish",
+        sv: "Svenska"
     }
 };
 class TranslationManager {
@@ -319,6 +331,9 @@ class TranslationManager {
             this.updateLanguage();
         });
         this.updateLanguage();
+    }
+    getLanguage() {
+        return this.language;
     }
     getTranslation(attribute) {
         let key = (0, bonsai_1.stateify)(attribute);

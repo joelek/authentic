@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ButtonTitle = void 0;
+exports.SelectTitle = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const Block_1 = require("../Block");
-const CLASS_NAME = "authentic-button-title";
+const CLASS_NAME = "authentic-select-title";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
 		color: rgb(255, 255, 255);
@@ -12,17 +12,17 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		height: auto;
 		line-height: 20px;
 		overflow: hidden;
-		text-align: center;
+		text-align: left;
 		text-overflow: ellipsis;
 		user-select: none;
 		white-space: nowrap;
 		word-break: break-word;
 	}
 `));
-function ButtonTitle(managers, attributes, ...children) {
+function SelectTitle(managers, attributes, ...children) {
     return ((0, Block_1.Block)("p", {
         class: [`${CLASS_NAME}`]
     }, ...children));
 }
-exports.ButtonTitle = ButtonTitle;
+exports.SelectTitle = SelectTitle;
 ;

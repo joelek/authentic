@@ -154,9 +154,6 @@ class Server {
         if (ticket == null) {
             return;
         }
-        if (session.expires_utc <= Date.now()) {
-            return;
-        }
         if (session.authenticated_user_id == null) {
             return;
         }
@@ -306,7 +303,18 @@ class Server {
         if (session_id != null) {
             let session = await this.sessions.lookupObject(session_id).catch(() => undefined);
             if (session != null) {
-                return session;
+                if (session.expires_utc <= Date.now()) {
+                    return this.sessions.updateObject({
+                        id: session.id,
+                        type: "WAITING_FOR_COMMAND",
+                        reason: "SESSION_EXPIRED",
+                        expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
+                        wait_until_utc: this.getExpiresInMilliseconds(250)
+                    });
+                }
+                else {
+                    return session;
+                }
             }
         }
         return this.sessions.createObject({
@@ -590,15 +598,6 @@ class Server {
                 id: session.id,
                 type: "WAITING_FOR_COMMAND",
                 reason: "COMMAND_REQUIRED",
-                expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-                wait_until_utc: this.getExpiresInMilliseconds(250)
-            };
-        }
-        if (session.expires_utc <= Date.now()) {
-            return {
-                id: session.id,
-                type: "WAITING_FOR_COMMAND",
-                reason: "SESSION_EXPIRED",
                 expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
                 wait_until_utc: this.getExpiresInMilliseconds(250)
             };

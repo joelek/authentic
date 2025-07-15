@@ -10,7 +10,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		background-color: transparent;
 		color: rgb(255, 255, 255);
 		cursor: pointer;
-		padding: 8px;
+		padding: 6px;
 	}
 
 	.${CLASS_NAME}:hover {
@@ -30,7 +30,7 @@ function IconButton(managers, { graphic: $graphic, ...augmentations }) {
         class: [`${CLASS_NAME}`, ...(augmentations.class ?? [])]
     }, (0, Icon_1.Icon)(managers, {
         graphic: graphic,
-        size: "24px"
+        size: "20px"
     })));
 }
 exports.IconButton = IconButton;

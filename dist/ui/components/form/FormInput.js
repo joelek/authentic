@@ -11,8 +11,9 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		color: rgb(255, 255, 255);
 		font-family: sans-serif;
 		font-size: 14px;
-		line-height: 18px;
-		padding: 8px;
+		height: 32px;
+		line-height: 20px;
+		padding: 6px;
 		transition: all 0.125s;
 	}
 

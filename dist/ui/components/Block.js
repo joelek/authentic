@@ -8,6 +8,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		box-sizing: border-box;
 			width: 100%;
 			height: 100%;
+		display: block;
 		overflow: hidden;
 		position: relative;
 	}

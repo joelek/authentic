@@ -13,7 +13,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		font-family: sans-serif;
 		font-size: 14px;
 		line-height: 18px;
-		padding: 8px 16px;
+		padding: 6px 12px;
 		transition: all 0.125s;
 	}
 
