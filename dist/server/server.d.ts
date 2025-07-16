@@ -14,6 +14,7 @@ type EmailTemplate = {
     [A in Language]: {
         subject: string;
         message: string;
+        html: boolean;
     };
 };
 export type ServerOptions = {
@@ -106,7 +107,7 @@ export declare class Server {
     protected getNextRecoverSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
     protected getNextSession(session: Session, command: Command, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session>;
     protected processEmailTemplateString(template: string, variables: Record<string, string | undefined>): string;
-    protected sendEmail(to_address: string, subject: string, message: string): Promise<void>;
+    protected sendEmail(to_address: string, subject: string, message: string, html: boolean): Promise<void>;
     protected validateEmailFormat(email: string): boolean;
     protected validatePassphraseFormat(passphrase: string): boolean;
     protected validateUsernameFormat(username: string): boolean;

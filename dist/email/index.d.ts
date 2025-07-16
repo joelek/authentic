@@ -13,6 +13,7 @@ export interface Mailer {
         reply_address?: string;
         reply_name?: string;
         attachments?: Array<Attachment>;
+        html?: boolean;
     }): Promise<void>;
 }
 export declare class TestMailer implements Mailer {
@@ -27,6 +28,7 @@ export declare class TestMailer implements Mailer {
         reply_address?: string;
         reply_name?: string;
         attachments?: Array<Attachment>;
+        html?: boolean;
     }): Promise<void>;
 }
 export declare function loadConfig(config: string): MailerOptions;
@@ -77,5 +79,6 @@ export declare class SMTPMailer implements Mailer {
         reply_address?: string;
         reply_name?: string;
         attachments?: Array<Attachment>;
+        html?: boolean;
     }): Promise<void>;
 }

@@ -17,31 +17,37 @@ const validator_1 = require("./validator");
 const WAITING_FOR_REGISTER_CODE_EMAIL_TEMPLATE = {
     en: {
         subject: "Verification code",
-        message: "The verification code is: {{code}}"
+        message: "The verification code is: {{code}}",
+        html: false
     },
     sv: {
         subject: "Verifieringskod",
-        message: "Verifieringskoden är: {{code}}"
+        message: "Verifieringskoden är: {{code}}",
+        html: false
     }
 };
 const WAITING_FOR_AUTHENTICATE_CODE_EMAIL_TEMPLATE = {
     en: {
         subject: "Verification code",
-        message: "The verification code is: {{code}}"
+        message: "The verification code is: {{code}}",
+        html: false
     },
     sv: {
         subject: "Verifieringskod",
-        message: "Verifieringskoden är: {{code}}"
+        message: "Verifieringskoden är: {{code}}",
+        html: false
     }
 };
 const WAITING_FOR_RECOVER_CODE_EMAIL_TEMPLATE = {
     en: {
         subject: "Verification code",
-        message: "The verification code is: {{code}}"
+        message: "The verification code is: {{code}}",
+        html: false
     },
     sv: {
         subject: "Verifieringskod",
-        message: "Verifieringskoden är: {{code}}"
+        message: "Verifieringskoden är: {{code}}",
+        html: false
     }
 };
 class AccessHandler {
@@ -377,13 +383,14 @@ class Server {
         if (this.require_code || !this.require_passphrase) {
             if (session.code_hash == null) {
                 let code = this.generateCode(15);
-                let subject = this.processEmailTemplateString(this.waiting_for_register_code_email_template[language].subject, {
+                let template = this.waiting_for_register_code_email_template[language];
+                let subject = this.processEmailTemplateString(template.subject, {
                     code: this.formatCode(code)
                 });
-                let message = this.processEmailTemplateString(this.waiting_for_register_code_email_template[language].message, {
+                let message = this.processEmailTemplateString(template.message, {
                     code: this.formatCode(code)
                 });
-                await this.sendEmail(session.email, subject, message);
+                await this.sendEmail(session.email, subject, message, template.html);
                 return {
                     ...session,
                     code_hash: this.computeHash(code),
@@ -467,13 +474,14 @@ class Server {
         if (this.require_code || !this.require_passphrase) {
             if (session.code_hash == null) {
                 let code = this.generateCode(6);
-                let subject = this.processEmailTemplateString(this.waiting_for_authenticate_code_email_template[language].subject, {
+                let template = this.waiting_for_authenticate_code_email_template[language];
+                let subject = this.processEmailTemplateString(template.subject, {
                     code: this.formatCode(code)
                 });
-                let message = this.processEmailTemplateString(this.waiting_for_authenticate_code_email_template[language].message, {
+                let message = this.processEmailTemplateString(template.message, {
                     code: this.formatCode(code)
                 });
-                await this.sendEmail(session.email, subject, message);
+                await this.sendEmail(session.email, subject, message, template.html);
                 return {
                     ...session,
                     code_hash: this.computeHash(code),
@@ -550,13 +558,14 @@ class Server {
         }
         if (session.code_hash == null) {
             let code = this.generateCode(15);
-            let subject = this.processEmailTemplateString(this.waiting_for_recover_code_email_template[language].subject, {
+            let template = this.waiting_for_recover_code_email_template[language];
+            let subject = this.processEmailTemplateString(template.subject, {
                 code: this.formatCode(code)
             });
-            let message = this.processEmailTemplateString(this.waiting_for_recover_code_email_template[language].message, {
+            let message = this.processEmailTemplateString(template.message, {
                 code: this.formatCode(code)
             });
-            await this.sendEmail(session.email, subject, message);
+            await this.sendEmail(session.email, subject, message, template.html);
             return {
                 ...session,
                 code_hash: this.computeHash(code),
@@ -840,11 +849,12 @@ class Server {
             return variables[groups[0]] ?? "?";
         });
     }
-    async sendEmail(to_address, subject, message) {
+    async sendEmail(to_address, subject, message, html) {
         await this.mailer.send({
             subject: subject,
             message: message,
-            to_address: to_address
+            to_address: to_address,
+            html: html
         });
     }
     validateEmailFormat(email) {

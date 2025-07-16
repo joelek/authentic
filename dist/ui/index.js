@@ -1,9 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createElementAndController = void 0;
+const bonsai_1 = require("@joelek/bonsai");
 const client_1 = require("../client");
 const Modal_1 = require("./components/Modal");
 const managers_1 = require("./managers");
+document.head.appendChild(bonsai_1.html.style({}, `
+	:root {
+		--authentic-accent-color: rgb(223, 159, 31);
+		--authentic-accent-color-bright: rgb(239, 175, 47);
+	}
+`));
 ;
 function createElementAndController(options) {
     let client = options?.client ?? (0, client_1.createClient)();

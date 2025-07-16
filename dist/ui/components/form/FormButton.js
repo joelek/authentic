@@ -6,7 +6,7 @@ const Block_1 = require("../Block");
 const CLASS_NAME = "authentic-form-button";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		background-color: rgb(223, 159, 31);
+		background-color: var(--authentic-accent-color);
 		border-radius: 4px;
 		color: rgb(255, 255, 255);
 		cursor: pointer;
@@ -18,7 +18,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}:hover {
-		background-color: rgb(239, 175, 47);
+		background-color: var(--authentic-accent-color-bright);
 	}
 
 	.${CLASS_NAME}[disabled] {
