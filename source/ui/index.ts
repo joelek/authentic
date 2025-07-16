@@ -1,8 +1,15 @@
-import { State, stateify } from "@joelek/bonsai";
+import { html, State } from "@joelek/bonsai";
 import * as api from "../api/client";
 import { Client, createClient } from "../client";
 import { Modal } from "./components/Modal";
 import { Managers } from "./managers";
+
+document.head.appendChild(html.style({}, `
+	:root {
+		--authentic-accent-color: rgb(223, 159, 31);
+		--authentic-accent-color-bright: rgb(239, 175, 47);
+	}
+`));
 
 export type UIOptions = {
 	client?: Client;
