@@ -41,6 +41,7 @@ export interface Mailer {
 		reply_address?: string,
 		reply_name?: string;
 		attachments?: Array<Attachment>;
+		html?: boolean;
 	}): Promise<void>;
 };
 
@@ -57,6 +58,7 @@ export class TestMailer implements Mailer {
 		reply_address?: string,
 		reply_name?: string;
 		attachments?: Array<Attachment>;
+		html?: boolean;
 	}): Promise<void> {
 		console.log(options);
 	}
@@ -164,6 +166,7 @@ export class SMTPMailer implements Mailer {
 		reply_address?: string,
 		reply_name?: string;
 		attachments?: Array<Attachment>;
+		html?: boolean;
 	}): Promise<void> {
 		let to = this.getTo(options);
 		let from = this.getFrom(options);
@@ -252,7 +255,7 @@ export class SMTPMailer implements Mailer {
 							lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
 							lines.push(``);
 							lines.push(`--${boundary}`);
-							lines.push(`Content-Type: text/plain; charset=utf-8`);
+							lines.push(`Content-Type: ${options.html === true ? "text/html" : "text/plain"}; charset=utf-8`);
 							lines.push(`Content-Transfer-Encoding: base64`);
 							lines.push(``);
 							lines.push(...split(Buffer.from(options.message).toString("base64"), 76));
