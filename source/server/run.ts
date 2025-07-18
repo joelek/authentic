@@ -1,7 +1,7 @@
 import * as libhttp from "http";
 import * as authentic from "./";
 
-const SERVER = new authentic.server.Server();
+const SERVER = new authentic.server.Server(/* Database adapters, settings, etc... */);
 
 const AUTH_REQUEST_LISTENER = SERVER.createAuthRequestListener({
 	urlPrefix: "/auth"
