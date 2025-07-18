@@ -50,4 +50,3 @@ controller.toggle();
 * Consider adding registration keys.
 * Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
 * Automatically create and update database tables.
-* Propagate language to server.
