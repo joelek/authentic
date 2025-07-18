@@ -1,4 +1,4 @@
-import { Language } from "../../shared";
+import { Language } from "../../api/client";
 import { Attribute, computed, State, stateify } from "@joelek/bonsai";
 
 const WAITING_FOR_REGISTER_USERNAME = {

@@ -530,6 +530,16 @@ export type User = autoguard.guards.Object<{
 	"username": autoguard.guards.String
 }>;
 
+export const Language: autoguard.serialization.MessageGuard<Language> = autoguard.guards.Union.of(
+	autoguard.guards.StringLiteral.of("en"),
+	autoguard.guards.StringLiteral.of("sv")
+);
+
+export type Language = autoguard.guards.Union<[
+	autoguard.guards.StringLiteral<"en">,
+	autoguard.guards.StringLiteral<"sv">
+]>;
+
 export namespace Autoguard {
 	export const Guards = {
 		"RegisterCommand": autoguard.guards.Reference.of(() => RegisterCommand),
@@ -570,7 +580,8 @@ export namespace Autoguard {
 		"WaitingForCommandState": autoguard.guards.Reference.of(() => WaitingForCommandState),
 		"AuthenticatedState": autoguard.guards.Reference.of(() => AuthenticatedState),
 		"State": autoguard.guards.Reference.of(() => State),
-		"User": autoguard.guards.Reference.of(() => User)
+		"User": autoguard.guards.Reference.of(() => User),
+		"Language": autoguard.guards.Reference.of(() => Language)
 	};
 
 	export type Guards = { [A in keyof typeof Guards]: ReturnType<typeof Guards[A]["as"]>; };
@@ -582,7 +593,9 @@ export namespace Autoguard {
 				autoguard.api.Options
 			),
 			"headers": autoguard.guards.Intersection.of(
-				autoguard.guards.Object.of({}, {}),
+				autoguard.guards.Object.of({}, {
+					"x-preferred-language": autoguard.guards.Reference.of(() => Language)
+				}),
 				autoguard.api.Headers
 			),
 			"payload": autoguard.api.Binary
@@ -597,7 +610,9 @@ export namespace Autoguard {
 				autoguard.api.Options
 			),
 			"headers": autoguard.guards.Intersection.of(
-				autoguard.guards.Object.of({}, {}),
+				autoguard.guards.Object.of({}, {
+					"x-preferred-language": autoguard.guards.Reference.of(() => Language)
+				}),
 				autoguard.api.Headers
 			)
 		})

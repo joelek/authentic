@@ -217,14 +217,20 @@ guard User: {
 	roles: string[]
 };
 
-route readState(): GET:/ => [
+guard Language: "en" | "sv";
+
+route readState(): GET:/ <= [
+	"x-preferred-language"?: Language
+] => [
 	"x-wait-ms": integer(0,*)
 ] {
 	state: State,
 	user?: User
 };
 
-route sendCommand(): POST:/ <= {
+route sendCommand(): POST:/ <= [
+	"x-preferred-language"?: Language
+] {
 	command: Command
 } => [
 	"x-wait-ms": integer(0,*)

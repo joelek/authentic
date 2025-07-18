@@ -16,7 +16,7 @@ import { WaitingForRegisterEmailStep } from "./steps/WaitingForRegisterEmailStep
 import { WaitingForRegisterPassphraseStep } from "./steps/WaitingForRegisterPassphraseStep";
 import { WaitingForRegisterCodeStep } from "./steps/WaitingForRegisterCodeStep";
 import { WaitingForRegisterUsernameStep } from "./steps/WaitingForRegisterUsernameStep";
-import { Language } from "../../shared";
+import { Language } from "../../api/client";
 import { FormSelect } from "./form/FormSelect";
 
 const CLASS_NAME = "authentic-modal";

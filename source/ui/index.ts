@@ -32,6 +32,9 @@ export function createElementAndController(options?: UIOptions): {
 	let controller: Controller = {
 		logout: async () => {
 			await managers.backend.sendCommand({
+				headers: {
+					"x-preferred-language": managers.translation.getLanguage().value()
+				},
 				payload: {
 					command: {
 						type: "RESET_STATE"

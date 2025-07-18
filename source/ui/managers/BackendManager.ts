@@ -3,6 +3,7 @@ import * as api from "../../api/client";
 
 export class BackendManager implements api.Client {
 	protected client: api.Client;
+	protected language: State<api.Language>;
 	protected state: State<api.State | undefined>;
 	protected user: State<api.User | undefined>;
 	protected lock: Promise<any>;
@@ -16,14 +17,19 @@ export class BackendManager implements api.Client {
 		});
 	}
 
-	constructor(client: api.Client) {
+	constructor(client: api.Client, language: State<api.Language>) {
 		this.client = client;
+		this.language = language;
 		this.state = stateify(undefined);
 		this.user = stateify(undefined);
 		this.lock = Promise.resolve();
 		this.editable = stateify(true);
 		this.submittable = stateify(true);
-		this.readState({});
+		this.readState({
+			headers: {
+				"x-preferred-language": language.value()
+			}
+		});
 	}
 
 	async readState(...args: Parameters<api.Client["readState"]>): ReturnType<api.Client["readState"]> {

@@ -40,6 +40,9 @@ export function WaitingForAuthenticatePassphraseStep(managers: Managers, attribu
 				FormButton(managers, {
 					onclick: async () => {
 						await managers.backend.sendCommand({
+							headers: {
+								"x-preferred-language": managers.translation.getLanguage().value()
+							},
 							payload: {
 								command: {
 									type: "AUTHENTICATE_PASSPHRASE",

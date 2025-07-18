@@ -11,9 +11,9 @@ export type Managers = {
 
 export const Managers = {
 	create(client: api.Client): Managers {
-		let backend = new BackendManager(client);
-		let state = StateManager.create();
 		let translation = new TranslationManager();
+		let backend = new BackendManager(client, translation.getLanguage());
+		let state = StateManager.create();
 		return {
 			backend,
 			state,

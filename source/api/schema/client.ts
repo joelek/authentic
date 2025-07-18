@@ -15,6 +15,7 @@ export const makeClient = (clientOptions?: autoguard.api.ClientOptions): Client 
 		let parameters = new Array<[string, string]>();
 		parameters.push(...autoguard.api.encodeUndeclaredParameterPairs(request.options ?? {}, [...[], ...parameters.map((parameter) => parameter[0])]));
 		let headers = new Array<[string, string]>();
+		headers.push(...autoguard.api.encodeHeaderPairs("x-preferred-language", [request.headers?.["x-preferred-language"]], false));
 		headers.push(...autoguard.api.encodeUndeclaredHeaderPairs(request.headers ?? {}, headers.map((header) => header[0])));
 		let payload = request.payload ?? [];
 		let requestHandler = clientOptions?.requestHandler ?? autoguard.api.xhr;
@@ -42,6 +43,7 @@ export const makeClient = (clientOptions?: autoguard.api.ClientOptions): Client 
 		let parameters = new Array<[string, string]>();
 		parameters.push(...autoguard.api.encodeUndeclaredParameterPairs(request.options ?? {}, [...[], ...parameters.map((parameter) => parameter[0])]));
 		let headers = new Array<[string, string]>();
+		headers.push(...autoguard.api.encodeHeaderPairs("x-preferred-language", [request.headers?.["x-preferred-language"]], false));
 		headers.push(...autoguard.api.encodeUndeclaredHeaderPairs(request.headers ?? {}, headers.map((header) => header[0])));
 		let payload = autoguard.api.serializePayload(request.payload);
 		let requestHandler = clientOptions?.requestHandler ?? autoguard.api.xhr;

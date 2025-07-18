@@ -5,7 +5,7 @@ import * as libnet from "net";
 import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer, TestMailer } from "../email";
-import { ExpectedUnreachableCodeError, Language } from "../shared";
+import { ExpectedUnreachableCodeError } from "../shared";
 import { Origin, OriginStore, VolatileOriginStore } from "./stores/origin";
 import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
@@ -19,7 +19,7 @@ type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard
 type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
 
 type EmailTemplate = {
-	[A in Language]: {
+	[A in api.Language]: {
 		subject: string;
 		message: string;
 		html: boolean;
@@ -276,18 +276,35 @@ export class Server {
 		return headers.filter((header): header is string => typeof header === "string");
 	}
 
-	protected getUserLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Language {
+	protected getAcceptLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): api.Language {
 		let headers = this.getHeaders(request.headers(), "accept-language");
 		for (let header of headers) {
 			let header_parts = header.split(",").map((part) => part.trim());
 			for (let header_part of header_parts) {
 				let language = header_part.split(";")[0].split("-")[0];
-				if (Language.is(language)) {
+				if (api.Language.is(language)) {
 					return language;
 				}
 			}
 		}
 		return "en";
+	}
+
+	protected getPreferredLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): api.Language | undefined {
+		let headers = this.getHeaders(request.headers(), "x-preferred-language");
+		for (let header of headers) {
+			let header_parts = header.split(",").map((part) => part.trim());
+			for (let header_part of header_parts) {
+				let language = header_part.split(";")[0].split("-")[0];
+				if (api.Language.is(language)) {
+					return language;
+				}
+			}
+		}
+	}
+
+	protected getUserLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): api.Language {
+		return this.getPreferredLanguage(request) ?? this.getAcceptLanguage(request);
 	}
 
 	protected getCookieData(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): CookieData | undefined {

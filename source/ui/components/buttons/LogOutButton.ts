@@ -9,6 +9,9 @@ export function LogOutButton(managers: Managers, attributes: LogOutButton) {
 		FormButton(managers, {
 			onclick: async () => {
 				await managers.backend.sendCommand({
+					headers: {
+						"x-preferred-language": managers.translation.getLanguage().value()
+					},
 					payload: {
 						command: {
 							type: "RESET_STATE"

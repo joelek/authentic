@@ -19,6 +19,9 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 				FormButton(managers, {
 					onclick: async () => {
 						await managers.backend.sendCommand({
+							headers: {
+								"x-preferred-language": managers.translation.getLanguage().value()
+							},
 							payload: {
 								command: {
 									type: "REGISTER"
@@ -32,6 +35,9 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 				FormButton(managers, {
 					onclick: async () => {
 						await managers.backend.sendCommand({
+							headers: {
+								"x-preferred-language": managers.translation.getLanguage().value()
+							},
 							payload: {
 								command: {
 									type: "AUTHENTICATE"
@@ -45,6 +51,9 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 				FormButton(managers, {
 					onclick: async () => {
 						await managers.backend.sendCommand({
+							headers: {
+								"x-preferred-language": managers.translation.getLanguage().value()
+							},
 							payload: {
 								command: {
 									type: "RECOVER"
