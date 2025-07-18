@@ -2,7 +2,6 @@ import * as autoguard from "@joelek/autoguard/dist/lib-server";
 import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer } from "../email";
-import { Language } from "../shared";
 import { Origin, OriginStore } from "./stores/origin";
 import { RoleStore } from "./stores/role";
 import { Session, SessionStore } from "./stores/session";
@@ -11,7 +10,7 @@ import { UserRoleStore } from "./stores/user_role";
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
 type AutoguardRoutes<A extends autoguard.api.RequestMap<A>, B extends autoguard.api.ResponseMap<B>> = autoguard.api.Server<A, B>;
 type EmailTemplate = {
-    [A in Language]: {
+    [A in api.Language]: {
         subject: string;
         message: string;
         html: boolean;
@@ -95,7 +94,9 @@ export declare class Server {
     protected getExpiresInSeconds(valid_for_seconds: number): number;
     protected getExpiresInMilliseconds(valid_for_milliseconds: number): number;
     protected getHeaders(all_headers: Record<string, autoguard.api.JSON> | undefined, name: string): Array<string>;
-    protected getUserLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Language;
+    protected getAcceptLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): api.Language;
+    protected getPreferredLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): api.Language | undefined;
+    protected getUserLanguage(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): api.Language;
     protected getCookieData(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): CookieData | undefined;
     protected getRemoteAddress(request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): string;
     protected getOrigin(address: string): Promise<Origin>;

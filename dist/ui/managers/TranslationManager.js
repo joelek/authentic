@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TranslationManager = void 0;
-const shared_1 = require("../../shared");
+const client_1 = require("../../api/client");
 const bonsai_1 = require("@joelek/bonsai");
 const WAITING_FOR_REGISTER_USERNAME = {
     "WAITING_FOR_REGISTER_USERNAME": {
@@ -319,7 +319,7 @@ class TranslationManager {
     updateLanguage() {
         for (let language of navigator.languages) {
             language = language.split("-")[0];
-            if (shared_1.Language.is(language)) {
+            if (client_1.Language.is(language)) {
                 this.language.update(language);
                 break;
             }

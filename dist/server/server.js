@@ -210,18 +210,33 @@ class Server {
         }
         return headers.filter((header) => typeof header === "string");
     }
-    getUserLanguage(request) {
+    getAcceptLanguage(request) {
         let headers = this.getHeaders(request.headers(), "accept-language");
         for (let header of headers) {
             let header_parts = header.split(",").map((part) => part.trim());
             for (let header_part of header_parts) {
                 let language = header_part.split(";")[0].split("-")[0];
-                if (shared_1.Language.is(language)) {
+                if (api.Language.is(language)) {
                     return language;
                 }
             }
         }
         return "en";
+    }
+    getPreferredLanguage(request) {
+        let headers = this.getHeaders(request.headers(), "x-preferred-language");
+        for (let header of headers) {
+            let header_parts = header.split(",").map((part) => part.trim());
+            for (let header_part of header_parts) {
+                let language = header_part.split(";")[0].split("-")[0];
+                if (api.Language.is(language)) {
+                    return language;
+                }
+            }
+        }
+    }
+    getUserLanguage(request) {
+        return this.getPreferredLanguage(request) ?? this.getAcceptLanguage(request);
     }
     getCookieData(request) {
         let headers = this.getHeaders(request.headers(), "cookie");

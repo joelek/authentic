@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const libhttp = require("http");
 const authentic = require("./");
-const SERVER = new authentic.server.Server();
+const SERVER = new authentic.server.Server( /* Database adapters, settings, etc... */);
 const AUTH_REQUEST_LISTENER = SERVER.createAuthRequestListener({
     urlPrefix: "/auth"
 });

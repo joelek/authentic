@@ -4,6 +4,7 @@ exports.BackendManager = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 class BackendManager {
     client;
+    language;
     state;
     user;
     lock;
@@ -15,14 +16,19 @@ class BackendManager {
             setTimeout(resolve, ms);
         });
     }
-    constructor(client) {
+    constructor(client, language) {
         this.client = client;
+        this.language = language;
         this.state = (0, bonsai_1.stateify)(undefined);
         this.user = (0, bonsai_1.stateify)(undefined);
         this.lock = Promise.resolve();
         this.editable = (0, bonsai_1.stateify)(true);
         this.submittable = (0, bonsai_1.stateify)(true);
-        this.readState({});
+        this.readState({
+            headers: {
+                "x-preferred-language": language.value()
+            }
+        });
     }
     async readState(...args) {
         this.editable.update(false);

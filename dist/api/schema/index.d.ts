@@ -263,6 +263,11 @@ export type User = autoguard.guards.Object<{
 }, {
     "username": autoguard.guards.String;
 }>;
+export declare const Language: autoguard.serialization.MessageGuard<Language>;
+export type Language = autoguard.guards.Union<[
+    autoguard.guards.StringLiteral<"en">,
+    autoguard.guards.StringLiteral<"sv">
+]>;
 export declare namespace Autoguard {
     const Guards: {
         RegisterCommand: autoguard.guards.ReferenceGuard<{
@@ -559,6 +564,7 @@ export declare namespace Autoguard {
             roles: autoguard.guards.Array<string>;
             username?: string | undefined;
         }>;
+        Language: autoguard.guards.ReferenceGuard<"en" | "sv">;
     };
     type Guards = {
         [A in keyof typeof Guards]: ReturnType<typeof Guards[A]["as"]>;
@@ -570,6 +576,7 @@ export declare namespace Autoguard {
             };
             headers: {
                 [x: string]: autoguard.api.JSON;
+                "x-preferred-language"?: "en" | "sv" | undefined;
             };
             payload: autoguard.api.AsyncBinary | autoguard.api.SyncBinary;
         }>;
@@ -627,6 +634,7 @@ export declare namespace Autoguard {
             };
             headers: {
                 [x: string]: autoguard.api.JSON;
+                "x-preferred-language"?: "en" | "sv" | undefined;
             };
         }>;
     };

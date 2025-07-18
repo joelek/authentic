@@ -17,6 +17,7 @@ const makeServer = (routes, serverOptions) => {
                 let options = {};
                 options = { ...options, ...autoguard.api.decodeUndeclaredParameters(raw.parameters, Object.keys(options)) };
                 let headers = {};
+                headers["x-preferred-language"] = autoguard.api.decodeHeaderValue(raw.headers, "x-preferred-language", false);
                 headers = { ...headers, ...autoguard.api.decodeUndeclaredHeaders(raw.headers, Object.keys(headers)) };
                 let payload = raw.payload;
                 let guard = autoguard.api.wrapMessageGuard(shared.Autoguard.Requests["readState"], serverOptions?.debugMode);
@@ -54,6 +55,7 @@ const makeServer = (routes, serverOptions) => {
                 let options = {};
                 options = { ...options, ...autoguard.api.decodeUndeclaredParameters(raw.parameters, Object.keys(options)) };
                 let headers = {};
+                headers["x-preferred-language"] = autoguard.api.decodeHeaderValue(raw.headers, "x-preferred-language", false);
                 headers = { ...headers, ...autoguard.api.decodeUndeclaredHeaders(raw.headers, Object.keys(headers)) };
                 let payload = await autoguard.api.deserializePayload(raw.payload);
                 let guard = autoguard.api.wrapMessageGuard(shared.Autoguard.Requests["sendCommand"], serverOptions?.debugMode);

@@ -6,9 +6,9 @@ const StateManager_1 = require("./StateManager");
 const TranslationManager_1 = require("./TranslationManager");
 exports.Managers = {
     create(client) {
-        let backend = new BackendManager_1.BackendManager(client);
-        let state = StateManager_1.StateManager.create();
         let translation = new TranslationManager_1.TranslationManager();
+        let backend = new BackendManager_1.BackendManager(client, translation.getLanguage());
+        let state = StateManager_1.StateManager.create();
         return {
             backend,
             state,

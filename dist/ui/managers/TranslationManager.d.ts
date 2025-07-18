@@ -1,4 +1,4 @@
-import { Language } from "../../shared";
+import { Language } from "../../api/client";
 import { Attribute, State } from "@joelek/bonsai";
 declare const STATES: {
     AUTHENTICATED: {

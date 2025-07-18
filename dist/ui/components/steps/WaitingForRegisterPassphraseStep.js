@@ -34,6 +34,9 @@ function WaitingForRegisterPassphraseStep(managers, attributes) {
     }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("REGISTER_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, input, (0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
+                headers: {
+                    "x-preferred-language": managers.translation.getLanguage().value()
+                },
                 payload: {
                     command: {
                         type: "REGISTER_PASSPHRASE",

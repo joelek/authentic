@@ -15,6 +15,9 @@ function WaitingForCommandStep(managers, attributes) {
     }, (0, FormGroup_1.FormGroup)(managers, {}, (0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
+                headers: {
+                    "x-preferred-language": managers.translation.getLanguage().value()
+                },
                 payload: {
                     command: {
                         type: "REGISTER"
@@ -25,6 +28,9 @@ function WaitingForCommandStep(managers, attributes) {
     }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("REGISTER_ACCOUNT"))), (0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
+                headers: {
+                    "x-preferred-language": managers.translation.getLanguage().value()
+                },
                 payload: {
                     command: {
                         type: "AUTHENTICATE"
@@ -35,6 +41,9 @@ function WaitingForCommandStep(managers, attributes) {
     }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT"))), (0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
+                headers: {
+                    "x-preferred-language": managers.translation.getLanguage().value()
+                },
                 payload: {
                     command: {
                         type: "RECOVER"

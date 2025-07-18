@@ -7,6 +7,9 @@ function CancelButton(managers, attributes) {
     return ((0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
+                headers: {
+                    "x-preferred-language": managers.translation.getLanguage().value()
+                },
                 payload: {
                     command: {
                         type: "RESET_STATE"
