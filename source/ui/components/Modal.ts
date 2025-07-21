@@ -18,6 +18,7 @@ import { WaitingForRegisterCodeStep } from "./steps/WaitingForRegisterCodeStep";
 import { WaitingForRegisterUsernameStep } from "./steps/WaitingForRegisterUsernameStep";
 import { Language } from "../../api/client";
 import { FormSelect } from "./form/FormSelect";
+import { ModalTitle } from "./titles/ModalTitle";
 
 const CLASS_NAME = "authentic-modal";
 
@@ -59,8 +60,11 @@ document.head.appendChild(html.style({}, `
 		align-items: center;
 		background-color: rgb(63, 63, 63);
 		display: grid;
-		grid-template-columns: auto;
-		justify-content: end;
+		grid-template-columns: minmax(0%, 100%) auto;
+	}
+
+	.${CLASS_NAME}__title {
+		padding: 6px;
 	}
 
 	.${CLASS_NAME}__body {
@@ -119,6 +123,13 @@ export function Modal(managers: Managers, attributes: Modal) {
 						Block("div", {
 							class: [`${CLASS_NAME}__head`]
 						},
+							Block("div", {
+								class: [`${CLASS_NAME}__title`]
+							},
+								ModalTitle(managers, {},
+									""
+								)
+							),
 							IconButton(managers, {
 								graphic: "cross",
 								onclick: () => {
