@@ -467,26 +467,24 @@ export class Server {
 				wait_until_utc: this.getExpiresInMilliseconds(250 * 2 ** Math.max(0, email_attempts - this.tolerable_email_attempts))
 			};
 		}
-		if (this.require_code || !this.require_passphrase) {
-			if (session.code_hash == null) {
-				let code = this.generateCode(15);
-				let template = this.waiting_for_register_code_email_template[language];
-				let subject = this.processEmailTemplateString(template.subject, {
-					code: this.formatCode(code)
-				});
-				let message = this.processEmailTemplateString(template.message, {
-					code: this.formatCode(code)
-				});
-				await this.sendEmail(session.email, subject, message, template.html);
-				return {
-					...session,
-					code_hash: this.computeHash(code),
-					type: "WAITING_FOR_REGISTER_CODE",
-					reason: "REGISTER_CODE_REQUIRED",
-					expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
-					wait_until_utc: this.getExpiresInMilliseconds(250)
-				};
-			}
+		if (session.code_hash == null) {
+			let code = this.generateCode(15);
+			let template = this.waiting_for_register_code_email_template[language];
+			let subject = this.processEmailTemplateString(template.subject, {
+				code: this.formatCode(code)
+			});
+			let message = this.processEmailTemplateString(template.message, {
+				code: this.formatCode(code)
+			});
+			await this.sendEmail(session.email, subject, message, template.html);
+			return {
+				...session,
+				code_hash: this.computeHash(code),
+				type: "WAITING_FOR_REGISTER_CODE",
+				reason: "REGISTER_CODE_REQUIRED",
+				expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
+				wait_until_utc: this.getExpiresInMilliseconds(250)
+			};
 		}
 		if (this.require_passphrase) {
 			if (session.passdata == null) {
