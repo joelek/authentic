@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitingForRecoverEmailStep = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const api = require("../../../api/client");
-const CancelButton_1 = require("../buttons/CancelButton");
+const RestartButton_1 = require("../buttons/RestartButton");
 const FormButton_1 = require("../form/FormButton");
 const FormGroup_1 = require("../form/FormGroup");
 const FormInput_1 = require("../form/FormInput");
@@ -48,7 +48,7 @@ function WaitingForRecoverEmailStep(managers, attributes) {
                 input.focus();
             }
         }
-    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")))), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason)), (0, CancelButton_1.CancelButton)(managers, {})));
+    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")))), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason)), (0, RestartButton_1.RestartButton)(managers, {})));
 }
 exports.WaitingForRecoverEmailStep = WaitingForRecoverEmailStep;
 ;

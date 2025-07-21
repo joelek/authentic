@@ -257,9 +257,9 @@ const STATES = {
     ...AUTHENTICATED
 };
 const TRANSLATIONS = {
-    "CANCEL": {
-        en: "Cancel",
-        sv: "Avbryt"
+    "RESTART": {
+        en: "Restart",
+        sv: "Börja om"
     },
     "REGISTER_ACCOUNT": {
         en: "Register account",

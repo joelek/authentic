@@ -205,7 +205,7 @@ declare const STATES: {
 type States = typeof STATES;
 type StatesKey = keyof States;
 declare const TRANSLATIONS: {
-    CANCEL: {
+    RESTART: {
         en: string;
         sv: string;
     };
