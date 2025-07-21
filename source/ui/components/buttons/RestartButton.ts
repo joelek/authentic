@@ -2,9 +2,9 @@ import { Managers } from "../../managers/Managers";
 import { FormButton } from "../form/FormButton";
 import { ButtonTitle } from "../titles/ButtonTitle";
 
-export type CancelButton = {};
+export type RestartButton = {};
 
-export function CancelButton(managers: Managers, attributes: CancelButton) {
+export function RestartButton(managers: Managers, attributes: RestartButton) {
 	return (
 		FormButton(managers, {
 			onclick: async () => {
@@ -20,7 +20,7 @@ export function CancelButton(managers: Managers, attributes: CancelButton) {
 				});
 			}
 		},
-			ButtonTitle(managers, {}, managers.translation.getTranslation("CANCEL"))
+			ButtonTitle(managers, {}, managers.translation.getTranslation("RESTART"))
 		)
 	);
 };
