@@ -5,6 +5,8 @@ const api = require("../../../api/client");
 const FormButton_1 = require("../form/FormButton");
 const FormGroup_1 = require("../form/FormGroup");
 const ButtonTitle_1 = require("../titles/ButtonTitle");
+const StepDescriptionTitle_1 = require("../titles/StepDescriptionTitle");
+const StepHeaderTitle_1 = require("../titles/StepHeaderTitle");
 const Step_1 = require("./Step");
 function WaitingForCommandStep(managers, attributes) {
     let state = managers.backend.getState();
@@ -12,7 +14,7 @@ function WaitingForCommandStep(managers, attributes) {
     return ((0, Step_1.Step)(managers, {
         type,
         reason
-    }, (0, FormGroup_1.FormGroup)(managers, {}, (0, FormButton_1.FormButton)(managers, {
+    }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("MANAGE_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, (0, FormButton_1.FormButton)(managers, {
         onclick: async () => {
             await managers.backend.sendCommand({
                 headers: {

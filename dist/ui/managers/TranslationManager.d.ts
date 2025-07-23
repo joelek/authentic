@@ -205,6 +205,10 @@ declare const STATES: {
 type States = typeof STATES;
 type StatesKey = keyof States;
 declare const TRANSLATIONS: {
+    MANAGE_ACCOUNT: {
+        en: string;
+        sv: string;
+    };
     RESTART: {
         en: string;
         sv: string;

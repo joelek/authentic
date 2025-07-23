@@ -113,7 +113,7 @@ function Modal(managers, attributes) {
         class: [`${CLASS_NAME}__head`]
     }, (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__title`]
-    }, (0, ModalTitle_1.ModalTitle)(managers, {}, "")), (0, IconButton_1.IconButton)(managers, {
+    }, (0, ModalTitle_1.ModalTitle)(managers, {}, managers.translation.getTranslation("MANAGE_ACCOUNT"))), (0, IconButton_1.IconButton)(managers, {
         graphic: "cross",
         onclick: () => {
             visible.update(!visible.value());

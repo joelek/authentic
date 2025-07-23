@@ -215,8 +215,8 @@ const RECOVER_STATES = {
 };
 const WAITING_FOR_COMMAND = {
     "WAITING_FOR_COMMAND": {
-        en: "Waiting for command.",
-        sv: "Väntar på instruktion."
+        en: "Please select an option.",
+        sv: "Vänligen välj ett alternativ."
     },
     "COMMAND_REQUIRED": {
         en: "Command required.",
@@ -257,6 +257,10 @@ const STATES = {
     ...AUTHENTICATED
 };
 const TRANSLATIONS = {
+    "MANAGE_ACCOUNT": {
+        en: "Manage account",
+        sv: "Hantera konto"
+    },
     "RESTART": {
         en: "Restart",
         sv: "Börja om"
