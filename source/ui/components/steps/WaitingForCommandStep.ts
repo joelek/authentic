@@ -3,6 +3,8 @@ import { Managers } from "../../managers/Managers";
 import { FormButton } from "../form/FormButton";
 import { FormGroup } from "../form/FormGroup";
 import { ButtonTitle } from "../titles/ButtonTitle";
+import { StepDescriptionTitle } from "../titles/StepDescriptionTitle";
+import { StepHeaderTitle } from "../titles/StepHeaderTitle";
 import { Step } from "./Step";
 
 export type WaitingForCommandStep = {};
@@ -15,6 +17,8 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 			type,
 			reason
 		},
+			StepHeaderTitle(managers, {}, managers.translation.getTranslation("MANAGE_ACCOUNT")),
+			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
 				FormButton(managers, {
 					onclick: async () => {
