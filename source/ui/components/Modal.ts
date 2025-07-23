@@ -127,7 +127,7 @@ export function Modal(managers: Managers, attributes: Modal) {
 								class: [`${CLASS_NAME}__title`]
 							},
 								ModalTitle(managers, {},
-									""
+									managers.translation.getTranslation("MANAGE_ACCOUNT"),
 								)
 							),
 							IconButton(managers, {

@@ -276,6 +276,10 @@ type States = typeof STATES;
 type StatesKey = keyof States;
 
 const TRANSLATIONS = {
+	"MANAGE_ACCOUNT": {
+		en: "Manage account",
+		sv: "Hantera konto"
+	},
 	"RESTART": {
 		en: "Restart",
 		sv: "Börja om"
