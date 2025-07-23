@@ -9,6 +9,9 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		color: rgb(255, 255, 255);
 		font-family: sans-serif;
 		font-size: 18px;
+		font-stretch: normal;
+		font-style: normal;
+		font-weight: normal;
 		height: auto;
 		line-height: 24px;
 		overflow: visible;
