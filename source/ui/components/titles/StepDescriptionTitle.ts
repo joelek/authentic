@@ -9,6 +9,9 @@ document.head.appendChild(html.style({}, `
 		color: rgb(191, 191, 191);
 		font-family: sans-serif;
 		font-size: 14px;
+		font-stretch: normal;
+		font-style: normal;
+		font-weight: normal;
 		height: auto;
 		line-height: 20px;
 		overflow: visible;
