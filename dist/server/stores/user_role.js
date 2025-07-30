@@ -8,17 +8,17 @@ exports.UNIQUE_USER_ROLE_PROPERTIES = ((...values) => values)();
 ;
 class VolatileUserRoleStore extends store_1.VolatileObjectStore {
     constructor() {
-        super(exports.UNIQUE_USER_ROLE_PROPERTIES);
+        super("user_role_id", exports.UNIQUE_USER_ROLE_PROPERTIES);
     }
 }
 exports.VolatileUserRoleStore = VolatileUserRoleStore;
 ;
 exports.UserRole = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
-    id: autoguard.guards.String
+    user_role_id: autoguard.guards.String
 }), objects_1.UserRoleProperties);
 class DatabaseUserRoleStore extends store_1.DatabaseObjectStore {
     constructor(detail, table) {
-        super(detail, table, exports.UserRole);
+        super(detail, table, "user_role_id", exports.UserRole);
     }
 }
 exports.DatabaseUserRoleStore = DatabaseUserRoleStore;

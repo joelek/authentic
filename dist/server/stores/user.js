@@ -8,17 +8,17 @@ exports.UNIQUE_USER_PROPERTIES = ((...values) => values)("email", "username");
 ;
 class VolatileUserStore extends store_1.VolatileObjectStore {
     constructor() {
-        super(exports.UNIQUE_USER_PROPERTIES);
+        super("user_id", exports.UNIQUE_USER_PROPERTIES);
     }
 }
 exports.VolatileUserStore = VolatileUserStore;
 ;
 exports.User = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
-    id: autoguard.guards.String
+    user_id: autoguard.guards.String
 }), objects_1.UserProperties);
 class DatabaseUserStore extends store_1.DatabaseObjectStore {
     constructor(detail, table) {
-        super(detail, table, exports.User);
+        super(detail, table, "user_id", exports.User);
     }
 }
 exports.DatabaseUserStore = DatabaseUserStore;

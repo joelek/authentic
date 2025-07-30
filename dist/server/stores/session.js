@@ -8,17 +8,17 @@ exports.UNIQUE_SESSION_PROPERTIES = ((...values) => values)();
 ;
 class VolatileSessionStore extends store_1.VolatileObjectStore {
     constructor() {
-        super(exports.UNIQUE_SESSION_PROPERTIES);
+        super("session_id", exports.UNIQUE_SESSION_PROPERTIES);
     }
 }
 exports.VolatileSessionStore = VolatileSessionStore;
 ;
 exports.Session = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
-    id: autoguard.guards.String
+    session_id: autoguard.guards.String
 }), objects_1.SessionProperties);
 class DatabaseSessionStore extends store_1.DatabaseObjectStore {
     constructor(detail, table) {
-        super(detail, table, exports.Session);
+        super(detail, table, "session_id", exports.Session);
     }
 }
 exports.DatabaseSessionStore = DatabaseSessionStore;

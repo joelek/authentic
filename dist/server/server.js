@@ -108,7 +108,7 @@ class Server {
     }
     createSetCookieValues(session, ticket) {
         let cookie_data = {
-            session_id: session.id,
+            session_id: session.session_id,
             ticket: ticket
         };
         let value = Buffer.from(JSON.stringify(cookie_data)).toString("base64url");
@@ -176,7 +176,7 @@ class Server {
         let user_roles = await this.user_roles.lookupObjects("user_id", "=", session.authenticated_user_id);
         let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
         return {
-            id: user.id,
+            user_id: user.user_id,
             email: user.email,
             username: user.username ?? undefined,
             roles: roles.map((role) => role.name)
@@ -327,7 +327,7 @@ class Server {
             if (session != null) {
                 if (session.expires_utc <= Date.now()) {
                     return this.sessions.updateObject({
-                        id: session.id,
+                        session_id: session.session_id,
                         created_utc: session.created_utc,
                         type: "WAITING_FOR_COMMAND",
                         reason: "SESSION_EXPIRED",
@@ -435,9 +435,9 @@ class Server {
             passdata: session.passdata ?? validator_1.Validator.fromPassphrase(this.generateTicket(32)).toChunk()
         });
         return {
-            id: session.id,
+            session_id: session.session_id,
             created_utc: session.created_utc,
-            authenticated_user_id: user.id,
+            authenticated_user_id: user.user_id,
             type: "AUTHENTICATED",
             reason: "REGISTRATION_COMPLETED",
             expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -523,9 +523,9 @@ class Server {
             }
         }
         return {
-            id: session.id,
+            session_id: session.session_id,
             created_utc: session.created_utc,
-            authenticated_user_id: user.id,
+            authenticated_user_id: user.user_id,
             type: "AUTHENTICATED",
             reason: "AUTHENTICATION_COMPLETED",
             expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -612,9 +612,9 @@ class Server {
             }
         }
         return {
-            id: session.id,
+            session_id: session.session_id,
             created_utc: session.created_utc,
-            authenticated_user_id: user.id,
+            authenticated_user_id: user.user_id,
             type: "AUTHENTICATED",
             reason: "RECOVERY_COMPLETED",
             expires_utc: this.getExpiresInDays(this.authenticated_session_validity_days),
@@ -624,7 +624,7 @@ class Server {
     async getNextSession(session, command, request) {
         if (api.ResetStateCommand.is(command)) {
             return {
-                id: session.id,
+                session_id: session.session_id,
                 created_utc: session.created_utc,
                 type: "WAITING_FOR_COMMAND",
                 reason: "COMMAND_REQUIRED",
@@ -858,7 +858,7 @@ class Server {
             }
         }
         return {
-            id: session.id,
+            session_id: session.session_id,
             created_utc: session.created_utc,
             type: "WAITING_FOR_COMMAND",
             reason: "INVALID_COMMAND",
@@ -975,11 +975,11 @@ class Server {
             let now = Date.now();
             let sessions = await this.sessions.lookupObjects("expires_utc", "<=", now);
             for (let session of sessions) {
-                await this.sessions.deleteObject(session.id).catch(() => undefined);
+                await this.sessions.deleteObject(session.session_id).catch(() => undefined);
             }
             let origins = await this.origins.lookupObjects("expires_utc", "<=", now);
             for (let origin of origins) {
-                await this.origins.deleteObject(origin.id).catch(() => undefined);
+                await this.origins.deleteObject(origin.origin_id).catch(() => undefined);
             }
         }, this.clean_expired_interval_minutes * 1000 * 60);
     }

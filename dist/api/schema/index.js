@@ -128,7 +128,7 @@ exports.AuthenticatedState = autoguard.guards.Object.of({
 }, {});
 exports.State = autoguard.guards.Union.of(autoguard.guards.Reference.of(() => exports.WaitingForCommandState), autoguard.guards.Reference.of(() => exports.RegisterStates), autoguard.guards.Reference.of(() => exports.AuthenticateStates), autoguard.guards.Reference.of(() => exports.RecoverStates), autoguard.guards.Reference.of(() => exports.AuthenticatedState));
 exports.User = autoguard.guards.Object.of({
-    "id": autoguard.guards.String,
+    "user_id": autoguard.guards.String,
     "email": autoguard.guards.String,
     "roles": autoguard.guards.Array.of(autoguard.guards.String)
 }, {

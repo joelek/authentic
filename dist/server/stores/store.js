@@ -81,6 +81,7 @@ exports.bisectSortedArray = bisectSortedArray;
 ;
 class ObjectIndex {
     groups;
+    id;
     key;
     collectObjects(min_group_index, max_group_index) {
         let objects = [];
@@ -95,10 +96,11 @@ class ObjectIndex {
         return bisectSortedArray(this.groups, { value, objects: [] }, (group) => group.value, exports.OBJECT_VALUE_COLLATOR);
     }
     findObjectIndex(objects, object) {
-        return bisectSortedArray(objects, object, (object) => object.id, exports.OBJECT_VALUE_COLLATOR);
+        return bisectSortedArray(objects, object, (object) => object[this.key], exports.OBJECT_VALUE_COLLATOR);
     }
-    constructor(objects, key) {
+    constructor(objects, id, key) {
         this.groups = [];
+        this.id = id;
         this.key = key;
         for (let object of objects) {
             this.insert(object);
@@ -113,7 +115,7 @@ class ObjectIndex {
                 let object_index = this.findObjectIndex(group.objects, object);
                 if (object_index >= 0 && object_index < group.objects.length) {
                     let existing_object = group.objects[object_index];
-                    if (existing_object.id === object.id) {
+                    if (existing_object[this.id] === object[this.id]) {
                         return;
                     }
                 }
@@ -197,7 +199,7 @@ class ObjectIndex {
                 let object_index = this.findObjectIndex(group.objects, object);
                 if (object_index >= 0 && object_index < group.objects.length) {
                     let existing_object = group.objects[object_index];
-                    if (existing_object.id === object.id) {
+                    if (existing_object[this.id] === object[this.id]) {
                         group.objects.splice(object_index, 1);
                         if (group.objects.length === 0) {
                             this.groups.splice(group_index, 1);
@@ -213,6 +215,7 @@ exports.ObjectIndex = ObjectIndex;
 ;
 ;
 class VolatileObjectStore {
+    id;
     unique_keys;
     objects;
     indices;
@@ -245,12 +248,13 @@ class VolatileObjectStore {
     getIndex(key) {
         let index = this.indices.get(key);
         if (index == null) {
-            index = new ObjectIndex(this.objects.values(), key);
+            index = new ObjectIndex(this.objects.values(), this.id, key);
             this.indices.set(key, index);
         }
         return index;
     }
-    constructor(unique_keys) {
+    constructor(id, unique_keys) {
+        this.id = id;
         this.unique_keys = [...unique_keys];
         this.objects = new Map();
         this.indices = new Map();
@@ -258,7 +262,7 @@ class VolatileObjectStore {
     async createObject(properties) {
         let id = this.createId();
         let object = {
-            id,
+            [this.id]: id,
             ...properties
         };
         for (let unique_key of this.unique_keys) {
@@ -277,7 +281,7 @@ class VolatileObjectStore {
     async lookupObject(id) {
         let object = this.objects.get(id);
         if (object == null) {
-            throw new ExpectedObjectError("id", id);
+            throw new ExpectedObjectError(this.id, id);
         }
         return this.cloneObject(object);
     }
@@ -287,16 +291,16 @@ class VolatileObjectStore {
         return objects.map((object) => this.cloneObject(object));
     }
     async updateObject(object) {
-        let id = object.id;
+        let id = object[this.id];
         let existing_object = this.objects.get(id);
         if (existing_object == null) {
-            throw new ExpectedObjectError("id", id);
+            throw new ExpectedObjectError(this.id, id);
         }
         for (let unique_key of this.unique_keys) {
             let value = object[unique_key];
             if (value != null) {
                 let objects = await this.lookupObjects(unique_key, "=", value);
-                if (objects.length !== 0 && objects[0].id !== id) {
+                if (objects.length !== 0 && objects[0][this.id] !== id) {
                     throw new ExpectedUniquePropertyError(unique_key, value);
                 }
             }
@@ -309,7 +313,7 @@ class VolatileObjectStore {
     async deleteObject(id) {
         let object = this.objects.get(id);
         if (object == null) {
-            throw new ExpectedObjectError("id", id);
+            throw new ExpectedObjectError(this.id, id);
         }
         this.objects.delete(id);
         this.removeFromIndices(object);
@@ -321,6 +325,7 @@ exports.VolatileObjectStore = VolatileObjectStore;
 class DatabaseObjectStore {
     detail;
     table;
+    id;
     guard;
     async createId() {
         let id = this.detail.generateId?.() ?? utils.generateHexId(32);
@@ -336,16 +341,17 @@ class DatabaseObjectStore {
     escapeIdentifier(identifier) {
         return `"${identifier.replaceAll("\"", "\"\"")}"`;
     }
-    constructor(detail, table, guard) {
+    constructor(detail, table, id, guard) {
         this.detail = detail;
         this.table = table;
+        this.id = id;
         this.guard = guard;
     }
     async createObject(properties) {
         let connection = await this.detail.getConnection();
         let id = await this.createId();
         let columns = [
-            "id",
+            this.id,
             ...Object.keys(properties)
         ];
         let values = [
@@ -369,12 +375,12 @@ class DatabaseObjectStore {
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier("id")} = ?
+				${this.escapeIdentifier(this.id)} = ?
 		`, [
             id
         ]);
         if (objects.length === 0) {
-            throw new ExpectedObjectError("id", id);
+            throw new ExpectedObjectError(this.id, id);
         }
         return this.guard.as(objects[0]);
     }
@@ -393,10 +399,10 @@ class DatabaseObjectStore {
     }
     async updateObject(object) {
         let connection = await this.detail.getConnection();
-        let id = object.id;
+        let id = object[this.id];
         let existing_object = await this.lookupObject(id).catch(() => undefined);
         if (existing_object == null) {
-            throw new ExpectedObjectError("id", id);
+            throw new ExpectedObjectError(this.id, id);
         }
         let columns = [
             ...Object.keys(object)
@@ -415,7 +421,7 @@ class DatabaseObjectStore {
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
 			WHERE
-				${this.escapeIdentifier("id")} = ?
+				${this.escapeIdentifier(this.id)} = ?
 		`, [
             ...values,
             id
@@ -426,13 +432,13 @@ class DatabaseObjectStore {
         let connection = await this.detail.getConnection();
         let object = await this.lookupObject(id).catch(() => undefined);
         if (object == null) {
-            throw new ExpectedObjectError("id", id);
+            throw new ExpectedObjectError(this.id, id);
         }
         await connection.query(`
 			DELETE
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier("id")} = ?
+				${this.escapeIdentifier(this.id)} = ?
 		`, [
             id
         ]);

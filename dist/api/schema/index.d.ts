@@ -257,7 +257,7 @@ export type State = autoguard.guards.Union<[
 ]>;
 export declare const User: autoguard.serialization.MessageGuard<User>;
 export type User = autoguard.guards.Object<{
-    "id": autoguard.guards.String;
+    "user_id": autoguard.guards.String;
     "email": autoguard.guards.String;
     "roles": autoguard.guards.Array<autoguard.guards.String>;
 }, {
@@ -559,7 +559,7 @@ export declare namespace Autoguard {
             reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED";
         }>;
         User: autoguard.guards.ReferenceGuard<{
-            id: string;
+            user_id: string;
             email: string;
             roles: autoguard.guards.Array<string>;
             username?: string | undefined;
@@ -692,7 +692,7 @@ export declare namespace Autoguard {
                     reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED";
                 };
                 user?: {
-                    id: string;
+                    user_id: string;
                     email: string;
                     roles: autoguard.guards.Array<string>;
                     username?: string | undefined;
@@ -751,7 +751,7 @@ export declare namespace Autoguard {
                     reason: "REGISTRATION_COMPLETED" | "AUTHENTICATION_COMPLETED" | "RECOVERY_COMPLETED";
                 };
                 user?: {
-                    id: string;
+                    user_id: string;
                     email: string;
                     roles: autoguard.guards.Array<string>;
                     username?: string | undefined;

@@ -11,7 +11,7 @@ function AuthenticatedStep(managers, attributes) {
     let state = managers.backend.getState();
     let { type, reason } = state.compute((state) => api.AuthenticatedState.is(state) ? state : { type: undefined, reason: undefined });
     let user = managers.backend.getUser();
-    let { id, email, username } = user.compute((user) => user != null ? user : { id: undefined, email: undefined, username: undefined });
+    let { user_id, email, username } = user.compute((user) => user != null ? user : { user_id: undefined, email: undefined, username: undefined });
     return ((0, Step_1.Step)(managers, {
         type,
         reason

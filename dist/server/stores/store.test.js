@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const wtf = require("@joelek/wtf");
 const store = require("./store");
 wtf.test(`ObjectIndex should support lookups.`, async (assert) => {
-    let index = new store.ObjectIndex([], "value");
+    let index = new store.ObjectIndex([], "id", "value");
     index.insert({
         id: "a",
         value: 1
