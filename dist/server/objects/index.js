@@ -5,19 +5,25 @@ exports.Autoguard = exports.OriginProperties = exports.SessionProperties = expor
 const autoguard = require("@joelek/autoguard/dist/lib-shared");
 const server_1 = require("../../api/server");
 exports.UserProperties = autoguard.guards.Object.of({
+    "created_utc": autoguard.guards.Integer,
     "email": autoguard.guards.String,
     "passdata": autoguard.guards.String
 }, {
     "username": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null)
 });
 exports.RoleProperties = autoguard.guards.Object.of({
+    "created_utc": autoguard.guards.Integer,
     "name": autoguard.guards.String
 }, {});
 exports.UserRoleProperties = autoguard.guards.Object.of({
+    "created_utc": autoguard.guards.Integer,
     "user_id": autoguard.guards.String,
     "role_id": autoguard.guards.String
 }, {});
-exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => server_1.State), autoguard.guards.Object.of({
+exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Object.of({
+    "created_utc": autoguard.guards.Integer,
+    "type": autoguard.guards.String,
+    "reason": autoguard.guards.String,
     "expires_utc": autoguard.guards.Integer,
     "wait_until_utc": autoguard.guards.Integer
 }, {
@@ -31,8 +37,9 @@ exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Re
     "passdata_attempts": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
     "authenticated_user_id": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
     "ticket_hash": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null)
-}));
+}), autoguard.guards.Reference.of(() => server_1.State));
 exports.OriginProperties = autoguard.guards.Object.of({
+    "created_utc": autoguard.guards.Integer,
     "address": autoguard.guards.String,
     "expires_utc": autoguard.guards.Integer,
     "wait_until_utc": autoguard.guards.Integer

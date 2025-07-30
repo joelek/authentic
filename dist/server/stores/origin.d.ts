@@ -11,6 +11,7 @@ export declare class VolatileOriginStore extends VolatileObjectStore<OriginPrope
 export declare const Origin: autoguard.guards.IntersectionGuard<[{
     id: string;
 }, {
+    created_utc: number;
     address: string;
     expires_utc: number;
     wait_until_utc: number;

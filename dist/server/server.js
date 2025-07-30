@@ -294,6 +294,7 @@ class Server {
             return origin;
         }
         return this.origins.createObject({
+            created_utc: Date.now(),
             address: address,
             expires_utc: this.getExpiresInMinutes(this.origin_validity_minutes),
             wait_until_utc: this.getExpiresInMilliseconds(0)
@@ -327,6 +328,7 @@ class Server {
                 if (session.expires_utc <= Date.now()) {
                     return this.sessions.updateObject({
                         id: session.id,
+                        created_utc: session.created_utc,
                         type: "WAITING_FOR_COMMAND",
                         reason: "SESSION_EXPIRED",
                         expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
@@ -339,6 +341,7 @@ class Server {
             }
         }
         return this.sessions.createObject({
+            created_utc: Date.now(),
             type: "WAITING_FOR_COMMAND",
             reason: "COMMAND_REQUIRED",
             expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
@@ -426,12 +429,14 @@ class Server {
             }
         }
         let user = await this.users.createObject({
+            created_utc: Date.now(),
             email: session.email,
             username: session.username,
             passdata: session.passdata ?? validator_1.Validator.fromPassphrase(this.generateTicket(32)).toChunk()
         });
         return {
             id: session.id,
+            created_utc: session.created_utc,
             authenticated_user_id: user.id,
             type: "AUTHENTICATED",
             reason: "REGISTRATION_COMPLETED",
@@ -519,6 +524,7 @@ class Server {
         }
         return {
             id: session.id,
+            created_utc: session.created_utc,
             authenticated_user_id: user.id,
             type: "AUTHENTICATED",
             reason: "AUTHENTICATION_COMPLETED",
@@ -607,6 +613,7 @@ class Server {
         }
         return {
             id: session.id,
+            created_utc: session.created_utc,
             authenticated_user_id: user.id,
             type: "AUTHENTICATED",
             reason: "RECOVERY_COMPLETED",
@@ -618,6 +625,7 @@ class Server {
         if (api.ResetStateCommand.is(command)) {
             return {
                 id: session.id,
+                created_utc: session.created_utc,
                 type: "WAITING_FOR_COMMAND",
                 reason: "COMMAND_REQUIRED",
                 expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
@@ -851,6 +859,7 @@ class Server {
         }
         return {
             id: session.id,
+            created_utc: session.created_utc,
             type: "WAITING_FOR_COMMAND",
             reason: "INVALID_COMMAND",
             expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),

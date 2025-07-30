@@ -11,6 +11,7 @@ export declare class VolatileUserStore extends VolatileObjectStore<UserPropertie
 export declare const User: autoguard.guards.IntersectionGuard<[{
     id: string;
 }, {
+    created_utc: number;
     email: string;
     passdata: string;
     username?: string | null | undefined;
