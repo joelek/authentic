@@ -7,25 +7,25 @@ export const UNIQUE_USER_PROPERTIES = (<A extends PropertyKey[]>(...values: A) =
 	"username"
 );
 
-export type User = Object<UserProperties>
+export type User = Object<UserProperties, "user_id">;
 
-export interface UserStore extends ObjectStore<UserProperties> {};
+export interface UserStore extends ObjectStore<UserProperties, "user_id"> {};
 
-export class VolatileUserStore extends VolatileObjectStore<UserProperties, typeof UNIQUE_USER_PROPERTIES> {
+export class VolatileUserStore extends VolatileObjectStore<UserProperties, "user_id", typeof UNIQUE_USER_PROPERTIES> {
 	constructor() {
-		super(UNIQUE_USER_PROPERTIES);
+		super("user_id", UNIQUE_USER_PROPERTIES);
 	}
 };
 
 export const User = autoguard.guards.Intersection.of(
 	autoguard.guards.Object.of({
-		id: autoguard.guards.String
+		user_id: autoguard.guards.String
 	}),
 	UserProperties
 );
 
-export class DatabaseUserStore extends DatabaseObjectStore<UserProperties> {
+export class DatabaseUserStore extends DatabaseObjectStore<UserProperties, "user_id"> {
 	constructor(detail: DatabaseObjectStoreDetail, table: string) {
-		super(detail, table, User);
+		super(detail, table, "user_id", User);
 	}
 };

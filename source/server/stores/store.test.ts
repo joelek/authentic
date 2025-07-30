@@ -2,7 +2,7 @@ import * as wtf from "@joelek/wtf";
 import * as store from "./store";
 
 wtf.test(`ObjectIndex should support lookups.`, async (assert) => {
-	let index = new store.ObjectIndex([] as Array<{ id: string; value: number; }>, "value");
+	let index = new store.ObjectIndex([] as Array<{ id: string; value: number; }>, "id", "value");
 	index.insert({
 		id: "a",
 		value: 1

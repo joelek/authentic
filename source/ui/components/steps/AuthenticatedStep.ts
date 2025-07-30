@@ -12,7 +12,7 @@ export function AuthenticatedStep(managers: Managers, attributes: AuthenticatedS
 	let state = managers.backend.getState();
 	let { type, reason } = state.compute((state) => api.AuthenticatedState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.AuthenticatedState>);
 	let user = managers.backend.getUser();
-	let { id, email, username } = user.compute((user) => user != null ? user : { id: undefined, email: undefined, username: undefined } as Partial<api.User>);
+	let { user_id, email, username } = user.compute((user) => user != null ? user : { user_id: undefined, email: undefined, username: undefined } as Partial<api.User>);
 	return (
 		Step(managers, {
 			type,

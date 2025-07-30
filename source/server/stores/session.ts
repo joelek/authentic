@@ -4,25 +4,25 @@ import { DatabaseObjectStoreDetail, DatabaseObjectStore, Object, ObjectStore, Vo
 
 export const UNIQUE_SESSION_PROPERTIES = (<A extends PropertyKey[]>(...values: A) => values)();
 
-export type Session = Object<SessionProperties>
+export type Session = Object<SessionProperties, "session_id">;
 
-export interface SessionStore extends ObjectStore<SessionProperties> {};
+export interface SessionStore extends ObjectStore<SessionProperties, "session_id"> {};
 
-export class VolatileSessionStore extends VolatileObjectStore<SessionProperties, typeof UNIQUE_SESSION_PROPERTIES> {
+export class VolatileSessionStore extends VolatileObjectStore<SessionProperties, "session_id", typeof UNIQUE_SESSION_PROPERTIES> {
 	constructor() {
-		super(UNIQUE_SESSION_PROPERTIES);
+		super("session_id", UNIQUE_SESSION_PROPERTIES);
 	}
 };
 
 export const Session = autoguard.guards.Intersection.of(
 	autoguard.guards.Object.of({
-		id: autoguard.guards.String
+		session_id: autoguard.guards.String
 	}),
 	SessionProperties
 );
 
-export class DatabaseSessionStore extends DatabaseObjectStore<SessionProperties> {
+export class DatabaseSessionStore extends DatabaseObjectStore<SessionProperties, "session_id"> {
 	constructor(detail: DatabaseObjectStoreDetail, table: string) {
-		super(detail, table, Session);
+		super(detail, table, "session_id", Session);
 	}
 };

@@ -40,8 +40,8 @@ export type ObjectProperties<A> = {
 	[B in keyof A]: ObjectValue;
 };
 
-export type Object<A extends ObjectProperties<A>> = A & {
-	id: string;
+export type Object<A extends ObjectProperties<A>, B extends string> = A & {
+	[C in B]: string;
 };
 
 export type CollatorResult = "ONE_COMES_FIRST" | "IDENTICAL" | "TWO_COMES_FIRST";
@@ -91,19 +91,20 @@ export function bisectSortedArray<A, B>(objects: Array<A>, object: A, mapper: Ma
 	return recurse(0, objects.length);
 };
 
-export type ObjectGroup<A extends ObjectProperties<A>, B extends keyof A> = {
-	value: A[B];
-	objects: Array<Object<A>>;
+export type ObjectGroup<A extends ObjectProperties<A>, B extends string, C extends keyof A> = {
+	value: A[C];
+	objects: Array<Object<A, B>>;
 };
 
 export type Operator = ">" | ">=" | "=" | "<" | "<=";
 
-export class ObjectIndex<A extends ObjectProperties<A>, B extends keyof A> {
-	protected groups: Array<ObjectGroup<Object<A>, B>>;
-	protected key: B;
+export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C extends keyof A> {
+	protected groups: Array<ObjectGroup<A, B, C>>;
+	protected id: B;
+	protected key: C;
 
-	protected collectObjects(min_group_index: number, max_group_index: number): Array<Object<A>> {
-		let objects: Array<Object<A>> = [];
+	protected collectObjects(min_group_index: number, max_group_index: number): Array<Object<A, B>> {
+		let objects: Array<Object<A, B>> = [];
 		min_group_index = Math.max(0, Math.min(min_group_index, this.groups.length));
 		max_group_index = Math.max(0, Math.min(max_group_index, this.groups.length));
 		for (let group_index = min_group_index; group_index < max_group_index; group_index += 1) {
@@ -112,23 +113,24 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends keyof A> {
 		return objects;
 	}
 
-	protected findGroupIndex(value: Object<A>[B]): number {
+	protected findGroupIndex(value: Object<A, B>[C]): number {
 		return bisectSortedArray(this.groups, { value, objects: [] }, (group) => group.value, OBJECT_VALUE_COLLATOR);
 	}
 
-	protected findObjectIndex(objects: Array<Object<A>>, object: Object<A>): number {
-		return bisectSortedArray(objects, object, (object) => object.id, OBJECT_VALUE_COLLATOR);
+	protected findObjectIndex(objects: Array<Object<A, B>>, object: Object<A, B>): number {
+		return bisectSortedArray(objects, object, (object) => object[this.key], OBJECT_VALUE_COLLATOR);
 	}
 
-	constructor(objects: Iterable<Object<A>>, key: B) {
+	constructor(objects: Iterable<Object<A, B>>, id: B, key: C) {
 		this.groups = [];
+		this.id = id;
 		this.key = key;
 		for (let object of objects) {
 			this.insert(object);
 		}
 	}
 
-	insert(object: Object<A>): void {
+	insert(object: Object<A, B>): void {
 		let value = object[this.key];
 		let group_index = this.findGroupIndex(value);
 		if (group_index >= 0 && group_index < this.groups.length) {
@@ -137,7 +139,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends keyof A> {
 				let object_index = this.findObjectIndex(group.objects, object);
 				if (object_index >= 0 && object_index < group.objects.length) {
 					let existing_object = group.objects[object_index];
-					if (existing_object.id === object.id) {
+					if (existing_object[this.id] === object[this.id]) {
 						return;
 					}
 				}
@@ -153,7 +155,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends keyof A> {
 		});
 	}
 
-	lookup(operator: Operator, value: Object<A>[B]): Array<Object<A>> {
+	lookup(operator: Operator, value: Object<A, B>[C]): Array<Object<A, B>> {
 		let group_index = this.findGroupIndex(value);
 		let collator_result = OBJECT_VALUE_COLLATOR(this.groups[group_index]?.value, value);
 		if (operator === "<") {
@@ -214,7 +216,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends keyof A> {
 		throw new ExpectedUnreachableCodeError();
 	}
 
-	remove(object: Object<A>): void {
+	remove(object: Object<A, B>): void {
 		let value = object[this.key];
 		let group_index = this.findGroupIndex(value);
 		if (group_index >= 0 && group_index < this.groups.length) {
@@ -223,7 +225,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends keyof A> {
 				let object_index = this.findObjectIndex(group.objects, object);
 				if (object_index >= 0 && object_index < group.objects.length) {
 					let existing_object = group.objects[object_index];
-					if (existing_object.id === object.id) {
+					if (existing_object[this.id] === object[this.id]) {
 						group.objects.splice(object_index, 1);
 						if (group.objects.length === 0) {
 							this.groups.splice(group_index, 1);
@@ -236,37 +238,38 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends keyof A> {
 	}
 };
 
-export interface ObjectStore<A extends ObjectProperties<A>> {
-	createObject(properties: A): Promise<Object<A>>;
-	lookupObject(id: string): Promise<Object<A>>;
-	lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Array<Object<A>>>;
-	updateObject(object: Object<A>): Promise<Object<A>>;
-	deleteObject(id: string): Promise<Object<A>>;
+export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
+	createObject(properties: A): Promise<Object<A, B>>;
+	lookupObject(id: string): Promise<Object<A, B>>;
+	lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Array<Object<A, B>>>;
+	updateObject(object: Object<A, B>): Promise<Object<A, B>>;
+	deleteObject(id: string): Promise<Object<A, B>>;
 };
 
-export class VolatileObjectStore<A extends ObjectProperties<A>, B extends Array<keyof A>> implements ObjectStore<A> {
-	protected unique_keys: [...B];
-	protected objects: Map<string, Object<A>>;
-	protected indices: Map<keyof A, ObjectIndex<A, keyof A>>;
+export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string, C extends Array<keyof A>> implements ObjectStore<A, B> {
+	protected id: B;
+	protected unique_keys: [...C];
+	protected objects: Map<ObjectValue, Object<A, B>>;
+	protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
 
-	protected insertIntoIndices(object: Object<A>): void {
+	protected insertIntoIndices(object: Object<A, B>): void {
 		for (let [key, index] of this.indices) {
 			index.insert(object);
 		}
 	}
 
-	protected updateObjectIndices(existing_object: Object<A>, object: Object<A>): void {
+	protected updateObjectIndices(existing_object: Object<A, B>, object: Object<A, B>): void {
 		this.removeFromIndices(existing_object);
 		this.insertIntoIndices(object);
 	}
 
-	protected removeFromIndices(object: Object<A>): void {
+	protected removeFromIndices(object: Object<A, B>): void {
 		for (let [key, index] of this.indices) {
 			index.remove(object);
 		}
 	}
 
-	protected cloneObject(object: Object<A>): Object<A> {
+	protected cloneObject(object: Object<A, B>): Object<A, B> {
 		return {
 			...object
 		};
@@ -280,27 +283,28 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends Array<
 		return id;
 	}
 
-	protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, C> {
-		let index = this.indices.get(key) as ObjectIndex<A, C>;
+	protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, B, C> {
+		let index = this.indices.get(key) as ObjectIndex<A, B, C>;
 		if (index == null) {
-			index = new ObjectIndex(this.objects.values(), key);
+			index = new ObjectIndex(this.objects.values(), this.id, key);
 			this.indices.set(key, index);
 		}
 		return index;
 	}
 
-	constructor(unique_keys: [...B]) {
+	constructor(id: B, unique_keys: [...C]) {
+		this.id = id;
 		this.unique_keys = [ ...unique_keys ];
 		this.objects = new Map();
 		this.indices = new Map();
 	}
 
-	async createObject(properties: A): Promise<Object<A>> {
+	async createObject(properties: A): Promise<Object<A, B>> {
 		let id = this.createId();
-		let object: Object<A> = {
-			id,
+		let object = {
+			[this.id]: id,
 			...properties
-		};
+		} as Object<A, B>;
 		for (let unique_key of this.unique_keys) {
 			let value = object[unique_key];
 			if (value != null) {
@@ -315,31 +319,31 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends Array<
 		return this.cloneObject(object);
 	}
 
-	async lookupObject(id: string): Promise<Object<A>> {
+	async lookupObject(id: string): Promise<Object<A, B>> {
 		let object = this.objects.get(id);
 		if (object == null) {
-			throw new ExpectedObjectError("id", id);
+			throw new ExpectedObjectError(this.id, id);
 		}
 		return this.cloneObject(object);
 	}
 
-	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Array<Object<A>>> {
+	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Array<Object<A, B>>> {
 		let index = this.getIndex(key);
 		let objects = index.lookup(operator, value);
 		return objects.map((object) => this.cloneObject(object));
 	}
 
-	async updateObject(object: Object<A>): Promise<Object<A>> {
-		let id = object.id;
+	async updateObject(object: Object<A, B>): Promise<Object<A, B>> {
+		let id = object[this.id];
 		let existing_object = this.objects.get(id);
 		if (existing_object == null) {
-			throw new ExpectedObjectError("id", id);
+			throw new ExpectedObjectError(this.id, id);
 		}
 		for (let unique_key of this.unique_keys) {
 			let value = object[unique_key];
 			if (value != null) {
 				let objects = await this.lookupObjects(unique_key, "=", value);
-				if (objects.length !== 0 && objects[0].id !== id) {
+				if (objects.length !== 0 && objects[0][this.id] !== id) {
 					throw new ExpectedUniquePropertyError(unique_key, value);
 				}
 			}
@@ -350,10 +354,10 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends Array<
 		return this.cloneObject(object);
 	}
 
-	async deleteObject(id: string): Promise<Object<A>> {
+	async deleteObject(id: string): Promise<Object<A, B>> {
 		let object = this.objects.get(id);
 		if (object == null) {
-			throw new ExpectedObjectError("id", id);
+			throw new ExpectedObjectError(this.id, id);
 		}
 		this.objects.delete(id);
 		this.removeFromIndices(object);
@@ -370,10 +374,11 @@ export type DatabaseObjectStoreDetail = {
 	generateId?(): string;
 };
 
-export class DatabaseObjectStore<A extends ObjectProperties<A>> implements ObjectStore<A> {
+export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
 	protected detail: DatabaseObjectStoreDetail;
 	protected table: string;
-	protected guard: autoguard.serialization.MessageGuardBase<Object<A>>;
+	protected id: B;
+	protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
 
 	protected async createId(): Promise<string> {
 		let id = this.detail.generateId?.() ?? utils.generateHexId(32);
@@ -391,17 +396,18 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return `"${identifier.replaceAll("\"", "\"\"")}"`;
 	}
 
-	constructor(detail: DatabaseObjectStoreDetail, table: string, guard: autoguard.serialization.MessageGuardBase<Object<A>>) {
+	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>) {
 		this.detail = detail;
 		this.table = table;
+		this.id = id;
 		this.guard = guard;
 	}
 
-	async createObject(properties: A): Promise<Object<A>> {
+	async createObject(properties: A): Promise<Object<A, B>> {
 		let connection = await this.detail.getConnection();
 		let id = await this.createId();
 		let columns = [
-			"id",
+			this.id,
 			...Object.keys(properties)
 		];
 		let values = [
@@ -419,24 +425,24 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return this.lookupObject(id);
 	}
 
-	async lookupObject(id: string): Promise<Object<A>> {
+	async lookupObject(id: string): Promise<Object<A, B>> {
 		let connection = await this.detail.getConnection();
 		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier("id")} = ?
+				${this.escapeIdentifier(this.id)} = ?
 		`, [
 			id
 		]);
 		if (objects.length === 0) {
-			throw new ExpectedObjectError("id", id);
+			throw new ExpectedObjectError(this.id, id);
 		}
 		return this.guard.as(objects[0]);
 	}
 
-	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A>[C]): Promise<Object<A>[]> {
+	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Object<A, B>[]> {
 		let connection = await this.detail.getConnection();
 		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
@@ -450,12 +456,12 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return autoguard.guards.Array.of(this.guard).as(objects);
 	}
 
-	async updateObject(object: Object<A>): Promise<Object<A>> {
+	async updateObject(object: Object<A, B>): Promise<Object<A, B>> {
 		let connection = await this.detail.getConnection();
-		let id = object.id;
+		let id = object[this.id];
 		let existing_object = await this.lookupObject(id).catch(() => undefined);
 		if (existing_object == null) {
-			throw new ExpectedObjectError("id", id);
+			throw new ExpectedObjectError(this.id, id);
 		}
 		let columns = [
 			...Object.keys(object)
@@ -474,7 +480,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
 			WHERE
-				${this.escapeIdentifier("id")} = ?
+				${this.escapeIdentifier(this.id)} = ?
 		`, [
 			...values,
 			id
@@ -482,17 +488,17 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>> implements Objec
 		return this.lookupObject(id);
 	}
 
-	async deleteObject(id: string): Promise<Object<A>> {
+	async deleteObject(id: string): Promise<Object<A, B>> {
 		let connection = await this.detail.getConnection();
 		let object = await this.lookupObject(id).catch(() => undefined);
 		if (object == null) {
-			throw new ExpectedObjectError("id", id);
+			throw new ExpectedObjectError(this.id, id);
 		}
 		await connection.query(`
 			DELETE
 			FROM ${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier("id")} = ?
+				${this.escapeIdentifier(this.id)} = ?
 		`, [
 			id
 		]);

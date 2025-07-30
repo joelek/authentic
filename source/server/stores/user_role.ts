@@ -6,25 +6,25 @@ export const UNIQUE_USER_ROLE_PROPERTIES = (<A extends PropertyKey[]>(...values:
 
 );
 
-export type UserRole = Object<UserRoleProperties>
+export type UserRole = Object<UserRoleProperties, "user_role_id">;
 
-export interface UserRoleStore extends ObjectStore<UserRoleProperties> {};
+export interface UserRoleStore extends ObjectStore<UserRoleProperties, "user_role_id"> {};
 
-export class VolatileUserRoleStore extends VolatileObjectStore<UserRoleProperties, typeof UNIQUE_USER_ROLE_PROPERTIES> {
+export class VolatileUserRoleStore extends VolatileObjectStore<UserRoleProperties, "user_role_id", typeof UNIQUE_USER_ROLE_PROPERTIES> {
 	constructor() {
-		super(UNIQUE_USER_ROLE_PROPERTIES);
+		super("user_role_id", UNIQUE_USER_ROLE_PROPERTIES);
 	}
 };
 
 export const UserRole = autoguard.guards.Intersection.of(
 	autoguard.guards.Object.of({
-		id: autoguard.guards.String
+		user_role_id: autoguard.guards.String
 	}),
 	UserRoleProperties
 );
 
-export class DatabaseUserRoleStore extends DatabaseObjectStore<UserRoleProperties> {
+export class DatabaseUserRoleStore extends DatabaseObjectStore<UserRoleProperties, "user_role_id"> {
 	constructor(detail: DatabaseObjectStoreDetail, table: string) {
-		super(detail, table, UserRole);
+		super(detail, table, "user_role_id", UserRole);
 	}
 };
