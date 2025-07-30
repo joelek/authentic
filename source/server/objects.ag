@@ -1,19 +1,25 @@
 guard UserProperties: {
+	created_utc: integer,
 	email: string,
 	passdata: string,
 	username?: string | null
 };
 
 guard RoleProperties: {
+	created_utc: integer,
 	name: string
 };
 
 guard UserRoleProperties: {
+	created_utc: integer,
 	user_id: string,
 	role_id: string
 };
 
-guard SessionProperties: ../api/server/State & {
+guard SessionProperties: {
+	created_utc: integer,
+	type: string,
+	reason: string,
 	expires_utc: integer,
 	wait_until_utc: integer,
 	username?: string | null,
@@ -26,9 +32,10 @@ guard SessionProperties: ../api/server/State & {
 	passdata_attempts?: integer | null,
 	authenticated_user_id?: string | null,
 	ticket_hash?: string | null
-};
+} & ../api/server/State;
 
 guard OriginProperties: {
+	created_utc: integer,
 	address: string,
 	expires_utc: integer,
 	wait_until_utc: integer

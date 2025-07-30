@@ -4,6 +4,7 @@ import * as autoguard from "@joelek/autoguard/dist/lib-shared";
 import { State } from "../../api/server";
 
 export const UserProperties: autoguard.serialization.MessageGuard<UserProperties> = autoguard.guards.Object.of({
+	"created_utc": autoguard.guards.Integer,
 	"email": autoguard.guards.String,
 	"passdata": autoguard.guards.String
 }, {
@@ -14,6 +15,7 @@ export const UserProperties: autoguard.serialization.MessageGuard<UserProperties
 });
 
 export type UserProperties = autoguard.guards.Object<{
+	"created_utc": autoguard.guards.Integer,
 	"email": autoguard.guards.String,
 	"passdata": autoguard.guards.String
 }, {
@@ -24,26 +26,32 @@ export type UserProperties = autoguard.guards.Object<{
 }>;
 
 export const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties> = autoguard.guards.Object.of({
+	"created_utc": autoguard.guards.Integer,
 	"name": autoguard.guards.String
 }, {});
 
 export type RoleProperties = autoguard.guards.Object<{
+	"created_utc": autoguard.guards.Integer,
 	"name": autoguard.guards.String
 }, {}>;
 
 export const UserRoleProperties: autoguard.serialization.MessageGuard<UserRoleProperties> = autoguard.guards.Object.of({
+	"created_utc": autoguard.guards.Integer,
 	"user_id": autoguard.guards.String,
 	"role_id": autoguard.guards.String
 }, {});
 
 export type UserRoleProperties = autoguard.guards.Object<{
+	"created_utc": autoguard.guards.Integer,
 	"user_id": autoguard.guards.String,
 	"role_id": autoguard.guards.String
 }, {}>;
 
 export const SessionProperties: autoguard.serialization.MessageGuard<SessionProperties> = autoguard.guards.Intersection.of(
-	autoguard.guards.Reference.of(() => State),
 	autoguard.guards.Object.of({
+		"created_utc": autoguard.guards.Integer,
+		"type": autoguard.guards.String,
+		"reason": autoguard.guards.String,
 		"expires_utc": autoguard.guards.Integer,
 		"wait_until_utc": autoguard.guards.Integer
 	}, {
@@ -87,12 +95,15 @@ export const SessionProperties: autoguard.serialization.MessageGuard<SessionProp
 			autoguard.guards.String,
 			autoguard.guards.Null
 		)
-	})
+	}),
+	autoguard.guards.Reference.of(() => State)
 );
 
 export type SessionProperties = autoguard.guards.Intersection<[
-	autoguard.guards.Reference<State>,
 	autoguard.guards.Object<{
+		"created_utc": autoguard.guards.Integer,
+		"type": autoguard.guards.String,
+		"reason": autoguard.guards.String,
 		"expires_utc": autoguard.guards.Integer,
 		"wait_until_utc": autoguard.guards.Integer
 	}, {
@@ -136,16 +147,19 @@ export type SessionProperties = autoguard.guards.Intersection<[
 			autoguard.guards.String,
 			autoguard.guards.Null
 		]>
-	}>
+	}>,
+	autoguard.guards.Reference<State>
 ]>;
 
 export const OriginProperties: autoguard.serialization.MessageGuard<OriginProperties> = autoguard.guards.Object.of({
+	"created_utc": autoguard.guards.Integer,
 	"address": autoguard.guards.String,
 	"expires_utc": autoguard.guards.Integer,
 	"wait_until_utc": autoguard.guards.Integer
 }, {});
 
 export type OriginProperties = autoguard.guards.Object<{
+	"created_utc": autoguard.guards.Integer,
 	"address": autoguard.guards.String,
 	"expires_utc": autoguard.guards.Integer,
 	"wait_until_utc": autoguard.guards.Integer
