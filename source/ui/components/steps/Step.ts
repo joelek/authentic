@@ -7,7 +7,7 @@ const CLASS_NAME = "authentic-step";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		transition: all 0.50s;
+		transition: transform 0.50s;
 	}
 
 	.${CLASS_NAME}--visible {

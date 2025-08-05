@@ -10,7 +10,7 @@ document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
 		background-color: rgb(63, 63, 63);
 		border-radius: 4px;
-		transition: all 0.125s;
+		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
 	.${CLASS_NAME}:hover {
