@@ -1,42 +1,16 @@
-import { HTMLElementAugmentations, html } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
-import { Block } from "../Block";
+import { FormButton } from "../form/FormButton";
 import { Icon } from "../Icon";
 
-const CLASS_NAME = "authentic-icon-button";
-
-document.head.appendChild(html.style({}, `
-	.${CLASS_NAME} {
-		background-color: transparent;
-		color: rgb(255, 255, 255);
-		cursor: pointer;
-		padding: 6px;
-	}
-
-	.${CLASS_NAME}:hover {
-		background-color: rgb(95, 95, 95);
-	}
-
-	.${CLASS_NAME}[disabled] {
-		background-color: transparent;
-		color: rgb(127, 127, 127);
-		cursor: not-allowed;
-	}
-`));
-
-export type IconButton = HTMLElementAugmentations<HTMLButtonElement> & {
+export type IconButton = FormButton & {
 	graphic: Icon["graphic"];
 };
 
-export function IconButton(managers: Managers, { graphic: $graphic, ...augmentations }: IconButton) {
-	let graphic = $graphic;
+export function IconButton(managers: Managers, { graphic, ...rest }: IconButton) {
 	return (
-		Block("button", {
-			...augmentations,
-			class: [`${CLASS_NAME}`, ...(augmentations.class ?? [])]
-		},
+		FormButton(managers, rest,
 			Icon(managers, {
-				graphic: graphic as any,
+				graphic: graphic,
 				size: "20px"
 			})
 		)
