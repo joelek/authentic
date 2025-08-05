@@ -6,7 +6,7 @@ const Block_1 = require("../Block");
 const CLASS_NAME = "authentic-step";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		transition: all 0.50s;
+		transition: transform 0.50s;
 	}
 
 	.${CLASS_NAME}--visible {

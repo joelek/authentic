@@ -14,7 +14,11 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		height: 32px;
 		line-height: 20px;
 		padding: 6px;
-		transition: all 0.125s;
+		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
+	}
+
+	.${CLASS_NAME}:hover {
+		background-color: rgb(79, 79, 79);
 	}
 
 	.${CLASS_NAME}:focus {

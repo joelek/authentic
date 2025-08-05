@@ -14,10 +14,14 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		font-size: 14px;
 		line-height: 18px;
 		padding: 6px 12px;
-		transition: all 0.125s;
+		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
 	.${CLASS_NAME}:hover {
+		background-color: var(--authentic-accent-color-bright);
+	}
+
+	.${CLASS_NAME}:focus {
 		background-color: var(--authentic-accent-color-bright);
 	}
 
