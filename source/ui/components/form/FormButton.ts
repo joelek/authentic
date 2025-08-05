@@ -1,4 +1,4 @@
-import { Augmentations, Children, html } from "@joelek/bonsai";
+import { Attribute, Children, html, HTMLElementAugmentations, stateify } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
@@ -13,7 +13,7 @@ document.head.appendChild(html.style({}, `
 		font-family: sans-serif;
 		font-size: 14px;
 		line-height: 18px;
-		padding: 6px 12px;
+		padding: 6px;
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
@@ -31,16 +31,16 @@ document.head.appendChild(html.style({}, `
 	}
 `));
 
-export type FormButton = Augmentations<HTMLElementEventMap, HTMLButtonElement> & {
-
+export type FormButton = HTMLElementAugmentations<HTMLButtonElement> & {
+	enabled?: Attribute<boolean | undefined>;
 };
 
-export function FormButton(managers: Managers, { ...augmentations }: FormButton, ...children: Children) {
-	let enabled = managers.backend.getSubmittable();
+export function FormButton(managers: Managers, { enabled: $enabled, ...augmentations }: FormButton, ...children: Children) {
+	let enabled = stateify($enabled);
 	return (
 		Block("button", {
 			class: [`${CLASS_NAME}`],
-			disabled: enabled.compute((enabled) => enabled ? undefined : "")
+			disabled: enabled.compute((enabled) => enabled === false ? "" : undefined)
 		},
 			...children
 		).augment(augmentations)

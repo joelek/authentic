@@ -21,6 +21,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
 				FormButton(managers, {
+					enabled: managers.backend.getSubmittable(),
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {
@@ -37,6 +38,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 					ButtonTitle(managers, {}, managers.translation.getTranslation("REGISTER_ACCOUNT"))
 				),
 				FormButton(managers, {
+					enabled: managers.backend.getSubmittable(),
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {
@@ -53,6 +55,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 					ButtonTitle(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT"))
 				),
 				FormButton(managers, {
+					enabled: managers.backend.getSubmittable(),
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {

@@ -18,6 +18,7 @@ export function WaitingForRecoverPassphraseStep(managers: Managers, attributes: 
 	let value = stateify("");
 	let input = FormInput(managers, {
 		type: "password",
+		enabled: managers.backend.getEditable(),
 		placeholder: managers.translation.getTranslation("PASSPHRASE_PLACEHOLDER"),
 		value
 	});
@@ -38,6 +39,7 @@ export function WaitingForRecoverPassphraseStep(managers: Managers, attributes: 
 			FormGroup(managers, {},
 				input,
 				FormButton(managers, {
+					enabled: managers.backend.getSubmittable(),
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {

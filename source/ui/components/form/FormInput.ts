@@ -1,4 +1,4 @@
-import { Augmentations, html } from "@joelek/bonsai";
+import { Attribute, html, HTMLElementAugmentations, stateify } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
@@ -30,16 +30,16 @@ document.head.appendChild(html.style({}, `
 	}
 `));
 
-export type FormInput = Augmentations<HTMLElementEventMap, HTMLInputElement> & {
-
+export type FormInput = HTMLElementAugmentations<HTMLInputElement> & {
+	enabled?: Attribute<boolean | undefined>;
 };
 
-export function FormInput(managers: Managers, { ...augmentations }: FormInput) {
-	let enabled = managers.backend.getEditable();
+export function FormInput(managers: Managers, { enabled: $enabled, ...augmentations }: FormInput) {
+	let enabled = stateify($enabled);
 	return (
 		Block("input", {
 			class: [`${CLASS_NAME}`],
-			readonly: enabled.compute((enabled) => enabled ? undefined : ""),
+			readonly: enabled.compute((enabled) => enabled === false ? "" : undefined),
 			spellcheck: false
 		}).augment(augmentations)
 	);

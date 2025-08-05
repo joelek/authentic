@@ -18,6 +18,7 @@ export function WaitingForRegisterUsernameStep(managers: Managers, attributes: W
 	let value = stateify("");
 	let input = FormInput(managers, {
 		type: "text",
+		enabled: managers.backend.getEditable(),
 		placeholder: managers.translation.getTranslation("USERNAME_PLACEHOLDER"),
 		value
 	});
@@ -38,6 +39,7 @@ export function WaitingForRegisterUsernameStep(managers: Managers, attributes: W
 			FormGroup(managers, {},
 				input,
 				FormButton(managers, {
+					enabled: managers.backend.getSubmittable(),
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {

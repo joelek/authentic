@@ -1,4 +1,4 @@
-import { Augmentations, Children, html } from "@joelek/bonsai";
+import { Children, html, HTMLElementAugmentations } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 
@@ -11,7 +11,7 @@ document.head.appendChild(html.style({}, `
 	}
 `));
 
-export type FormGroup = Augmentations<HTMLElementEventMap, HTMLFormElement> & {
+export type FormGroup = HTMLElementAugmentations<HTMLFormElement> & {
 
 };
 

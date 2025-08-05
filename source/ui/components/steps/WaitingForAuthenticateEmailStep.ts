@@ -18,6 +18,7 @@ export function WaitingForAuthenticateEmailStep(managers: Managers, attributes: 
 	let value = stateify("");
 	let input = FormInput(managers, {
 		type: "email",
+		enabled: managers.backend.getEditable(),
 		placeholder: managers.translation.getTranslation("EMAIL_PLACEHOLDER"),
 		value
 	});
@@ -38,6 +39,7 @@ export function WaitingForAuthenticateEmailStep(managers: Managers, attributes: 
 			FormGroup(managers, {},
 				input,
 				FormButton(managers, {
+					enabled: managers.backend.getSubmittable(),
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {

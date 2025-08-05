@@ -7,6 +7,7 @@ export type LogOutButton = {};
 export function LogOutButton(managers: Managers, attributes: LogOutButton) {
 	return (
 		FormButton(managers, {
+			enabled: managers.backend.getSubmittable(),
 			onclick: async () => {
 				await managers.backend.sendCommand({
 					headers: {

@@ -1,4 +1,4 @@
-import { Attribute, Augmentations, computed, html, stateify } from "@joelek/bonsai";
+import { Attribute, computed, html, HTMLElementAugmentations, stateify } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 import { Block } from "../Block";
 import { Icon } from "../Icon";
@@ -60,7 +60,7 @@ type FormSelectGroup<A extends string> = {
 	options: Array<FormSelectOption<A>>;
 };
 
-export type FormSelect<A extends string> = Augmentations<HTMLElementEventMap, HTMLDivElement> & {
+export type FormSelect<A extends string> = HTMLElementAugmentations<HTMLDivElement> & {
 	enabled?: Attribute<boolean>;
 	groups: Attribute<Array<FormSelectGroup<A>>>;
 	value: Attribute<A>;
