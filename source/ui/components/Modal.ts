@@ -45,7 +45,7 @@ document.head.appendChild(html.style({}, `
 	.${CLASS_NAME}__positioner {
 		align-content: center;
 		display: grid;
-		grid-template-columns: minmax(240px, 400px);
+		grid-template-columns: minmax(240px, 480px);
 		justify-content: center;
 	}
 
