@@ -39,7 +39,6 @@ document.head.appendChild(html.style({}, `
 
 	.${CLASS_NAME}__background {
 		background-color: rgb(31, 31, 31);
-		padding: 24px;
 	}
 
 	.${CLASS_NAME}__positioner {
@@ -47,10 +46,10 @@ document.head.appendChild(html.style({}, `
 		display: grid;
 		grid-template-columns: minmax(240px, 480px);
 		justify-content: center;
+		padding: 24px;
 	}
 
 	.${CLASS_NAME}__window {
-		background-color: rgb(47, 47, 47);
 		border-radius: 4px;
 		display: grid;
 		grid-template-rows: auto minmax(0%, 100%) auto;
@@ -68,7 +67,7 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}__body {
-
+		background-color: rgb(47, 47, 47);
 	}
 
 	.${CLASS_NAME}__foot {
