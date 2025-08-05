@@ -70,6 +70,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}__foot {
+		background-color: rgb(47, 47, 47);
 		padding: 24px;
 	}
 
