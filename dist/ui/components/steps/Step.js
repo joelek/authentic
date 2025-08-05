@@ -10,15 +10,14 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}--visible {
-		height: auto;
-		opacity: 1.0;
+		height: initial;
 		transform: translate(0px, 0px);
 	}
 
 	.${CLASS_NAME}--hidden {
 		height: 0px;
-		opacity: 0.0;
 		transform: translate(0px, 120px);
+		visibility: hidden;
 	}
 
 	.${CLASS_NAME}__content {

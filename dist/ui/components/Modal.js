@@ -44,7 +44,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME}__positioner {
 		align-content: center;
 		display: grid;
-		grid-template-columns: minmax(240px, 400px);
+		grid-template-columns: minmax(240px, 480px);
 		justify-content: center;
 	}
 
@@ -57,7 +57,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 
 	.${CLASS_NAME}__head {
 		align-items: center;
-		background-color: rgb(63, 63, 63);
+		background-color: var(--authentic-accent-color);
 		display: grid;
 		grid-template-columns: minmax(0%, 100%) auto;
 	}

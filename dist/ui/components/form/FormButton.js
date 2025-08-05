@@ -13,7 +13,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		font-family: sans-serif;
 		font-size: 14px;
 		line-height: 18px;
-		padding: 6px 12px;
+		padding: 6px;
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
@@ -30,11 +30,11 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		cursor: not-allowed;
 	}
 `));
-function FormButton(managers, { ...augmentations }, ...children) {
-    let enabled = managers.backend.getSubmittable();
+function FormButton(managers, { enabled: $enabled, ...augmentations }, ...children) {
+    let enabled = (0, bonsai_1.stateify)($enabled);
     return ((0, Block_1.Block)("button", {
         class: [`${CLASS_NAME}`],
-        disabled: enabled.compute((enabled) => enabled ? undefined : "")
+        disabled: enabled.compute((enabled) => enabled === false ? "" : undefined)
     }, ...children).augment(augmentations));
 }
 exports.FormButton = FormButton;

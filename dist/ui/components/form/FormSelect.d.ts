@@ -1,4 +1,4 @@
-import { Attribute, Augmentations } from "@joelek/bonsai";
+import { Attribute, HTMLElementAugmentations } from "@joelek/bonsai";
 import { Managers } from "../../managers/Managers";
 type FormSelectOption<A extends string> = {
     title: string;
@@ -8,7 +8,7 @@ type FormSelectGroup<A extends string> = {
     title: string;
     options: Array<FormSelectOption<A>>;
 };
-export type FormSelect<A extends string> = Augmentations<HTMLElementEventMap, HTMLDivElement> & {
+export type FormSelect<A extends string> = HTMLElementAugmentations<HTMLDivElement> & {
     enabled?: Attribute<boolean>;
     groups: Attribute<Array<FormSelectGroup<A>>>;
     value: Attribute<A>;

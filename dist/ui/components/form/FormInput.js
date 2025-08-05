@@ -29,11 +29,11 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		cursor: not-allowed;
 	}
 `));
-function FormInput(managers, { ...augmentations }) {
-    let enabled = managers.backend.getEditable();
+function FormInput(managers, { enabled: $enabled, ...augmentations }) {
+    let enabled = (0, bonsai_1.stateify)($enabled);
     return ((0, Block_1.Block)("input", {
         class: [`${CLASS_NAME}`],
-        readonly: enabled.compute((enabled) => enabled ? undefined : ""),
+        readonly: enabled.compute((enabled) => enabled === false ? "" : undefined),
         spellcheck: false
     }).augment(augmentations));
 }

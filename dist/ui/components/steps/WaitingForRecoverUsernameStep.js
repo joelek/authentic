@@ -17,6 +17,7 @@ function WaitingForRecoverUsernameStep(managers, attributes) {
     let value = (0, bonsai_1.stateify)("");
     let input = (0, FormInput_1.FormInput)(managers, {
         type: "text",
+        enabled: managers.backend.getEditable(),
         placeholder: managers.translation.getTranslation("USERNAME_PLACEHOLDER"),
         value
     });
@@ -32,6 +33,7 @@ function WaitingForRecoverUsernameStep(managers, attributes) {
         type,
         reason
     }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, input, (0, FormButton_1.FormButton)(managers, {
+        enabled: managers.backend.getSubmittable(),
         onclick: async () => {
             await managers.backend.sendCommand({
                 headers: {
