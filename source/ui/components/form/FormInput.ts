@@ -17,6 +17,10 @@ document.head.appendChild(html.style({}, `
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
+	.${CLASS_NAME}:hover {
+		background-color: rgb(79, 79, 79);
+	}
+
 	.${CLASS_NAME}:focus {
 		background-color: rgb(79, 79, 79);
 	}

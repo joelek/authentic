@@ -21,6 +21,10 @@ document.head.appendChild(html.style({}, `
 		background-color: var(--authentic-accent-color-bright);
 	}
 
+	.${CLASS_NAME}:focus {
+		background-color: var(--authentic-accent-color-bright);
+	}
+
 	.${CLASS_NAME}[disabled] {
 		background-color: rgb(95, 95, 95);
 		cursor: not-allowed;

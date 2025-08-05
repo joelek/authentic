@@ -17,6 +17,10 @@ document.head.appendChild(html.style({}, `
 		background-color: rgb(79, 79, 79);
 	}
 
+	.${CLASS_NAME}:focus {
+		background-color: rgb(79, 79, 79);
+	}
+
 	.${CLASS_NAME}__box {
 		align-items: center;
 		display: grid;
