@@ -20,6 +20,7 @@ const WaitingForRegisterCodeStep_1 = require("./steps/WaitingForRegisterCodeStep
 const WaitingForRegisterUsernameStep_1 = require("./steps/WaitingForRegisterUsernameStep");
 const FormSelect_1 = require("./form/FormSelect");
 const ModalTitle_1 = require("./titles/ModalTitle");
+const RestartButton_1 = require("./buttons/RestartButton");
 const CLASS_NAME = "authentic-modal";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
@@ -33,11 +34,12 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}--hidden {
-		display: none;
+		visibility: hidden;
 	}
 
 	.${CLASS_NAME}__background {
-		background-color: rgb(31, 31, 31);
+		backdrop-filter: blur(6px);
+		background-color: rgba(0, 0, 0, 0.25);
 	}
 
 	.${CLASS_NAME}__positioner {
@@ -49,9 +51,17 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}__window {
-		border-radius: 4px;
+		border-radius: 3px;
+		box-shadow: 0px 0px 12px rgb(0, 0, 0, 0.25);
 		display: grid;
 		grid-template-rows: auto minmax(0%, 100%) auto;
+		transform: translate(0px, 120px);
+		transition: none;
+	}
+
+	.${CLASS_NAME}--visible .${CLASS_NAME}__window {
+		transform: translate(0px, 0px);
+		transition: transform 0.50s;
 	}
 
 	.${CLASS_NAME}__head {
@@ -59,6 +69,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		background-color: var(--authentic-accent-color);
 		display: grid;
 		grid-template-columns: minmax(0%, 100%) auto;
+		padding: 3px;
 	}
 
 	.${CLASS_NAME}__title {
@@ -66,12 +77,16 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}__body {
-		background-color: rgb(47, 47, 47);
+		background-color: var(--authentic-window-bg-color);
 	}
 
 	.${CLASS_NAME}__foot {
-		background-color: rgb(47, 47, 47);
-		padding: 24px;
+		background-color: var(--authentic-window-bg-color);
+		display: grid;
+		grid-auto-flow: column;
+		gap: 12px;
+		justify-content: end;
+		padding: 12px;
 	}
 
 	.${CLASS_NAME}__scroll {
@@ -90,8 +105,18 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 
 	.${CLASS_NAME}__scroll::-webkit-scrollbar-thumb {
-		background-color: rgb(63, 63, 63);
+		background-color: var(--authentic-scrollbar-color);
+		background-clip: padding-box;
+		border: 1px solid transparent;
 		border-radius: 12px;
+	}
+
+	.${CLASS_NAME}__scroll:hover::-webkit-scrollbar-thumb {
+		background-color: var(--authentic-active-scrollbar-color);
+	}
+
+	.${CLASS_NAME}__scroll:focus::-webkit-scrollbar-thumb {
+		background-color: var(--authentic-active-scrollbar-color);
 	}
 
 	.${CLASS_NAME}__content {
@@ -126,7 +151,7 @@ function Modal(managers, attributes) {
         class: [`${CLASS_NAME}__content`]
     }, (0, AuthenticatedStep_1.AuthenticatedStep)(managers, {}), (0, WaitingForCommandStep_1.WaitingForCommandStep)(managers, {}), (0, WaitingForAuthenticateEmailStep_1.WaitingForAuthenticateEmailStep)(managers, {}), (0, WaitingForAuthenticatePassphraseStep_1.WaitingForAuthenticatePassphraseStep)(managers, {}), (0, WaitingForAuthenticateCodeStep_1.WaitingForAuthenticateCodeStep)(managers, {}), (0, WaitingForAuthenticateUsernameStep_1.WaitingForAuthenticateUsernameStep)(managers, {}), (0, WaitingForRecoverEmailStep_1.WaitingForRecoverEmailStep)(managers, {}), (0, WaitingForRecoverPassphraseStep_1.WaitingForRecoverPassphraseStep)(managers, {}), (0, WaitingForRecoverCodeStep_1.WaitingForRecoverCodeStep)(managers, {}), (0, WaitingForRecoverUsernameStep_1.WaitingForRecoverUsernameStep)(managers, {}), (0, WaitingForRegisterEmailStep_1.WaitingForRegisterEmailStep)(managers, {}), (0, WaitingForRegisterPassphraseStep_1.WaitingForRegisterPassphraseStep)(managers, {}), (0, WaitingForRegisterCodeStep_1.WaitingForRegisterCodeStep)(managers, {}), (0, WaitingForRegisterUsernameStep_1.WaitingForRegisterUsernameStep)(managers, {})))), (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__foot`]
-    }, (0, FormSelect_1.FormSelect)(managers, {
+    }, (0, RestartButton_1.RestartButton)(managers, {}), (0, FormSelect_1.FormSelect)(managers, {
         groups: [
             {
                 title: managers.translation.getTranslation("LANGUAGES"),

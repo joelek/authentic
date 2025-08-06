@@ -6,7 +6,7 @@ const Block_1 = require("../Block");
 const CLASS_NAME = "authentic-step-description-title";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		color: rgb(191, 191, 191);
+		color: var(--authentic-window-fg-color);
 		font-family: sans-serif;
 		font-size: 14px;
 		font-stretch: normal;

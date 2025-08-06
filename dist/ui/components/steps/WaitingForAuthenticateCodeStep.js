@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitingForAuthenticateCodeStep = void 0;
 const bonsai_1 = require("@joelek/bonsai");
 const api = require("../../../api/client");
-const RestartButton_1 = require("../buttons/RestartButton");
 const FormButton_1 = require("../form/FormButton");
 const FormGroup_1 = require("../form/FormGroup");
 const FormInput_1 = require("../form/FormInput");
@@ -50,7 +49,7 @@ function WaitingForAuthenticateCodeStep(managers, attributes) {
                 input.focus();
             }
         }
-    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")))), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason)), (0, RestartButton_1.RestartButton)(managers, {})));
+    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")))), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason))));
 }
 exports.WaitingForAuthenticateCodeStep = WaitingForAuthenticateCodeStep;
 ;

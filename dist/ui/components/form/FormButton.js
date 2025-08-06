@@ -6,27 +6,34 @@ const Block_1 = require("../Block");
 const CLASS_NAME = "authentic-form-button";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		background-color: var(--authentic-accent-color);
+		background-color: var(--authentic-button-bg-color);
+		border-color: var(--authentic-button-border-color);
 		border-radius: 4px;
-		color: rgb(255, 255, 255);
+		border-style: solid;
+		border-width: 1px;
+		color: var(--authentic-button-fg-color);
 		cursor: pointer;
 		font-family: sans-serif;
 		font-size: 14px;
-		line-height: 18px;
-		padding: 6px;
+		height: auto;
+		line-height: 20px;
+		padding: 5px;
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
 	.${CLASS_NAME}:hover {
-		background-color: var(--authentic-accent-color-bright);
+		background-color: var(--authentic-active-button-bg-color);
+		border-color: var(--authentic-active-button-border-color);
 	}
 
 	.${CLASS_NAME}:focus {
-		background-color: var(--authentic-accent-color-bright);
+		background-color: var(--authentic-active-button-bg-color);
+		border-color: var(--authentic-active-button-border-color);
 	}
 
 	.${CLASS_NAME}[disabled] {
-		background-color: rgb(95, 95, 95);
+		background-color: var(--authentic-disabled-button-bg-color);
+		border-color: var(--authentic-disabled-button-border-color);
 		cursor: not-allowed;
 	}
 `));

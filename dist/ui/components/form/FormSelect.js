@@ -8,17 +8,23 @@ const SelectTitle_1 = require("../titles/SelectTitle");
 const CLASS_NAME = "authentic-form-select";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		background-color: rgb(63, 63, 63);
+		background-color: var(--authentic-input-bg-color);
+		border-color: var(--authentic-input-border-color);
 		border-radius: 4px;
+		border-style: solid;
+		border-width: 1px;
+		height: auto;
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
 	.${CLASS_NAME}:hover {
-		background-color: rgb(79, 79, 79);
+		background-color: var(--authentic-active-input-bg-color);
+		border-color: var(--authentic-active-input-border-color);
 	}
 
 	.${CLASS_NAME}:focus {
-		background-color: rgb(79, 79, 79);
+		background-color: var(--authentic-active-input-bg-color);
+		border-color: var(--authentic-active-input-border-color);
 	}
 
 	.${CLASS_NAME}__box {
@@ -26,15 +32,15 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		display: grid;
 		gap: 6px;
 		grid-template-columns: minmax(0%, 100%) auto;
-		padding: 6px;
+		padding: 5px;
 	}
 
 	.${CLASS_NAME}__box-title {
-
+		color: var(--authentic-input-fg-color)
 	}
 
 	.${CLASS_NAME}__box-icon {
-		color: rgb(255, 255, 255);
+		color: var(--authentic-input-fg-color)
 	}
 
 	.${CLASS_NAME}__select {

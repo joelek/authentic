@@ -6,26 +6,33 @@ const Block_1 = require("../Block");
 const CLASS_NAME = "authentic-form-input";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		background-color: rgb(63, 63, 63);
+		background-color: var(--authentic-input-bg-color);
+		border-color: var(--authentic-input-border-color);
 		border-radius: 4px;
-		color: rgb(255, 255, 255);
+		border-style: solid;
+		border-width: 1px;
+		color: var(--authentic-input-fg-color);
 		font-family: sans-serif;
 		font-size: 14px;
-		height: 32px;
+		height: auto;
 		line-height: 20px;
-		padding: 6px;
+		padding: 5px;
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
 	.${CLASS_NAME}:hover {
-		background-color: rgb(79, 79, 79);
+		background-color: var(--authentic-active-input-bg-color);
+		border-color: var(--authentic-active-input-border-color);
 	}
 
 	.${CLASS_NAME}:focus {
-		background-color: rgb(79, 79, 79);
+		background-color: var(--authentic-active-input-bg-color);
+		border-color: var(--authentic-active-input-border-color);
 	}
 
 	.${CLASS_NAME}[readonly] {
+		background-color: var(--authentic-disabled-input-bg-color);
+		border-color: var(--authentic-disabled-input-border-color);
 		cursor: not-allowed;
 	}
 `));
