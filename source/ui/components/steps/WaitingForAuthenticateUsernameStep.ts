@@ -1,7 +1,6 @@
 import { stateify } from "@joelek/bonsai";
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
-import { RestartButton } from "../buttons/RestartButton";
 import { FormButton } from "../form/FormButton";
 import { FormGroup } from "../form/FormGroup";
 import { FormInput } from "../form/FormInput";
@@ -60,8 +59,7 @@ export function WaitingForAuthenticateUsernameStep(managers: Managers, attribute
 					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE"))
 				)
 			),
-			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason)),
-			RestartButton(managers, {})
+			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason))
 		)
 	);
 };

@@ -19,6 +19,7 @@ import { WaitingForRegisterUsernameStep } from "./steps/WaitingForRegisterUserna
 import { Language } from "../../api/client";
 import { FormSelect } from "./form/FormSelect";
 import { ModalTitle } from "./titles/ModalTitle";
+import { RestartButton } from "./buttons/RestartButton";
 
 const CLASS_NAME = "authentic-modal";
 
@@ -34,11 +35,12 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}--hidden {
-		display: none;
+		visibility: hidden;
 	}
 
 	.${CLASS_NAME}__background {
-		background-color: rgb(31, 31, 31);
+		backdrop-filter: blur(6px);
+		background-color: rgba(0, 0, 0, 0.25);
 	}
 
 	.${CLASS_NAME}__positioner {
@@ -50,9 +52,17 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}__window {
-		border-radius: 4px;
+		border-radius: 3px;
+		box-shadow: 0px 0px 12px rgb(0, 0, 0, 0.25);
 		display: grid;
 		grid-template-rows: auto minmax(0%, 100%) auto;
+		transform: translate(0px, 120px);
+		transition: none;
+	}
+
+	.${CLASS_NAME}--visible .${CLASS_NAME}__window {
+		transform: translate(0px, 0px);
+		transition: transform 0.50s;
 	}
 
 	.${CLASS_NAME}__head {
@@ -60,6 +70,7 @@ document.head.appendChild(html.style({}, `
 		background-color: var(--authentic-accent-color);
 		display: grid;
 		grid-template-columns: minmax(0%, 100%) auto;
+		padding: 3px;
 	}
 
 	.${CLASS_NAME}__title {
@@ -67,12 +78,16 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}__body {
-		background-color: rgb(47, 47, 47);
+		background-color: var(--authentic-window-bg-color);
 	}
 
 	.${CLASS_NAME}__foot {
-		background-color: rgb(47, 47, 47);
-		padding: 24px;
+		background-color: var(--authentic-window-bg-color);
+		display: grid;
+		grid-auto-flow: column;
+		gap: 12px;
+		justify-content: end;
+		padding: 12px;
 	}
 
 	.${CLASS_NAME}__scroll {
@@ -91,8 +106,18 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}__scroll::-webkit-scrollbar-thumb {
-		background-color: rgb(63, 63, 63);
+		background-color: var(--authentic-scrollbar-color);
+		background-clip: padding-box;
+		border: 1px solid transparent;
 		border-radius: 12px;
+	}
+
+	.${CLASS_NAME}__scroll:hover::-webkit-scrollbar-thumb {
+		background-color: var(--authentic-active-scrollbar-color);
+	}
+
+	.${CLASS_NAME}__scroll:focus::-webkit-scrollbar-thumb {
+		background-color: var(--authentic-active-scrollbar-color);
 	}
 
 	.${CLASS_NAME}__content {
@@ -166,6 +191,7 @@ export function Modal(managers: Managers, attributes: Modal) {
 						Block("div", {
 							class: [`${CLASS_NAME}__foot`]
 						},
+							RestartButton(managers, {}),
 							FormSelect<Language>(managers, {
 								groups: [
 									{

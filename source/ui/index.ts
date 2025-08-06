@@ -1,15 +1,9 @@
-import { html, State } from "@joelek/bonsai";
+import { State } from "@joelek/bonsai";
 import * as api from "../api/client";
 import { Client, createClient } from "../client";
 import { Modal } from "./components/Modal";
-import { Managers } from "./managers";
-
-document.head.appendChild(html.style({}, `
-	:root {
-		--authentic-accent-color: rgb(223, 159, 31);
-		--authentic-accent-color-bright: rgb(239, 175, 47);
-	}
-`));
+import { Variables } from "./components/Variables";
+import { Managers, Theme } from "./managers";
 
 export type UIOptions = {
 	client?: Client;
@@ -19,6 +13,7 @@ export interface Controller {
 	logout(): Promise<void>;
 	toggle(): void;
 	getUser(): State<api.User | undefined>;
+	getTheme(): State<Theme>;
 };
 
 export function createElementAndController(options?: UIOptions): {
@@ -27,8 +22,9 @@ export function createElementAndController(options?: UIOptions): {
 } {
 	let client = options?.client ?? createClient();
 	let managers = Managers.create(client);
-	let element = Modal(managers, {});
+	let element = Variables(managers, {}, Modal(managers, {}));
 	let visible = managers.state.visible;
+	let theme = managers.state.theme;
 	let controller: Controller = {
 		logout: async () => {
 			await managers.backend.sendCommand({
@@ -47,6 +43,9 @@ export function createElementAndController(options?: UIOptions): {
 		},
 		getUser: () => {
 			return managers.backend.getUser();
+		},
+		getTheme: () => {
+			return theme;
 		}
 	};
 	return {
