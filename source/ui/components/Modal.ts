@@ -134,7 +134,12 @@ export function Modal(managers: Managers, attributes: Modal) {
 	let visible = managers.state.visible;
 	return (
 		Block("div", {
-			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
+			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)],
+			onkeyup: (event, element) => {
+				if (event.key === "Escape") {
+					visible.update(false);
+				}
+			}
 		},
 			Block("div", {
 				class: [`${CLASS_NAME}__background`]
