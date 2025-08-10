@@ -30,15 +30,27 @@ document.head.appendChild(html.style({}, `
 export type Step<A extends api.State> = {
 	type: State<A["type"] | undefined>;
 	reason: State<A["reason"] | undefined>;
+	ontransition?: (state: "start" | "end") => void;
 };
 
 export function Step<A extends api.State>(managers: Managers, attributes: Step<A>, ...children: Children) {
 	let type = attributes.type;
 	let reason = attributes.reason;
+	let ontransition = attributes.ontransition;
 	let visible = type.compute((type) => type != null);
 	return (
 		Block("div", {
-			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
+			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)],
+			ontransitionstart: (event, element) => {
+				if (event.target === element) {
+					ontransition?.("start");
+				}
+			},
+			ontransitionend: (event, element) => {
+				if (event.target === element) {
+					ontransition?.("end");
+				}
+			}
 		},
 			Block("div", {
 				class: [`${CLASS_NAME}__content`]

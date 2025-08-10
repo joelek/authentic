@@ -21,17 +21,17 @@ export function WaitingForAuthenticateUsernameStep(managers: Managers, attribute
 		placeholder: managers.translation.getTranslation("USERNAME_PLACEHOLDER"),
 		value
 	});
-	type.compute((type) => {
-		if (type != null) {
-			input.focus();
-		} else {
-			value.update("");
-		}
-	});
 	return (
 		Step(managers, {
 			type,
-			reason
+			reason,
+			ontransition: (state) => {
+				if (state === "start") {
+					value.update("");
+				} else {
+					input.focus();
+				}
+			}
 		},
 			StepHeaderTitle(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT")),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),

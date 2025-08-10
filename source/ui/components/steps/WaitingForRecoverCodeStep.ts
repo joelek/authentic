@@ -21,17 +21,17 @@ export function WaitingForRecoverCodeStep(managers: Managers, attributes: Waitin
 		placeholder: managers.translation.getTranslation("CODE_PLACEHOLDER"),
 		value
 	});
-	type.compute((type) => {
-		if (type != null) {
-			input.focus();
-		} else {
-			value.update("");
-		}
-	});
 	return (
 		Step(managers, {
 			type,
-			reason
+			reason,
+			ontransition: (state) => {
+				if (state === "start") {
+					value.update("");
+				} else {
+					input.focus();
+				}
+			}
 		},
 			StepHeaderTitle(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT")),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
