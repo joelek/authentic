@@ -6,9 +6,11 @@ export const StateManager = {
 	create() {
 		let visible = stateify<boolean>(false);
 		let theme = stateify<Theme>("light");
+		let modal_transition = stateify<boolean>(false);
 		return {
-			 visible,
-			 theme
+			visible,
+			theme,
+			modal_transition
 		};
 	}
 };

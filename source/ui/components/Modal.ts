@@ -132,6 +132,7 @@ export type Modal = {
 
 export function Modal(managers: Managers, attributes: Modal) {
 	let visible = managers.state.visible;
+	let modal_transition = managers.state.modal_transition;
 	return (
 		Block("div", {
 			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)],
@@ -148,7 +149,13 @@ export function Modal(managers: Managers, attributes: Modal) {
 					class: [`${CLASS_NAME}__positioner`]
 				},
 					Block("div", {
-						class: [`${CLASS_NAME}__window`]
+						class: [`${CLASS_NAME}__window`],
+						ontransitionstart: () => {
+							modal_transition.update(true);
+						},
+						ontransitionend: () => {
+							modal_transition.update(false);
+						}
 					},
 						Block("div", {
 							class: [`${CLASS_NAME}__head`]
