@@ -150,11 +150,15 @@ export function Modal(managers: Managers, attributes: Modal) {
 				},
 					Block("div", {
 						class: [`${CLASS_NAME}__window`],
-						ontransitionstart: () => {
-							modal_transition.update(true);
+						ontransitionstart: (event, element) => {
+							if (event.target === element) {
+								modal_transition.update(true);
+							}
 						},
-						ontransitionend: () => {
-							modal_transition.update(false);
+						ontransitionend: (event, element) => {
+							if (event.target === element) {
+								modal_transition.update(false);
+							}
 						}
 					},
 						Block("div", {
