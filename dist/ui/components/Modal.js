@@ -126,14 +126,30 @@ document.head.appendChild(bonsai_1.html.style({}, `
 `));
 function Modal(managers, attributes) {
     let visible = managers.state.visible;
+    let modal_transition = managers.state.modal_transition;
     return ((0, Block_1.Block)("div", {
-        class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
+        class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)],
+        onkeyup: (event, element) => {
+            if (event.key === "Escape") {
+                visible.update(false);
+            }
+        }
     }, (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__background`]
     }, (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__positioner`]
     }, (0, Block_1.Block)("div", {
-        class: [`${CLASS_NAME}__window`]
+        class: [`${CLASS_NAME}__window`],
+        ontransitionstart: (event, element) => {
+            if (event.target === element) {
+                modal_transition.update(true);
+            }
+        },
+        ontransitionend: (event, element) => {
+            if (event.target === element) {
+                modal_transition.update(false);
+            }
+        }
     }, (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__head`]
     }, (0, Block_1.Block)("div", {

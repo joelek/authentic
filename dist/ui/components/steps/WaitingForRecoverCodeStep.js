@@ -20,17 +20,17 @@ function WaitingForRecoverCodeStep(managers, attributes) {
         placeholder: managers.translation.getTranslation("CODE_PLACEHOLDER"),
         value
     });
-    type.compute((type) => {
-        if (type != null) {
-            input.focus();
-        }
-        else {
-            value.update("");
-        }
-    });
     return ((0, Step_1.Step)(managers, {
         type,
-        reason
+        reason,
+        ontransition: (state) => {
+            if (state === "start") {
+                value.update("");
+            }
+            else {
+                input.focus();
+            }
+        }
     }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, input, (0, FormButton_1.FormButton)(managers, {
         enabled: managers.backend.getSubmittable(),
         onclick: async () => {

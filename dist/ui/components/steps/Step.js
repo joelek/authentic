@@ -28,9 +28,20 @@ document.head.appendChild(bonsai_1.html.style({}, `
 function Step(managers, attributes, ...children) {
     let type = attributes.type;
     let reason = attributes.reason;
+    let ontransition = attributes.ontransition;
     let visible = type.compute((type) => type != null);
     return ((0, Block_1.Block)("div", {
-        class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
+        class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)],
+        ontransitionstart: (event, element) => {
+            if (event.target === element) {
+                ontransition?.("start");
+            }
+        },
+        ontransitionend: (event, element) => {
+            if (event.target === element) {
+                ontransition?.("end");
+            }
+        }
     }, (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__content`]
     }, ...children)));
