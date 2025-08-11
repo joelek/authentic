@@ -25,7 +25,7 @@ const CLASS_NAME = "authentic-modal";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		position: absolute;
+		position: fixed;
 			top: 0%;
 			left: 0%;
 	}
