@@ -7,6 +7,11 @@ export const StateManager = {
 		let visible = stateify<boolean>(false);
 		let theme = stateify<Theme>("light");
 		let modal_transition = stateify<boolean>(false);
+		window.addEventListener("keyup", (event) => {
+			if (event.key === "Escape") {
+				visible.update(false);
+			}
+		});
 		return {
 			visible,
 			theme,

@@ -135,12 +135,7 @@ export function Modal(managers: Managers, attributes: Modal) {
 	let modal_transition = managers.state.modal_transition;
 	return (
 		Block("div", {
-			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)],
-			onkeyup: (event, element) => {
-				if (event.key === "Escape") {
-					visible.update(false);
-				}
-			}
+			class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
 		},
 			Block("div", {
 				class: [`${CLASS_NAME}__background`]
