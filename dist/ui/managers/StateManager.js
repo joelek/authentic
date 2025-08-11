@@ -7,6 +7,11 @@ exports.StateManager = {
         let visible = (0, bonsai_1.stateify)(false);
         let theme = (0, bonsai_1.stateify)("light");
         let modal_transition = (0, bonsai_1.stateify)(false);
+        window.addEventListener("keyup", (event) => {
+            if (event.key === "Escape") {
+                visible.update(false);
+            }
+        });
         return {
             visible,
             theme,

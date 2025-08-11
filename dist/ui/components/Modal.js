@@ -24,7 +24,7 @@ const RestartButton_1 = require("./buttons/RestartButton");
 const CLASS_NAME = "authentic-modal";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		position: absolute;
+		position: fixed;
 			top: 0%;
 			left: 0%;
 	}
@@ -128,12 +128,7 @@ function Modal(managers, attributes) {
     let visible = managers.state.visible;
     let modal_transition = managers.state.modal_transition;
     return ((0, Block_1.Block)("div", {
-        class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)],
-        onkeyup: (event, element) => {
-            if (event.key === "Escape") {
-                visible.update(false);
-            }
-        }
+        class: [`${CLASS_NAME}`, visible.compute((visible) => visible ? `${CLASS_NAME}--visible` : `${CLASS_NAME}--hidden`)]
     }, (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__background`]
     }, (0, Block_1.Block)("div", {
