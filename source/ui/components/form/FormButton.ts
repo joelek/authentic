@@ -8,7 +8,7 @@ document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
 		background-color: var(--authentic-button-bg-color);
 		border-color: var(--authentic-button-border-color);
-		border-radius: 4px;
+		border-radius: 3px;
 		border-style: solid;
 		border-width: 1px;
 		color: var(--authentic-button-fg-color);
