@@ -8,7 +8,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
 		background-color: var(--authentic-input-bg-color);
 		border-color: var(--authentic-input-border-color);
-		border-radius: 4px;
+		border-radius: 3px;
 		border-style: solid;
 		border-width: 1px;
 		color: var(--authentic-input-fg-color);
