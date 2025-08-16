@@ -39,6 +39,7 @@ export function WaitingForAuthenticateUsernameStep(managers: Managers, attribute
 				input,
 				FormButton(managers, {
 					enabled: managers.backend.getSubmittable(),
+					primary: true,
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {

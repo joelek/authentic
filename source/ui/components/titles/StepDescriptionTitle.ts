@@ -6,7 +6,6 @@ const CLASS_NAME = "authentic-step-description-title";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		color: var(--authentic-window-fg-color);
 		font-family: sans-serif;
 		font-size: 14px;
 		font-stretch: normal;

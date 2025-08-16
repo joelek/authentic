@@ -39,6 +39,7 @@ export function WaitingForAuthenticateEmailStep(managers: Managers, attributes: 
 				input,
 				FormButton(managers, {
 					enabled: managers.backend.getSubmittable(),
+					primary: true,
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {

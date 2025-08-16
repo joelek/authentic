@@ -6,7 +6,6 @@ const CLASS_NAME = "authentic-select-title";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		color: var(--authentic-input-fg-color);
 		font-family: sans-serif;
 		font-size: 14px;
 		font-stretch: normal;

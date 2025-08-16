@@ -8,6 +8,7 @@ export function RestartButton(managers: Managers, attributes: RestartButton) {
 	return (
 		FormButton(managers, {
 			enabled: managers.backend.getSubmittable(),
+			primary: false,
 			onclick: async () => {
 				await managers.backend.sendCommand({
 					headers: {

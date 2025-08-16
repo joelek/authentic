@@ -22,6 +22,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 			FormGroup(managers, {},
 				FormButton(managers, {
 					enabled: managers.backend.getSubmittable(),
+					primary: true,
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {
@@ -39,6 +40,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 				),
 				FormButton(managers, {
 					enabled: managers.backend.getSubmittable(),
+					primary: true,
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {
@@ -56,6 +58,7 @@ export function WaitingForCommandStep(managers: Managers, attributes: WaitingFor
 				),
 				FormButton(managers, {
 					enabled: managers.backend.getSubmittable(),
+					primary: true,
 					onclick: async () => {
 						await managers.backend.sendCommand({
 							headers: {

@@ -6,12 +6,9 @@ const CLASS_NAME = "authentic-form-input";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		background-color: var(--authentic-input-bg-color);
-		border-color: var(--authentic-input-border-color);
 		border-radius: 3px;
 		border-style: solid;
 		border-width: 1px;
-		color: var(--authentic-input-fg-color);
 		font-family: sans-serif;
 		font-size: 14px;
 		height: auto;
@@ -20,20 +17,27 @@ document.head.appendChild(html.style({}, `
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
-	.${CLASS_NAME}:hover {
-		background-color: var(--authentic-active-input-bg-color);
-		border-color: var(--authentic-active-input-border-color);
+	.${CLASS_NAME} {
+		background-color: var(--authentic-input-bg-color);
+		border-color: var(--authentic-input-border-color);
+		color: var(--authentic-input-fg-color);
 	}
 
+	.${CLASS_NAME}:hover,
 	.${CLASS_NAME}:focus {
 		background-color: var(--authentic-active-input-bg-color);
 		border-color: var(--authentic-active-input-border-color);
+		color: var(--authentic-active-input-fg-color);
+	}
+
+	.${CLASS_NAME}[readonly] {
+		cursor: not-allowed;
 	}
 
 	.${CLASS_NAME}[readonly] {
 		background-color: var(--authentic-disabled-input-bg-color);
 		border-color: var(--authentic-disabled-input-border-color);
-		cursor: not-allowed;
+		color: var(--authentic-disabled-input-fg-color);
 	}
 `));
 

@@ -6,7 +6,6 @@ const CLASS_NAME = "authentic-button-title";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		color: var(--authentic-button-fg-color);
 		font-family: sans-serif;
 		font-size: 14px;
 		font-stretch: normal;

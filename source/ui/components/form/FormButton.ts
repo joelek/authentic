@@ -6,12 +6,9 @@ const CLASS_NAME = "authentic-form-button";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		background-color: var(--authentic-button-bg-color);
-		border-color: var(--authentic-button-border-color);
 		border-radius: 3px;
 		border-style: solid;
 		border-width: 1px;
-		color: var(--authentic-button-fg-color);
 		cursor: pointer;
 		font-family: sans-serif;
 		font-size: 14px;
@@ -21,32 +18,60 @@ document.head.appendChild(html.style({}, `
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
-	.${CLASS_NAME}:hover {
-		background-color: var(--authentic-active-button-bg-color);
-		border-color: var(--authentic-active-button-border-color);
-	}
-
-	.${CLASS_NAME}:focus {
-		background-color: var(--authentic-active-button-bg-color);
-		border-color: var(--authentic-active-button-border-color);
-	}
-
 	.${CLASS_NAME}[disabled] {
-		background-color: var(--authentic-disabled-button-bg-color);
-		border-color: var(--authentic-disabled-button-border-color);
 		cursor: not-allowed;
+	}
+
+	.${CLASS_NAME}--primary {
+		background-color: var(--authentic-primary-button-bg-color);
+		border-color: var(--authentic-primary-button-border-color);
+		color: var(--authentic-primary-button-fg-color);
+	}
+
+	.${CLASS_NAME}--primary:hover,
+	.${CLASS_NAME}--primary:focus {
+		background-color: var(--authentic-active-primary-button-bg-color);
+		border-color: var(--authentic-active-primary-button-border-color);
+		color: var(--authentic-active-primary-button-fg-color);
+	}
+
+	.${CLASS_NAME}--primary[disabled] {
+		background-color: var(--authentic-disabled-primary-button-bg-color);
+		border-color: var(--authentic-disabled-primary-button-border-color);
+		color: var(--authentic-disabled-primary-button-fg-color);
+	}
+
+	.${CLASS_NAME}--secondary {
+		background-color: var(--authentic-secondary-button-bg-color);
+		border-color: var(--authentic-secondary-button-border-color);
+		color: var(--authentic-secondary-button-fg-color);
+	}
+
+	.${CLASS_NAME}--secondary:hover,
+	.${CLASS_NAME}--secondary:focus {
+		background-color: var(--authentic-active-secondary-button-bg-color);
+		border-color: var(--authentic-active-secondary-button-border-color);
+		color: var(--authentic-active-secondary-button-fg-color);
+	}
+
+	.${CLASS_NAME}--secondary[disabled] {
+		background-color: var(--authentic-disabled-secondary-button-bg-color);
+		border-color: var(--authentic-disabled-secondary-button-border-color);
+		color: var(--authentic-disabled-secondary-button-fg-color);
 	}
 `));
 
 export type FormButton = HTMLElementAugmentations<HTMLButtonElement> & {
 	enabled?: Attribute<boolean | undefined>;
+	primary?: Attribute<boolean | undefined>;
 };
 
-export function FormButton(managers: Managers, { enabled: $enabled, ...augmentations }: FormButton, ...children: Children) {
+export function FormButton(managers: Managers, { enabled: $enabled, primary: $primary, ...augmentations }: FormButton, ...children: Children) {
 	let enabled = stateify($enabled);
+	let primary = stateify($primary);
 	return (
 		Block("button", {
-			class: [`${CLASS_NAME}`],
+			class: [`${CLASS_NAME}`, primary.compute((primary) => primary === true ? `${CLASS_NAME}--primary` : `${CLASS_NAME}--secondary`)],
 			disabled: enabled.compute((enabled) => enabled === false ? "" : undefined)
 		},
 			...children

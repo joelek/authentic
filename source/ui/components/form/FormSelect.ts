@@ -8,8 +8,6 @@ const CLASS_NAME = "authentic-form-select";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		background-color: var(--authentic-input-bg-color);
-		border-color: var(--authentic-input-border-color);
 		border-radius: 3px;
 		border-style: solid;
 		border-width: 1px;
@@ -17,14 +15,17 @@ document.head.appendChild(html.style({}, `
 		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
 	}
 
-	.${CLASS_NAME}:hover {
-		background-color: var(--authentic-active-input-bg-color);
-		border-color: var(--authentic-active-input-border-color);
+	.${CLASS_NAME} {
+		background-color: var(--authentic-input-bg-color);
+		border-color: var(--authentic-input-border-color);
+		color: var(--authentic-input-fg-color);
 	}
 
+	.${CLASS_NAME}:hover,
 	.${CLASS_NAME}:focus {
 		background-color: var(--authentic-active-input-bg-color);
 		border-color: var(--authentic-active-input-border-color);
+		color: var(--authentic-active-input-fg-color);
 	}
 
 	.${CLASS_NAME}__box {
@@ -33,14 +34,6 @@ document.head.appendChild(html.style({}, `
 		gap: 6px;
 		grid-template-columns: minmax(0%, 100%) auto;
 		padding: 5px;
-	}
-
-	.${CLASS_NAME}__box-title {
-		color: var(--authentic-input-fg-color)
-	}
-
-	.${CLASS_NAME}__box-icon {
-		color: var(--authentic-input-fg-color)
 	}
 
 	.${CLASS_NAME}__select {

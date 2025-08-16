@@ -67,7 +67,8 @@ document.head.appendChild(html.style({}, `
 
 	.${CLASS_NAME}__head {
 		align-items: center;
-		background-color: var(--authentic-accent-color);
+		background-color: var(--authentic-primary-button-bg-color);
+		color: var(--authentic-primary-button-fg-color);
 		display: grid;
 		grid-template-columns: minmax(0%, 100%) auto;
 		padding: 3px;
@@ -79,10 +80,12 @@ document.head.appendChild(html.style({}, `
 
 	.${CLASS_NAME}__body {
 		background-color: var(--authentic-window-bg-color);
+		color: var(--authentic-window-fg-color);
 	}
 
 	.${CLASS_NAME}__foot {
 		background-color: var(--authentic-window-bg-color);
+		color: var(--authentic-window-fg-color);
 		display: grid;
 		grid-auto-flow: column;
 		gap: 12px;
@@ -168,6 +171,7 @@ export function Modal(managers: Managers, attributes: Modal) {
 							),
 							IconButton(managers, {
 								graphic: "cross",
+								primary: true,
 								onclick: () => {
 									visible.update(!visible.value());
 								}
