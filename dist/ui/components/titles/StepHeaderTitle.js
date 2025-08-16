@@ -6,7 +6,6 @@ const Block_1 = require("../Block");
 const CLASS_NAME = "authentic-step-header-title";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		color: var(--authentic-window-fg-color);
 		font-family: sans-serif;
 		font-size: 18px;
 		font-stretch: normal;

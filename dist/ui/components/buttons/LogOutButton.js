@@ -6,6 +6,7 @@ const ButtonTitle_1 = require("../titles/ButtonTitle");
 function LogOutButton(managers, attributes) {
     return ((0, FormButton_1.FormButton)(managers, {
         enabled: managers.backend.getSubmittable(),
+        primary: true,
         onclick: async () => {
             await managers.backend.sendCommand({
                 headers: {

@@ -16,6 +16,7 @@ function WaitingForCommandStep(managers, attributes) {
         reason
     }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("MANAGE_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, (0, FormButton_1.FormButton)(managers, {
         enabled: managers.backend.getSubmittable(),
+        primary: true,
         onclick: async () => {
             await managers.backend.sendCommand({
                 headers: {
@@ -30,6 +31,7 @@ function WaitingForCommandStep(managers, attributes) {
         }
     }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("REGISTER_ACCOUNT"))), (0, FormButton_1.FormButton)(managers, {
         enabled: managers.backend.getSubmittable(),
+        primary: true,
         onclick: async () => {
             await managers.backend.sendCommand({
                 headers: {
@@ -44,6 +46,7 @@ function WaitingForCommandStep(managers, attributes) {
         }
     }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("AUTHENTICATE_ACCOUNT"))), (0, FormButton_1.FormButton)(managers, {
         enabled: managers.backend.getSubmittable(),
+        primary: true,
         onclick: async () => {
             await managers.backend.sendCommand({
                 headers: {

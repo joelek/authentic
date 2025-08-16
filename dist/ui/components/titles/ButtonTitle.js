@@ -6,7 +6,6 @@ const Block_1 = require("../Block");
 const CLASS_NAME = "authentic-button-title";
 document.head.appendChild(bonsai_1.html.style({}, `
 	.${CLASS_NAME} {
-		color: var(--authentic-button-fg-color);
 		font-family: sans-serif;
 		font-size: 14px;
 		font-stretch: normal;
