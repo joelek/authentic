@@ -22,7 +22,7 @@ export function LogOutButton(managers: Managers, attributes: LogOutButton) {
 				});
 			}
 		},
-			ButtonTitle(managers, {}, managers.translation.getTranslation("LOG_OUT"))
+			ButtonTitle(managers, {}, managers.translation.getTranslation(managers.backend.getUser().compute((user) => user == null ? "RESTART" : "LOG_OUT")))
 		)
 	);
 };

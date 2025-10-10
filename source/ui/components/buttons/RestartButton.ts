@@ -22,7 +22,7 @@ export function RestartButton(managers: Managers, attributes: RestartButton) {
 				});
 			}
 		},
-			ButtonTitle(managers, {}, managers.translation.getTranslation("RESTART"))
+			ButtonTitle(managers, {}, managers.translation.getTranslation(managers.backend.getUser().compute((user) => user == null ? "RESTART" : "LOG_OUT")))
 		)
 	);
 };
