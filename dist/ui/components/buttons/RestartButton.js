@@ -19,7 +19,7 @@ function RestartButton(managers, attributes) {
                 }
             });
         }
-    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("RESTART"))));
+    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation(managers.backend.getUser().compute((user) => user == null ? "RESTART" : "LOG_OUT")))));
 }
 exports.RestartButton = RestartButton;
 ;
