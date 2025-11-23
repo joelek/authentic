@@ -298,5 +298,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Use AVL-tree for indices in VolatileObjectStore class.
 * Consider adding display name.
 * Consider adding registration keys.
-* Consider dropping usernames.
 * Add functionality for creating and updating database tables.
