@@ -299,6 +299,5 @@ NB: This project targets TypeScript 4 in strict mode.
 * Consider adding display name.
 * Consider adding registration keys.
 * Consider dropping usernames.
-* Document database requirements (255 bytes for email, 127 bytes for passdata, 31 bytes for username).
 * Replace ANSI quoting of database identifiers with regexp checks.
 * Add functionality for creating and updating database tables.
