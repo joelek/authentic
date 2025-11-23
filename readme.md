@@ -299,5 +299,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Consider adding display name.
 * Consider adding registration keys.
 * Consider dropping usernames.
-* Replace ANSI quoting of database identifiers with regexp checks.
 * Add functionality for creating and updating database tables.
