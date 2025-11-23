@@ -32,6 +32,19 @@ export class ExpectedUniquePropertyError extends Error {
 	}
 };
 
+export class ExpectedSafeIdentifierError extends Error {
+	readonly identifer: string;
+
+	constructor(identifer: string) {
+		super();
+		this.identifer = identifer;
+	}
+
+	toString(): string {
+		return `Expected "${this.identifer}" to be a safe identifier!`;
+	};
+};
+
 export type ObjectKey = PropertyKey;
 
 export type ObjectValue = string | number | boolean | undefined | null | bigint;
@@ -374,11 +387,16 @@ export type DatabaseObjectStoreDetail = {
 	generateId?(): string;
 };
 
+export type DatabaseObjectStoreOptions = {
+	use_ansi_quotes?: boolean;
+};
+
 export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
 	protected detail: DatabaseObjectStoreDetail;
 	protected table: string;
 	protected id: B;
 	protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
+	protected use_ansi_quotes: boolean;
 
 	protected async createId(): Promise<string> {
 		let id = this.detail.generateId?.() ?? utils.generateHexId(32);
@@ -393,14 +411,22 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	}
 
 	protected escapeIdentifier(identifier: string): string {
-		return `"${identifier.replaceAll("\"", "\"\"")}"`;
+		if (this.use_ansi_quotes) {
+			return `"${identifier.replaceAll("\"", "\"\"")}"`;
+		} else {
+			if (!/^[a-z_][a-z0-9_]*$/i.test(identifier)) {
+				throw new ExpectedSafeIdentifierError(identifier);
+			}
+			return identifier;
+		}
 	}
 
-	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>) {
+	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>, options?: DatabaseObjectStoreOptions) {
 		this.detail = detail;
 		this.table = table;
 		this.id = id;
 		this.guard = guard;
+		this.use_ansi_quotes = options?.use_ansi_quotes ?? true;
 	}
 
 	async createObject(properties: A): Promise<Object<A, B>> {
