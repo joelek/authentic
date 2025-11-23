@@ -417,8 +417,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		await connection.query(`
 			INSERT INTO ${this.escapeIdentifier(this.table)} (
 				${columns.map((column) => `${this.escapeIdentifier(column)}`).join(",\r\n				")}
-			)
-			VALUES (
+			) VALUES (
 				${"?".repeat(columns.length).split("").join(",\r\n				")}
 			)
 		`, values);
@@ -430,7 +429,8 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
-			FROM ${this.escapeIdentifier(this.table)}
+			FROM
+				${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(this.id)} = ?
 		`, [
@@ -447,7 +447,8 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
-			FROM ${this.escapeIdentifier(this.table)}
+			FROM
+				${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(String(key))} ${operator} ?
 		`, [
@@ -476,7 +477,8 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 			}
 		}
 		await connection.query(`
-			UPDATE ${this.escapeIdentifier(this.table)}
+			UPDATE
+				${this.escapeIdentifier(this.table)}
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
 			WHERE
@@ -496,7 +498,8 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		}
 		await connection.query(`
 			DELETE
-			FROM ${this.escapeIdentifier(this.table)}
+			FROM
+				${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(this.id)} = ?
 		`, [
