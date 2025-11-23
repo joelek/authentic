@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
+exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedSafeIdentifierError = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
 const autoguard = require("@joelek/autoguard");
 const shared_1 = require("../../shared");
 const utils = require("../utils");
@@ -31,6 +31,19 @@ class ExpectedUniquePropertyError extends Error {
     }
 }
 exports.ExpectedUniquePropertyError = ExpectedUniquePropertyError;
+;
+class ExpectedSafeIdentifierError extends Error {
+    identifer;
+    constructor(identifer) {
+        super();
+        this.identifer = identifer;
+    }
+    toString() {
+        return `Expected "${this.identifer}" to be a safe identifier!`;
+    }
+    ;
+}
+exports.ExpectedSafeIdentifierError = ExpectedSafeIdentifierError;
 ;
 const OBJECT_VALUE_COLLATOR = (one, two) => {
     if (one == null) {
@@ -327,6 +340,7 @@ class DatabaseObjectStore {
     table;
     id;
     guard;
+    use_ansi_quotes;
     async createId() {
         let id = this.detail.generateId?.() ?? utils.generateHexId(32);
         while (true) {
@@ -339,13 +353,22 @@ class DatabaseObjectStore {
         return id;
     }
     escapeIdentifier(identifier) {
-        return `"${identifier.replaceAll("\"", "\"\"")}"`;
+        if (this.use_ansi_quotes) {
+            return `"${identifier.replaceAll("\"", "\"\"")}"`;
+        }
+        else {
+            if (!/^[a-z_][a-z0-9_]*$/i.test(identifier)) {
+                throw new ExpectedSafeIdentifierError(identifier);
+            }
+            return identifier;
+        }
     }
-    constructor(detail, table, id, guard) {
+    constructor(detail, table, id, guard, options) {
         this.detail = detail;
         this.table = table;
         this.id = id;
         this.guard = guard;
+        this.use_ansi_quotes = options?.use_ansi_quotes ?? true;
     }
     async createObject(properties) {
         let connection = await this.detail.getConnection();
@@ -361,8 +384,7 @@ class DatabaseObjectStore {
         await connection.query(`
 			INSERT INTO ${this.escapeIdentifier(this.table)} (
 				${columns.map((column) => `${this.escapeIdentifier(column)}`).join(",\r\n				")}
-			)
-			VALUES (
+			) VALUES (
 				${"?".repeat(columns.length).split("").join(",\r\n				")}
 			)
 		`, values);
@@ -373,7 +395,8 @@ class DatabaseObjectStore {
         let objects = await connection.query(`
 			SELECT
 				*
-			FROM ${this.escapeIdentifier(this.table)}
+			FROM
+				${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(this.id)} = ?
 		`, [
@@ -389,7 +412,8 @@ class DatabaseObjectStore {
         let objects = await connection.query(`
 			SELECT
 				*
-			FROM ${this.escapeIdentifier(this.table)}
+			FROM
+				${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(String(key))} ${operator} ?
 		`, [
@@ -417,7 +441,8 @@ class DatabaseObjectStore {
             }
         }
         await connection.query(`
-			UPDATE ${this.escapeIdentifier(this.table)}
+			UPDATE
+				${this.escapeIdentifier(this.table)}
 			SET
 				${columns.map((column) => `${this.escapeIdentifier(column)} = ?`).join(",\r\n				")}
 			WHERE
@@ -436,7 +461,8 @@ class DatabaseObjectStore {
         }
         await connection.query(`
 			DELETE
-			FROM ${this.escapeIdentifier(this.table)}
+			FROM
+				${this.escapeIdentifier(this.table)}
 			WHERE
 				${this.escapeIdentifier(this.id)} = ?
 		`, [

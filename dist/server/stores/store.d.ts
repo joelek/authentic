@@ -11,6 +11,11 @@ export declare class ExpectedUniquePropertyError extends Error {
     constructor(key: ObjectKey, value: ObjectValue);
     toString(): string;
 }
+export declare class ExpectedSafeIdentifierError extends Error {
+    readonly identifer: string;
+    constructor(identifer: string);
+    toString(): string;
+}
 export type ObjectKey = PropertyKey;
 export type ObjectValue = string | number | boolean | undefined | null | bigint;
 export type ObjectProperties<A> = {
@@ -73,14 +78,18 @@ export type DatabaseObjectStoreDetail = {
     getConnection(): Promise<ConnectionLike>;
     generateId?(): string;
 };
+export type DatabaseObjectStoreOptions = {
+    use_ansi_quotes?: boolean;
+};
 export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
     protected detail: DatabaseObjectStoreDetail;
     protected table: string;
     protected id: B;
     protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
+    protected use_ansi_quotes: boolean;
     protected createId(): Promise<string>;
     protected escapeIdentifier(identifier: string): string;
-    constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>);
+    constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>, options?: DatabaseObjectStoreOptions);
     createObject(properties: A): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
     lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Object<A, B>[]>;
