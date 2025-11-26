@@ -1,5 +1,6 @@
 guard UserProperties: {
 	created_utc: integer,
+	updated_utc: integer,
 	email: string,
 	passdata: string,
 	username?: string | null
@@ -7,17 +8,20 @@ guard UserProperties: {
 
 guard RoleProperties: {
 	created_utc: integer,
+	updated_utc: integer,
 	name: string
 };
 
 guard UserRoleProperties: {
 	created_utc: integer,
+	updated_utc: integer,
 	user_id: string,
 	role_id: string
 };
 
 guard SessionProperties: {
 	created_utc: integer,
+	updated_utc: integer,
 	type: string,
 	reason: string,
 	expires_utc: integer,
@@ -36,6 +40,7 @@ guard SessionProperties: {
 
 guard OriginProperties: {
 	created_utc: integer,
+	updated_utc: integer,
 	address: string,
 	expires_utc: integer,
 	wait_until_utc: integer
