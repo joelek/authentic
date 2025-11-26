@@ -134,6 +134,7 @@ The tables are expected to be compatible with the following `CREATE` statements.
 CREATE TABLE origins (
 	origin_id VARCHAR(32) PRIMARY KEY NOT NULL,
 	created_utc BIGINT NOT NULL,
+	updated_utc BIGINT NOT NULL,
 	address VARCHAR(31) NOT NULL,
 	expires_utc BIGINT NOT NULL,
 	wait_until_utc BIGINT NOT NULL,
@@ -144,6 +145,7 @@ CREATE TABLE origins (
 CREATE TABLE users (
 	user_id VARCHAR(32) PRIMARY KEY NOT NULL,
 	created_utc BIGINT NOT NULL,
+	updated_utc BIGINT NOT NULL,
 	username VARCHAR(31),
 	email VARCHAR(255) NOT NULL,
 	passdata VARCHAR(127) NOT NULL,
@@ -154,6 +156,7 @@ CREATE TABLE users (
 CREATE TABLE roles (
 	role_id VARCHAR(32) PRIMARY KEY NOT NULL,
 	created_utc BIGINT NOT NULL,
+	updated_utc BIGINT NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	UNIQUE INDEX name (name)
 );
@@ -161,6 +164,7 @@ CREATE TABLE roles (
 CREATE TABLE user_roles (
 	user_role_id VARCHAR(32) PRIMARY KEY NOT NULL,
 	created_utc BIGINT NOT NULL,
+	updated_utc BIGINT NOT NULL,
 	user_id VARCHAR(32) NOT NULL,
 	role_id VARCHAR(32) NOT NULL,
 	FOREIGN KEY (user_id) REFERENCES users(user_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
@@ -173,6 +177,7 @@ CREATE TABLE user_roles (
 CREATE TABLE sessions (
 	session_id VARCHAR(32) PRIMARY KEY NOT NULL,
 	created_utc BIGINT NOT NULL,
+	updated_utc BIGINT NOT NULL,
 	type VARCHAR(63) NOT NULL,
 	reason VARCHAR(63) NOT NULL,
 	expires_utc BIGINT NOT NULL,
