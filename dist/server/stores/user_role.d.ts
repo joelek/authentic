@@ -12,6 +12,7 @@ export declare const UserRole: autoguard.guards.IntersectionGuard<[{
     user_role_id: string;
 }, {
     created_utc: number;
+    updated_utc: number;
     user_id: string;
     role_id: string;
 }]>;

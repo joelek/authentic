@@ -12,6 +12,7 @@ export declare const Role: autoguard.guards.IntersectionGuard<[{
     role_id: string;
 }, {
     created_utc: number;
+    updated_utc: number;
     name: string;
 }]>;
 export declare class DatabaseRoleStore extends DatabaseObjectStore<RoleProperties, "role_id"> {

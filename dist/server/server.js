@@ -170,6 +170,7 @@ class Server {
         if (session.ticket_hash !== ticket_hash) {
             return;
         }
+        session.updated_utc = Date.now();
         session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
         await this.sessions.updateObject(session);
         let user = await this.users.lookupObject(session.authenticated_user_id);
@@ -295,6 +296,7 @@ class Server {
         }
         return this.origins.createObject({
             created_utc: Date.now(),
+            updated_utc: Date.now(),
             address: address,
             expires_utc: this.getExpiresInMinutes(this.origin_validity_minutes),
             wait_until_utc: this.getExpiresInMilliseconds(0)
@@ -317,6 +319,7 @@ class Server {
         this.checkRateLimit(origin.wait_until_utc);
         return await this.origins.updateObject({
             ...origin,
+            updated_utc: Date.now(),
             expires_utc: this.getExpiresInMinutes(this.origin_validity_minutes),
             wait_until_utc: this.getExpiresInMilliseconds(250)
         });
@@ -329,6 +332,7 @@ class Server {
                     return this.sessions.updateObject({
                         session_id: session.session_id,
                         created_utc: session.created_utc,
+                        updated_utc: Date.now(),
                         type: "WAITING_FOR_COMMAND",
                         reason: "SESSION_EXPIRED",
                         expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
@@ -342,6 +346,7 @@ class Server {
         }
         return this.sessions.createObject({
             created_utc: Date.now(),
+            updated_utc: Date.now(),
             type: "WAITING_FOR_COMMAND",
             reason: "COMMAND_REQUIRED",
             expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
@@ -430,6 +435,7 @@ class Server {
         }
         let user = await this.users.createObject({
             created_utc: Date.now(),
+            updated_utc: Date.now(),
             email: session.email,
             username: session.username,
             passdata: session.passdata ?? validator_1.Validator.fromPassphrase(this.generateTicket(32)).toChunk()
@@ -437,6 +443,7 @@ class Server {
         return {
             session_id: session.session_id,
             created_utc: session.created_utc,
+            updated_utc: session.updated_utc,
             authenticated_user_id: user.user_id,
             type: "AUTHENTICATED",
             reason: "REGISTRATION_COMPLETED",
@@ -525,6 +532,7 @@ class Server {
         return {
             session_id: session.session_id,
             created_utc: session.created_utc,
+            updated_utc: session.updated_utc,
             authenticated_user_id: user.user_id,
             type: "AUTHENTICATED",
             reason: "AUTHENTICATION_COMPLETED",
@@ -607,6 +615,7 @@ class Server {
             else {
                 await this.users.updateObject({
                     ...user,
+                    updated_utc: Date.now(),
                     passdata: session.passdata
                 });
             }
@@ -614,6 +623,7 @@ class Server {
         return {
             session_id: session.session_id,
             created_utc: session.created_utc,
+            updated_utc: session.updated_utc,
             authenticated_user_id: user.user_id,
             type: "AUTHENTICATED",
             reason: "RECOVERY_COMPLETED",
@@ -626,6 +636,7 @@ class Server {
             return {
                 session_id: session.session_id,
                 created_utc: session.created_utc,
+                updated_utc: session.updated_utc,
                 type: "WAITING_FOR_COMMAND",
                 reason: "COMMAND_REQUIRED",
                 expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
@@ -860,6 +871,7 @@ class Server {
         return {
             session_id: session.session_id,
             created_utc: session.created_utc,
+            updated_utc: session.updated_utc,
             type: "WAITING_FOR_COMMAND",
             reason: "INVALID_COMMAND",
             expires_utc: this.getExpiresInMinutes(this.session_validity_minutes),
@@ -930,6 +942,7 @@ class Server {
                 ticket = undefined;
                 session.ticket_hash = undefined;
             }
+            session.updated_utc = Date.now();
             await this.sessions.updateObject(session);
             let state = this.getApiState(session);
             let user = await this.getApiUser(session, ticket);

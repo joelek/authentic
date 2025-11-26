@@ -12,6 +12,7 @@ export declare const User: autoguard.guards.IntersectionGuard<[{
     user_id: string;
 }, {
     created_utc: number;
+    updated_utc: number;
     email: string;
     passdata: string;
     username?: string | null | undefined;

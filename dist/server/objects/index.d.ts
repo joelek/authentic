@@ -3,6 +3,7 @@ import { State } from "../../api/server";
 export declare const UserProperties: autoguard.serialization.MessageGuard<UserProperties>;
 export type UserProperties = autoguard.guards.Object<{
     "created_utc": autoguard.guards.Integer;
+    "updated_utc": autoguard.guards.Integer;
     "email": autoguard.guards.String;
     "passdata": autoguard.guards.String;
 }, {
@@ -14,11 +15,13 @@ export type UserProperties = autoguard.guards.Object<{
 export declare const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties>;
 export type RoleProperties = autoguard.guards.Object<{
     "created_utc": autoguard.guards.Integer;
+    "updated_utc": autoguard.guards.Integer;
     "name": autoguard.guards.String;
 }, {}>;
 export declare const UserRoleProperties: autoguard.serialization.MessageGuard<UserRoleProperties>;
 export type UserRoleProperties = autoguard.guards.Object<{
     "created_utc": autoguard.guards.Integer;
+    "updated_utc": autoguard.guards.Integer;
     "user_id": autoguard.guards.String;
     "role_id": autoguard.guards.String;
 }, {}>;
@@ -26,6 +29,7 @@ export declare const SessionProperties: autoguard.serialization.MessageGuard<Ses
 export type SessionProperties = autoguard.guards.Intersection<[
     autoguard.guards.Object<{
         "created_utc": autoguard.guards.Integer;
+        "updated_utc": autoguard.guards.Integer;
         "type": autoguard.guards.String;
         "reason": autoguard.guards.String;
         "expires_utc": autoguard.guards.Integer;
@@ -77,6 +81,7 @@ export type SessionProperties = autoguard.guards.Intersection<[
 export declare const OriginProperties: autoguard.serialization.MessageGuard<OriginProperties>;
 export type OriginProperties = autoguard.guards.Object<{
     "created_utc": autoguard.guards.Integer;
+    "updated_utc": autoguard.guards.Integer;
     "address": autoguard.guards.String;
     "expires_utc": autoguard.guards.Integer;
     "wait_until_utc": autoguard.guards.Integer;
@@ -85,22 +90,26 @@ export declare namespace Autoguard {
     const Guards: {
         UserProperties: autoguard.guards.ReferenceGuard<{
             created_utc: number;
+            updated_utc: number;
             email: string;
             passdata: string;
             username?: string | null | undefined;
         }>;
         RoleProperties: autoguard.guards.ReferenceGuard<{
             created_utc: number;
+            updated_utc: number;
             name: string;
         }>;
         UserRoleProperties: autoguard.guards.ReferenceGuard<{
             created_utc: number;
+            updated_utc: number;
             user_id: string;
             role_id: string;
         }>;
         SessionProperties: autoguard.guards.ReferenceGuard<SessionProperties>;
         OriginProperties: autoguard.guards.ReferenceGuard<{
             created_utc: number;
+            updated_utc: number;
             address: string;
             expires_utc: number;
             wait_until_utc: number;
