@@ -14,7 +14,7 @@ document.head.appendChild(html.style({}, `
 		height: auto;
 		line-height: 20px;
 		padding: 5px;
-		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
+		transition: background-color 0.125s, border-color 0.125s, color 0.125s, opacity 0.125s;
 	}
 
 	.${CLASS_NAME} {
@@ -32,12 +32,7 @@ document.head.appendChild(html.style({}, `
 
 	.${CLASS_NAME}[readonly] {
 		cursor: not-allowed;
-	}
-
-	.${CLASS_NAME}[readonly] {
-		background-color: var(--authentic-disabled-input-bg-color);
-		border-color: var(--authentic-disabled-input-border-color);
-		color: var(--authentic-disabled-input-fg-color);
+		opacity: 0.5;
 	}
 `));
 

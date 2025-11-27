@@ -29,10 +29,6 @@ document.head.appendChild(html.style({}, `
 		--authentic-active-primary-button-border-color: transparent;
 		--authentic-active-primary-button-fg-color: rgb(255, 255, 255);
 
-		--authentic-disabled-primary-button-bg-color: rgb(127, 127, 127);
-		--authentic-disabled-primary-button-border-color: transparent;
-		--authentic-disabled-primary-button-fg-color: rgb(255, 255, 255);
-
 		--authentic-secondary-button-bg-color: transparent;
 		--authentic-secondary-button-border-color: transparent;
 		--authentic-secondary-button-fg-color: rgb(0, 0, 0);
@@ -41,10 +37,6 @@ document.head.appendChild(html.style({}, `
 		--authentic-active-secondary-button-border-color: transparent;
 		--authentic-active-secondary-button-fg-color: rgb(0, 0, 0);
 
-		--authentic-disabled-secondary-button-bg-color: transparent;
-		--authentic-disabled-secondary-button-border-color: transparent;
-		--authentic-disabled-secondary-button-fg-color: rgb(0, 0, 0);
-
 		--authentic-input-bg-color: rgb(255, 255, 255);
 		--authentic-input-border-color: rgb(223, 223, 223);
 		--authentic-input-fg-color: rgb(0, 0, 0);
@@ -52,10 +44,6 @@ document.head.appendChild(html.style({}, `
 		--authentic-active-input-bg-color: rgb(255, 255, 255);
 		--authentic-active-input-border-color: rgb(191, 191, 191);
 		--authentic-active-input-fg-color: rgb(0, 0, 0);
-
-		--authentic-disabled-input-bg-color: rgb(255, 255, 255);
-		--authentic-disabled-input-border-color: rgb(223, 223, 223);
-		--authentic-disabled-input-fg-color: rgb(0, 0, 0);
 	}
 
 	.${CLASS_NAME}--dark {
@@ -73,10 +61,6 @@ document.head.appendChild(html.style({}, `
 		--authentic-active-primary-button-border-color: transparent;
 		--authentic-active-primary-button-fg-color: rgb(255, 255, 255);
 
-		--authentic-disabled-primary-button-bg-color: rgb(79, 79, 79);
-		--authentic-disabled-primary-button-border-color: transparent;
-		--authentic-disabled-primary-button-fg-color: rgb(255, 255, 255);
-
 		--authentic-secondary-button-bg-color: transparent;
 		--authentic-secondary-button-border-color: transparent;
 		--authentic-secondary-button-fg-color: rgb(255, 255, 255);
@@ -85,10 +69,6 @@ document.head.appendChild(html.style({}, `
 		--authentic-active-secondary-button-border-color: transparent;
 		--authentic-active-secondary-button-fg-color: rgb(255, 255, 255);
 
-		--authentic-disabled-secondary-button-bg-color: transparent;
-		--authentic-disabled-secondary-button-border-color: transparent;
-		--authentic-disabled-secondary-button-fg-color: rgb(255, 255, 255);
-
 		--authentic-input-bg-color: rgb(63, 63, 63);
 		--authentic-input-border-color: transparent;
 		--authentic-input-fg-color: rgb(255, 255, 255);
@@ -96,10 +76,6 @@ document.head.appendChild(html.style({}, `
 		--authentic-active-input-bg-color: rgb(79, 79, 79);
 		--authentic-active-input-border-color: transparent;
 		--authentic-active-input-fg-color: rgb(255, 255, 255);
-
-		--authentic-disabled-input-bg-color: rgb(63, 63, 63);
-		--authentic-disabled-input-border-color: transparent;
-		--authentic-disabled-input-fg-color: rgb(255, 255, 255);
 	}
 `));
 

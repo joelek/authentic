@@ -12,13 +12,17 @@ document.head.appendChild(html.style({}, `
 		border-style: solid;
 		border-width: 1px;
 		height: auto;
-		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
+		transition: background-color 0.125s, border-color 0.125s, color 0.125s, opacity 0.125s;
 	}
 
 	.${CLASS_NAME} {
 		background-color: var(--authentic-input-bg-color);
 		border-color: var(--authentic-input-border-color);
 		color: var(--authentic-input-fg-color);
+	}
+
+	.${CLASS_NAME}[disabled] {
+		opacity: 0.5;
 	}
 
 	.${CLASS_NAME}:hover,
@@ -81,7 +85,8 @@ export function FormSelect<A extends string>(managers: Managers, { enabled: $ena
 	});
 	return (
 		Block("div", {
-			class: [`${CLASS_NAME}`]
+			class: [`${CLASS_NAME}`],
+			disabled: enabled.compute((enabled) => enabled !== false ? undefined : ""),
 		},
 			Block("div", {
 				class: [`${CLASS_NAME}__box`]
