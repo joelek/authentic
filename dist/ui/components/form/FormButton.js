@@ -15,11 +15,12 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		height: auto;
 		line-height: 20px;
 		padding: 5px;
-		transition: background-color 0.125s, border-color 0.125s, color 0.125s;
+		transition: background-color 0.125s, border-color 0.125s, color 0.125s, opacity 0.125s;
 	}
 
 	.${CLASS_NAME}[disabled] {
 		cursor: not-allowed;
+		opacity: 0.5;
 	}
 
 	.${CLASS_NAME}--primary {
@@ -35,12 +36,6 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		color: var(--authentic-active-primary-button-fg-color);
 	}
 
-	.${CLASS_NAME}--primary[disabled] {
-		background-color: var(--authentic-disabled-primary-button-bg-color);
-		border-color: var(--authentic-disabled-primary-button-border-color);
-		color: var(--authentic-disabled-primary-button-fg-color);
-	}
-
 	.${CLASS_NAME}--secondary {
 		background-color: var(--authentic-secondary-button-bg-color);
 		border-color: var(--authentic-secondary-button-border-color);
@@ -52,12 +47,6 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		background-color: var(--authentic-active-secondary-button-bg-color);
 		border-color: var(--authentic-active-secondary-button-border-color);
 		color: var(--authentic-active-secondary-button-fg-color);
-	}
-
-	.${CLASS_NAME}--secondary[disabled] {
-		background-color: var(--authentic-disabled-secondary-button-bg-color);
-		border-color: var(--authentic-disabled-secondary-button-border-color);
-		color: var(--authentic-disabled-secondary-button-fg-color);
 	}
 `));
 function FormButton(managers, { enabled: $enabled, primary: $primary, ...augmentations }, ...children) {
