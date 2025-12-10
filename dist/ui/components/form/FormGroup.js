@@ -11,7 +11,7 @@ document.head.appendChild(bonsai_1.html.style({}, `
 	}
 `));
 function FormGroup(managers, { ...augmentations }, ...children) {
-    return ((0, Block_1.Block)("form", {
+    return ((0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}`]
     }, ...children).augment(augmentations));
 }
