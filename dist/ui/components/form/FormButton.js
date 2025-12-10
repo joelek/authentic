@@ -54,7 +54,8 @@ function FormButton(managers, { enabled: $enabled, primary: $primary, ...augment
     let primary = (0, bonsai_1.stateify)($primary);
     return ((0, Block_1.Block)("button", {
         class: [`${CLASS_NAME}`, primary.compute((primary) => primary === true ? `${CLASS_NAME}--primary` : `${CLASS_NAME}--secondary`)],
-        disabled: enabled.compute((enabled) => enabled === false ? "" : undefined)
+        disabled: enabled.compute((enabled) => enabled === false ? "" : undefined),
+        type: "button"
     }, ...children).augment(augmentations));
 }
 exports.FormButton = FormButton;
