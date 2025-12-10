@@ -11,13 +11,13 @@ document.head.appendChild(html.style({}, `
 	}
 `));
 
-export type FormGroup = HTMLElementAugmentations<HTMLFormElement> & {
+export type FormGroup = HTMLElementAugmentations<HTMLDivElement> & {
 
 };
 
 export function FormGroup(managers: Managers, { ...augmentations }: FormGroup, ...children: Children) {
 	return (
-		Block("form", {
+		Block("div", {
 			class: [`${CLASS_NAME}`]
 		},
 			...children
