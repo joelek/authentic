@@ -7,6 +7,7 @@ export type CloseWindowButton = {};
 export function CloseWindowButton(managers: Managers, attributes: CloseWindowButton) {
 	return (
 		FormButton(managers, {
+			enabled: managers.backend.getSubmittable(),
 			primary: true,
 			onclick: async () => {
 				managers.state.visible.update(false);
