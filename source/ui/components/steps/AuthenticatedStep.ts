@@ -1,6 +1,6 @@
 import * as api from "../../../api/client";
 import { Managers } from "../../managers/Managers";
-import { LogOutButton } from "../buttons/LogOutButton";
+import { CloseWindowButton } from "../buttons/CloseWindowButton";
 import { FormGroup } from "../form/FormGroup";
 import { StepDescriptionTitle } from "../titles/StepDescriptionTitle";
 import { StepHeaderTitle } from "../titles/StepHeaderTitle";
@@ -21,7 +21,7 @@ export function AuthenticatedStep(managers: Managers, attributes: AuthenticatedS
 			StepHeaderTitle(managers, {}, managers.translation.getTranslation("LOGGED_IN_AS")),
 			FormGroup(managers, {},
 				StepDescriptionTitle(managers, {}, email),
-				LogOutButton(managers, {})
+				CloseWindowButton(managers, {})
 			)
 		)
 	);
