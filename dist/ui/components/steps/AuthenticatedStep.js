@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticatedStep = void 0;
 const api = require("../../../api/client");
-const LogOutButton_1 = require("../buttons/LogOutButton");
+const CloseWindowButton_1 = require("../buttons/CloseWindowButton");
 const FormGroup_1 = require("../form/FormGroup");
 const StepDescriptionTitle_1 = require("../titles/StepDescriptionTitle");
 const StepHeaderTitle_1 = require("../titles/StepHeaderTitle");
@@ -15,7 +15,7 @@ function AuthenticatedStep(managers, attributes) {
     return ((0, Step_1.Step)(managers, {
         type,
         reason
-    }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("LOGGED_IN_AS")), (0, FormGroup_1.FormGroup)(managers, {}, (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, email), (0, LogOutButton_1.LogOutButton)(managers, {}))));
+    }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("LOGGED_IN_AS")), (0, FormGroup_1.FormGroup)(managers, {}, (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, email), (0, CloseWindowButton_1.CloseWindowButton)(managers, {}))));
 }
 exports.AuthenticatedStep = AuthenticatedStep;
 ;

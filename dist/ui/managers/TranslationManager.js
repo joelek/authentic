@@ -305,6 +305,10 @@ const TRANSLATIONS = {
         en: "Logged in as",
         sv: "Inloggad som"
     },
+    "CLOSE_WINDOW": {
+        en: "Close window",
+        sv: "Stäng fönster"
+    },
     "LANGUAGES": {
         en: "Languages",
         sv: "Språk"

@@ -253,6 +253,10 @@ declare const TRANSLATIONS: {
         en: string;
         sv: string;
     };
+    CLOSE_WINDOW: {
+        en: string;
+        sv: string;
+    };
     LANGUAGES: {
         en: string;
         sv: string;
