@@ -18,20 +18,14 @@ function WaitingForRecoverCodeStep(managers, attributes) {
         type: "text",
         enabled: managers.backend.getEditable(),
         placeholder: managers.translation.getTranslation("CODE_PLACEHOLDER"),
+        onkeyup: (event) => {
+            if (event.key === "Enter") {
+                button.click();
+            }
+        },
         value
     });
-    return ((0, Step_1.Step)(managers, {
-        type,
-        reason,
-        ontransition: (state) => {
-            if (state === "start") {
-                value.update("");
-            }
-            else {
-                input.focus();
-            }
-        }
-    }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, input, (0, FormButton_1.FormButton)(managers, {
+    let button = (0, FormButton_1.FormButton)(managers, {
         enabled: managers.backend.getSubmittable(),
         primary: true,
         onclick: async () => {
@@ -50,7 +44,19 @@ function WaitingForRecoverCodeStep(managers, attributes) {
                 input.focus();
             }
         }
-    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")))), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason))));
+    }, (0, ButtonTitle_1.ButtonTitle)(managers, {}, managers.translation.getTranslation("CONTINUE")));
+    return ((0, Step_1.Step)(managers, {
+        type,
+        reason,
+        ontransition: (state) => {
+            if (state === "start") {
+                value.update("");
+            }
+            else {
+                input.focus();
+            }
+        }
+    }, (0, StepHeaderTitle_1.StepHeaderTitle)(managers, {}, managers.translation.getTranslation("RECOVER_ACCOUNT")), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(type)), (0, FormGroup_1.FormGroup)(managers, {}, input, button), (0, StepDescriptionTitle_1.StepDescriptionTitle)(managers, {}, managers.translation.getStateTranslation(reason))));
 }
 exports.WaitingForRecoverCodeStep = WaitingForRecoverCodeStep;
 ;
