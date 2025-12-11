@@ -19,8 +19,35 @@ export function WaitingForRecoverEmailStep(managers: Managers, attributes: Waiti
 		type: "email",
 		enabled: managers.backend.getEditable(),
 		placeholder: managers.translation.getTranslation("EMAIL_PLACEHOLDER"),
+		onkeyup: (event) => {
+			if (event.key === "Enter") {
+				button.click();
+			}
+		},
 		value
 	});
+	let button = FormButton(managers, {
+		enabled: managers.backend.getSubmittable(),
+		primary: true,
+		onclick: async () => {
+			await managers.backend.sendCommand({
+				headers: {
+					"x-preferred-language": managers.translation.getLanguage().value()
+				},
+				payload: {
+					command: {
+						type: "RECOVER_EMAIL",
+						email: value.value()
+					}
+				}
+			});
+			if (type.value() != null) {
+				input.focus();
+			}
+		}
+	},
+		ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE"))
+	);
 	return (
 		Step(managers, {
 			type,
@@ -37,28 +64,7 @@ export function WaitingForRecoverEmailStep(managers: Managers, attributes: Waiti
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(type)),
 			FormGroup(managers, {},
 				input,
-				FormButton(managers, {
-					enabled: managers.backend.getSubmittable(),
-					primary: true,
-					onclick: async () => {
-						await managers.backend.sendCommand({
-							headers: {
-								"x-preferred-language": managers.translation.getLanguage().value()
-							},
-							payload: {
-								command: {
-									type: "RECOVER_EMAIL",
-									email: value.value()
-								}
-							}
-						});
-						if (type.value() != null) {
-							input.focus();
-						}
-					}
-				},
-					ButtonTitle(managers, {}, managers.translation.getTranslation("CONTINUE"))
-				)
+				button
 			),
 			StepDescriptionTitle(managers, {}, managers.translation.getStateTranslation(reason))
 		)
