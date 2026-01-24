@@ -45,3 +45,19 @@ guard OriginProperties: {
 	expires_utc: integer,
 	wait_until_utc: integer
 };
+
+guard JobStatus:
+	"ENQUEUED" |
+	"RUNNING" |
+	"SUCCESS" |
+	"FAILURE" |
+	"INVALID";
+
+guard JobProperties: {
+	created_utc: integer,
+	updated_utc: integer,
+	type: string,
+	status: JobStatus,
+	started_utc?: integer | null,
+	ended_utc?: integer | null
+};

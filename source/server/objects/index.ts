@@ -175,13 +175,63 @@ export type OriginProperties = autoguard.guards.Object<{
 	"wait_until_utc": autoguard.guards.Integer
 }, {}>;
 
+export const JobStatus: autoguard.serialization.MessageGuard<JobStatus> = autoguard.guards.Union.of(
+	autoguard.guards.StringLiteral.of("ENQUEUED"),
+	autoguard.guards.StringLiteral.of("RUNNING"),
+	autoguard.guards.StringLiteral.of("SUCCESS"),
+	autoguard.guards.StringLiteral.of("FAILURE"),
+	autoguard.guards.StringLiteral.of("INVALID")
+);
+
+export type JobStatus = autoguard.guards.Union<[
+	autoguard.guards.StringLiteral<"ENQUEUED">,
+	autoguard.guards.StringLiteral<"RUNNING">,
+	autoguard.guards.StringLiteral<"SUCCESS">,
+	autoguard.guards.StringLiteral<"FAILURE">,
+	autoguard.guards.StringLiteral<"INVALID">
+]>;
+
+export const JobProperties: autoguard.serialization.MessageGuard<JobProperties> = autoguard.guards.Object.of({
+	"created_utc": autoguard.guards.Integer,
+	"updated_utc": autoguard.guards.Integer,
+	"type": autoguard.guards.String,
+	"status": autoguard.guards.Reference.of(() => JobStatus)
+}, {
+	"started_utc": autoguard.guards.Union.of(
+		autoguard.guards.Integer,
+		autoguard.guards.Null
+	),
+	"ended_utc": autoguard.guards.Union.of(
+		autoguard.guards.Integer,
+		autoguard.guards.Null
+	)
+});
+
+export type JobProperties = autoguard.guards.Object<{
+	"created_utc": autoguard.guards.Integer,
+	"updated_utc": autoguard.guards.Integer,
+	"type": autoguard.guards.String,
+	"status": autoguard.guards.Reference<JobStatus>
+}, {
+	"started_utc": autoguard.guards.Union<[
+		autoguard.guards.Integer,
+		autoguard.guards.Null
+	]>,
+	"ended_utc": autoguard.guards.Union<[
+		autoguard.guards.Integer,
+		autoguard.guards.Null
+	]>
+}>;
+
 export namespace Autoguard {
 	export const Guards = {
 		"UserProperties": autoguard.guards.Reference.of(() => UserProperties),
 		"RoleProperties": autoguard.guards.Reference.of(() => RoleProperties),
 		"UserRoleProperties": autoguard.guards.Reference.of(() => UserRoleProperties),
 		"SessionProperties": autoguard.guards.Reference.of(() => SessionProperties),
-		"OriginProperties": autoguard.guards.Reference.of(() => OriginProperties)
+		"OriginProperties": autoguard.guards.Reference.of(() => OriginProperties),
+		"JobStatus": autoguard.guards.Reference.of(() => JobStatus),
+		"JobProperties": autoguard.guards.Reference.of(() => JobProperties)
 	};
 
 	export type Guards = { [A in keyof typeof Guards]: ReturnType<typeof Guards[A]["as"]>; };
