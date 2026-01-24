@@ -86,6 +86,30 @@ export type OriginProperties = autoguard.guards.Object<{
     "expires_utc": autoguard.guards.Integer;
     "wait_until_utc": autoguard.guards.Integer;
 }, {}>;
+export declare const JobStatus: autoguard.serialization.MessageGuard<JobStatus>;
+export type JobStatus = autoguard.guards.Union<[
+    autoguard.guards.StringLiteral<"ENQUEUED">,
+    autoguard.guards.StringLiteral<"RUNNING">,
+    autoguard.guards.StringLiteral<"SUCCESS">,
+    autoguard.guards.StringLiteral<"FAILURE">,
+    autoguard.guards.StringLiteral<"INVALID">
+]>;
+export declare const JobProperties: autoguard.serialization.MessageGuard<JobProperties>;
+export type JobProperties = autoguard.guards.Object<{
+    "created_utc": autoguard.guards.Integer;
+    "updated_utc": autoguard.guards.Integer;
+    "type": autoguard.guards.String;
+    "status": autoguard.guards.Reference<JobStatus>;
+}, {
+    "started_utc": autoguard.guards.Union<[
+        autoguard.guards.Integer,
+        autoguard.guards.Null
+    ]>;
+    "ended_utc": autoguard.guards.Union<[
+        autoguard.guards.Integer,
+        autoguard.guards.Null
+    ]>;
+}>;
 export declare namespace Autoguard {
     const Guards: {
         UserProperties: autoguard.guards.ReferenceGuard<{
@@ -113,6 +137,15 @@ export declare namespace Autoguard {
             address: string;
             expires_utc: number;
             wait_until_utc: number;
+        }>;
+        JobStatus: autoguard.guards.ReferenceGuard<"ENQUEUED" | "RUNNING" | "SUCCESS" | "FAILURE" | "INVALID">;
+        JobProperties: autoguard.guards.ReferenceGuard<{
+            created_utc: number;
+            updated_utc: number;
+            type: string;
+            status: "ENQUEUED" | "RUNNING" | "SUCCESS" | "FAILURE" | "INVALID";
+            started_utc?: number | null | undefined;
+            ended_utc?: number | null | undefined;
         }>;
     };
     type Guards = {
