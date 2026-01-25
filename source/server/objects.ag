@@ -57,6 +57,7 @@ guard JobProperties: {
 	created_utc: integer,
 	updated_utc: integer,
 	type: string,
+	options?: string | null,
 	status: JobStatus,
 	started_utc?: integer | null,
 	ended_utc?: integer | null

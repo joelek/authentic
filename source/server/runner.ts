@@ -46,7 +46,7 @@ async function waitUntil(target_ms: number): Promise<void> {
 };
 
 export type Task = {
-	run(job_id: string): Promise<void>;
+	run(job_id: string, options: string | null): Promise<void>;
 	getNextDate(): Date | null;
 };
 
@@ -73,6 +73,7 @@ export async function run(options: RunOptions): Promise<void> {
 						created_utc: Date.now(),
 						updated_utc: Date.now(),
 						type: type,
+						options: null,
 						status: "ENQUEUED",
 						started_utc: null,
 						ended_utc: null
@@ -109,7 +110,7 @@ export async function run(options: RunOptions): Promise<void> {
 						started_utc: Date.now()
 					});
 					try {
-						await options.tasks[job.type].run(job_id);
+						await options.tasks[job.type].run(job.job_id, job.options ?? null);
 						job = await options.jobs.updateObject({
 							...job,
 							status: "SUCCESS",
