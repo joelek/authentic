@@ -45,9 +45,12 @@ async function waitUntil(target_ms: number): Promise<void> {
 	}
 };
 
+export type JobMetadata = Partial<Pick<stores.job.Job, "description" | "options">>;
+
 export type Task = {
 	run(job_id: string, options: string | null): Promise<void>;
 	getNextDate(): Date | null;
+	getMetadata(next_date: Date): JobMetadata;
 };
 
 export type RunOptions = {
@@ -69,12 +72,13 @@ export async function run(options: RunOptions): Promise<void> {
 							continue;
 						}
 					}
+					let metadata = options.tasks[type].getMetadata(next_date);
 					let job = await options.jobs.createObject({
 						created_utc: Date.now(),
 						updated_utc: Date.now(),
 						type: type,
-						options: null,
-						description: null,
+						options: metadata.options ?? null,
+						description: metadata.description ?? null,
 						status: "ENQUEUED",
 						started_utc: null,
 						ended_utc: null
