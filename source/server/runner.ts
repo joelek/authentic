@@ -20,14 +20,14 @@ function oneSecondFromNow(): Date {
 	return date;
 };
 
-async function * getScheduledDates(getNextDate: DateProvider): AsyncGenerator<void> {
+async function * getScheduledDates(getNextDate: DateProvider): AsyncGenerator<Date> {
 	while (true) {
 		let next_date = getNextDate();
 		if (next_date == null) {
 			break;
 		}
 		await waitUntil(next_date.getTime());
-		yield;
+		yield next_date;
 	}
 };
 
@@ -62,7 +62,7 @@ export async function run(options: RunOptions): Promise<void> {
 			let last_job_id: string | null = null;
 			let scheduler = new Promise<void>(async (resolve, reject) => {
 				let getNextDate = options.tasks[type].getNextDate;
-				for await (let _ of getScheduledDates(getNextDate)) {
+				for await (let next_date of getScheduledDates(getNextDate)) {
 					if (last_job_id != null) {
 						let job = await options.jobs.lookupObject(last_job_id);
 						if (job.status === "ENQUEUED" || job.status === "RUNNING") {
@@ -86,7 +86,7 @@ export async function run(options: RunOptions): Promise<void> {
 		}
 		let poller = new Promise<void>(async (resolve, reject) => {
 			let getNextDate = oneSecondFromNow;
-			for await (let _ of getScheduledDates(getNextDate)) {
+			for await (let next_date of getScheduledDates(getNextDate)) {
 				let job = (await options.jobs.lookupObjects("status", "=", "ENQUEUED")).pop();
 				if (job == null) {
 					continue;
