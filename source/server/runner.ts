@@ -74,6 +74,7 @@ export async function run(options: RunOptions): Promise<void> {
 						updated_utc: Date.now(),
 						type: type,
 						options: null,
+						description: null,
 						status: "ENQUEUED",
 						started_utc: null,
 						ended_utc: null
