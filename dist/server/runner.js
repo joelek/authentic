@@ -26,7 +26,7 @@ async function* getScheduledDates(getNextDate) {
             break;
         }
         await waitUntil(next_date.getTime());
-        yield;
+        yield next_date;
     }
 }
 ;
@@ -51,18 +51,20 @@ async function run(options) {
             let last_job_id = null;
             let scheduler = new Promise(async (resolve, reject) => {
                 let getNextDate = options.tasks[type].getNextDate;
-                for await (let _ of getScheduledDates(getNextDate)) {
+                for await (let next_date of getScheduledDates(getNextDate)) {
                     if (last_job_id != null) {
                         let job = await options.jobs.lookupObject(last_job_id);
                         if (job.status === "ENQUEUED" || job.status === "RUNNING") {
                             continue;
                         }
                     }
+                    let metadata = options.tasks[type].getMetadata(next_date);
                     let job = await options.jobs.createObject({
                         created_utc: Date.now(),
                         updated_utc: Date.now(),
                         type: type,
-                        options: null,
+                        options: metadata.options ?? null,
+                        description: metadata.description ?? null,
                         status: "ENQUEUED",
                         started_utc: null,
                         ended_utc: null
@@ -75,7 +77,7 @@ async function run(options) {
         }
         let poller = new Promise(async (resolve, reject) => {
             let getNextDate = oneSecondFromNow;
-            for await (let _ of getScheduledDates(getNextDate)) {
+            for await (let next_date of getScheduledDates(getNextDate)) {
                 let job = (await options.jobs.lookupObjects("status", "=", "ENQUEUED")).pop();
                 if (job == null) {
                     continue;

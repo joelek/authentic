@@ -105,6 +105,10 @@ export type JobProperties = autoguard.guards.Object<{
         autoguard.guards.String,
         autoguard.guards.Null
     ]>;
+    "description": autoguard.guards.Union<[
+        autoguard.guards.String,
+        autoguard.guards.Null
+    ]>;
     "started_utc": autoguard.guards.Union<[
         autoguard.guards.Integer,
         autoguard.guards.Null
@@ -149,6 +153,7 @@ export declare namespace Autoguard {
             type: string;
             status: "ENQUEUED" | "RUNNING" | "SUCCESS" | "FAILURE" | "INVALID";
             options?: string | null | undefined;
+            description?: string | null | undefined;
             started_utc?: number | null | undefined;
             ended_utc?: number | null | undefined;
         }>;
