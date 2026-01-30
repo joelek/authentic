@@ -47,8 +47,12 @@ async function waitUntil(target_ms: number): Promise<void> {
 
 export type JobMetadata = Partial<Pick<stores.job.Job, "description" | "options">>;
 
+export type JobResult = {
+	delete?: boolean;
+};
+
 export type Task = {
-	run(job_id: string, options: string | null): Promise<void>;
+	run(job_id: string, options: string | null): Promise<JobResult>;
 	getNextDate(): Date | null;
 	getMetadata(next_date: Date): JobMetadata;
 };
@@ -115,13 +119,17 @@ export async function run(options: RunOptions): Promise<void> {
 						started_utc: Date.now()
 					});
 					try {
-						await options.tasks[job.type].run(job.job_id, job.options ?? null);
-						job = await options.jobs.updateObject({
-							...job,
-							status: "SUCCESS",
-							updated_utc: Date.now(),
-							ended_utc: Date.now()
-						});
+						let result = await options.tasks[job.type].run(job.job_id, job.options ?? null);
+						if (result.delete === true) {
+							await options.jobs.deleteObject(job.job_id);
+						} else {
+							job = await options.jobs.updateObject({
+								...job,
+								status: "SUCCESS",
+								updated_utc: Date.now(),
+								ended_utc: Date.now()
+							});
+						}
 					} catch (error) {
 						job = await options.jobs.updateObject({
 							...job,
