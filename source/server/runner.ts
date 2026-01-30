@@ -71,8 +71,8 @@ export async function run(options: RunOptions): Promise<void> {
 				let getNextDate = options.tasks[type].getNextDate;
 				for await (let next_date of getScheduledDates(getNextDate)) {
 					if (last_job_id != null) {
-						let job = await options.jobs.lookupObject(last_job_id);
-						if (job.status === "ENQUEUED" || job.status === "RUNNING") {
+						let job = await options.jobs.lookupObject(last_job_id).catch(() => null);
+						if (job?.status === "ENQUEUED" || job?.status === "RUNNING") {
 							continue;
 						}
 					}
