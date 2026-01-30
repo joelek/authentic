@@ -66,15 +66,16 @@ export async function run(options: RunOptions): Promise<void> {
 	if (libwt.isMainThread) {
 		let promises: Array<Promise<void>> = [];
 		for (let type in options.tasks) {
-			let last_job_id: string | null = null;
 			let scheduler = new Promise<void>(async (resolve, reject) => {
 				let getNextDate = options.tasks[type].getNextDate;
 				for await (let next_date of getScheduledDates(getNextDate)) {
-					if (last_job_id != null) {
-						let job = await options.jobs.lookupObject(last_job_id).catch(() => null);
-						if (job?.status === "ENQUEUED" || job?.status === "RUNNING") {
-							continue;
-						}
+					let enqueued_jobs = await options.jobs.lookupObjects("status", "=", "ENQUEUED");
+					if (enqueued_jobs.find((job) => job.type === type) != null) {
+						continue;
+					}
+					let running_jobs = await options.jobs.lookupObjects("status", "=", "RUNNING");
+					if (running_jobs.find((job) => job.type === type) != null) {
+						continue;
 					}
 					let metadata = options.tasks[type].getMetadata(next_date);
 					let job = await options.jobs.createObject({
@@ -87,7 +88,6 @@ export async function run(options: RunOptions): Promise<void> {
 						started_utc: null,
 						ended_utc: null
 					});
-					last_job_id = job.job_id;
 				}
 				resolve();
 			});
