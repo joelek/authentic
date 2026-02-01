@@ -4,6 +4,7 @@ exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectIndex 
 const autoguard = require("@joelek/autoguard");
 const shared_1 = require("../../shared");
 const utils = require("../utils");
+const prequel_1 = require("../prequel");
 class ExpectedObjectError extends Error {
     key;
     value;
@@ -168,7 +169,7 @@ class ObjectIndex {
                 return this.collectObjects(0, group_index);
             }
         }
-        if (operator === "=") {
+        if (operator === "==") {
             if (collator_result === "ONE_COMES_FIRST") {
                 return [];
             }
@@ -177,6 +178,26 @@ class ObjectIndex {
             }
             if (collator_result === "TWO_COMES_FIRST") {
                 return [];
+            }
+        }
+        if (operator === "!=") {
+            if (collator_result === "ONE_COMES_FIRST") {
+                return [
+                    ...this.collectObjects(0, group_index + 1),
+                    ...this.collectObjects(group_index + 1, this.groups.length)
+                ];
+            }
+            if (collator_result === "IDENTICAL") {
+                return [
+                    ...this.collectObjects(0, group_index),
+                    ...this.collectObjects(group_index + 1, this.groups.length)
+                ];
+            }
+            if (collator_result === "TWO_COMES_FIRST") {
+                return [
+                    ...this.collectObjects(0, group_index),
+                    ...this.collectObjects(group_index, this.groups.length)
+                ];
             }
         }
         if (operator === ">") {
@@ -267,6 +288,118 @@ class VolatileObjectStore {
         }
         return index;
     }
+    matchesWhere(object, where) {
+        if (prequel_1.WhereString.is(where)) {
+            let one = object[where.key];
+            let two = where.operand;
+            let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one, two);
+            if (where.operator === "<") {
+                return collator_result === "ONE_COMES_FIRST";
+            }
+            else if (where.operator === "<=") {
+                return collator_result === "ONE_COMES_FIRST" || collator_result === "IDENTICAL";
+            }
+            else if (where.operator === "==") {
+                return collator_result === "IDENTICAL";
+            }
+            else if (where.operator === "!=") {
+                return collator_result === "ONE_COMES_FIRST" || collator_result === "TWO_COMES_FIRST";
+            }
+            else if (where.operator === ">") {
+                return collator_result === "TWO_COMES_FIRST";
+            }
+            else if (where.operator === ">=") {
+                return collator_result === "TWO_COMES_FIRST" || collator_result === "IDENTICAL";
+            }
+            else if (where.operator === "^=") {
+                return one != null && two != null && one.startsWith(two);
+            }
+            else if (where.operator === "*=") {
+                return one != null && two != null && one.includes(two);
+            }
+            else if (where.operator === "$=") {
+                return one != null && two != null && one.endsWith(two);
+            }
+            else {
+                let dummy = where.operator;
+            }
+        }
+        else if (prequel_1.WhereInteger.is(where)) {
+            let one = object[where.key];
+            let two = where.operand;
+            let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one, two);
+            if (where.operator === "<") {
+                return collator_result === "ONE_COMES_FIRST";
+            }
+            else if (where.operator === "<=") {
+                return collator_result === "ONE_COMES_FIRST" || collator_result === "IDENTICAL";
+            }
+            else if (where.operator === "==") {
+                return collator_result === "IDENTICAL";
+            }
+            else if (where.operator === "!=") {
+                return collator_result === "ONE_COMES_FIRST" || collator_result === "TWO_COMES_FIRST";
+            }
+            else if (where.operator === ">") {
+                return collator_result === "TWO_COMES_FIRST";
+            }
+            else if (where.operator === ">=") {
+                return collator_result === "TWO_COMES_FIRST" || collator_result === "IDENTICAL";
+            }
+            else {
+                let dummy = where.operator;
+            }
+        }
+        else if (prequel_1.WhereBoolean.is(where)) {
+            let one = object[where.key];
+            let two = where.operand;
+            let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one, two);
+            if (where.operator === "<") {
+                return collator_result === "ONE_COMES_FIRST";
+            }
+            else if (where.operator === "<=") {
+                return collator_result === "ONE_COMES_FIRST" || collator_result === "IDENTICAL";
+            }
+            else if (where.operator === "==") {
+                return collator_result === "IDENTICAL";
+            }
+            else if (where.operator === "!=") {
+                return collator_result === "ONE_COMES_FIRST" || collator_result === "TWO_COMES_FIRST";
+            }
+            else if (where.operator === ">") {
+                return collator_result === "TWO_COMES_FIRST";
+            }
+            else if (where.operator === ">=") {
+                return collator_result === "TWO_COMES_FIRST" || collator_result === "IDENTICAL";
+            }
+            else {
+                let dummy = where.operator;
+            }
+        }
+        else if (prequel_1.WhereAll.is(where)) {
+            for (let subwhere of where.all) {
+                if (!this.matchesWhere(object, subwhere)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if (prequel_1.WhereAny.is(where)) {
+            for (let subwhere of where.any) {
+                if (this.matchesWhere(object, subwhere)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if (prequel_1.WhereNot.is(where)) {
+            return !this.matchesWhere(object, where.not);
+        }
+        else {
+            let dummy = where;
+        }
+        throw new Error(`Expected code to be unreachable!`);
+    }
     constructor(id, unique_keys, guard) {
         this.id = id;
         this.unique_keys = [...unique_keys];
@@ -283,7 +416,13 @@ class VolatileObjectStore {
         for (let unique_key of this.unique_keys) {
             let value = object[unique_key];
             if (value != null) {
-                let objects = await this.lookupObjects(unique_key, "=", value);
+                let objects = await this.lookupObjects({
+                    where: {
+                        key: unique_key,
+                        operator: "==",
+                        operand: value
+                    }
+                });
                 if (objects.length !== 0) {
                     throw new ExpectedUniquePropertyError(unique_key, value);
                 }
@@ -300,9 +439,36 @@ class VolatileObjectStore {
         }
         return this.cloneObject(object);
     }
-    async lookupObjects(key, operator, value) {
-        let index = this.getIndex(key);
-        let objects = index.lookup(operator, value);
+    async lookupObjects(options) {
+        options = options ?? {};
+        let objects = Array.from(this.objects.values());
+        if (options.where != null) {
+            let where = options.where;
+            objects = objects.filter((object) => {
+                return this.matchesWhere(object, where);
+            });
+        }
+        if (options.order != null) {
+            let order = options.order;
+            objects = objects.sort((one, two) => {
+                for (let key of order.keys) {
+                    let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one[key], two[key]);
+                    if (collator_result === "ONE_COMES_FIRST") {
+                        return order.sort === "ASC" ? -1 : 1;
+                    }
+                    if (collator_result === "TWO_COMES_FIRST") {
+                        return order.sort === "ASC" ? 1 : -1;
+                    }
+                }
+                return 0;
+            });
+        }
+        if (options.offset != null) {
+            objects = objects.slice(options.offset);
+        }
+        if (options.length != null) {
+            objects = objects.slice(0, options.length);
+        }
         return objects.map((object) => this.cloneObject(object));
     }
     async updateObject(object) {
@@ -315,7 +481,13 @@ class VolatileObjectStore {
         for (let unique_key of this.unique_keys) {
             let value = object[unique_key];
             if (value != null) {
-                let objects = await this.lookupObjects(unique_key, "=", value);
+                let objects = await this.lookupObjects({
+                    where: {
+                        key: unique_key,
+                        operator: "==",
+                        operand: value
+                    }
+                });
                 if (objects.length !== 0 && objects[0][this.id] !== id) {
                     throw new ExpectedUniquePropertyError(unique_key, value);
                 }
@@ -366,6 +538,234 @@ class DatabaseObjectStore {
             return identifier;
         }
     }
+    serializeWhere(where) {
+        if (prequel_1.WhereString.is(where)) {
+            if (where.operator === "<") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} < ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "<=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} <= ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "==") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "!=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === ">") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} > ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === ">=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} >= ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "^=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+                    parameters: [
+                        where.operand == null ? null : `${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
+                    ]
+                };
+            }
+            else if (where.operator === "*=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+                    parameters: [
+                        where.operand == null ? null : `%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
+                    ]
+                };
+            }
+            else if (where.operator === "$=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+                    parameters: [
+                        where.operand == null ? null : `%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}`
+                    ]
+                };
+            }
+            else {
+                let dummy = where.operator;
+            }
+        }
+        else if (prequel_1.WhereInteger.is(where)) {
+            if (where.operator === "<") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} < ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "<=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} <= ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "==") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "!=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === ">") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} > ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === ">=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} >= ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else {
+                let dummy = where.operator;
+            }
+        }
+        else if (prequel_1.WhereBoolean.is(where)) {
+            if (where.operator === "<") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} < ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "<=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} <= ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "==") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === "!=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === ">") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} > ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else if (where.operator === ">=") {
+                return {
+                    sql: `${this.escapeIdentifier(where.key)} >= ?`,
+                    parameters: [
+                        where.operand
+                    ]
+                };
+            }
+            else {
+                let dummy = where.operator;
+            }
+        }
+        else if (prequel_1.WhereAll.is(where)) {
+            let results = where.all.map(this.serializeWhere);
+            return {
+                sql: results.map((result) => `(${result.sql})`).join(" AND ") || "TRUE",
+                parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [])
+            };
+        }
+        else if (prequel_1.WhereAny.is(where)) {
+            let results = where.any.map(this.serializeWhere);
+            return {
+                sql: results.map((result) => `(${result.sql})`).join(" OR ") || "TRUE",
+                parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [])
+            };
+        }
+        else if (prequel_1.WhereNot.is(where)) {
+            let result = this.serializeWhere(where.not);
+            return {
+                sql: `NOT (${result.sql})`,
+                parameters: result.parameters
+            };
+        }
+        else {
+            let dummy = where;
+        }
+        throw new Error(`Expected code to be unreachable!`);
+    }
+    serializeOrder(order) {
+        return {
+            sql: order.keys.map((key) => `${this.escapeIdentifier(String(key))} ${order.sort}`).map((line, index, lines) => index < lines.length - 1 ? `${line},` : line),
+            parameters: []
+        };
+    }
+    serializeLength(length) {
+        return {
+            sql: length == null ? [] : [`LIMIT ${length}`],
+            parameters: []
+        };
+    }
+    serializeOffset(offset) {
+        return {
+            sql: offset == null ? [] : [`OFFSET ${offset}`],
+            parameters: []
+        };
+    }
     constructor(detail, table, id, guard, options) {
         this.detail = detail;
         this.table = table;
@@ -412,17 +812,28 @@ class DatabaseObjectStore {
         }
         return this.guard.as(objects[0]);
     }
-    async lookupObjects(key, operator, value) {
+    async lookupObjects(options) {
         let connection = await this.detail.getConnection();
+        let where = this.serializeWhere((options?.where ?? { and: [] }));
+        let order = this.serializeOrder((options?.order ?? { keys: [this.id], sort: "ASC" }));
+        let length = this.serializeLength(options?.length);
+        let offset = this.serializeOffset(options?.offset);
         let objects = await connection.query(`
 			SELECT
 				*
 			FROM
 				${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier(String(key))} ${operator} ?
-		`, [
-            value
+				${where.sql}
+			ORDER BY
+				${order.sql.join("\n				")}
+		`
+            + length.sql.join("\n			")
+            + offset.sql.join("\n			"), [
+            ...where.parameters,
+            ...order.parameters,
+            ...length.parameters,
+            ...offset.parameters
         ]);
         return autoguard.guards.Array.of(this.guard).as(objects);
     }

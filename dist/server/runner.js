@@ -51,12 +51,44 @@ async function run(options) {
             let scheduler = new Promise(async (resolve, reject) => {
                 let getNextDate = options.tasks[type].getNextDate;
                 for await (let next_date of getScheduledDates(getNextDate)) {
-                    let enqueued_jobs = await options.jobs.lookupObjects("status", "=", "ENQUEUED");
-                    if (enqueued_jobs.find((job) => job.type === type) != null) {
+                    let enqueued_jobs = await options.jobs.lookupObjects({
+                        where: {
+                            all: [
+                                {
+                                    key: "status",
+                                    operator: "==",
+                                    operand: "ENQUEUED"
+                                },
+                                {
+                                    key: "type",
+                                    operator: "==",
+                                    operand: type
+                                }
+                            ]
+                        },
+                        length: 1
+                    });
+                    if (enqueued_jobs.length > 0) {
                         continue;
                     }
-                    let running_jobs = await options.jobs.lookupObjects("status", "=", "RUNNING");
-                    if (running_jobs.find((job) => job.type === type) != null) {
+                    let running_jobs = await options.jobs.lookupObjects({
+                        where: {
+                            all: [
+                                {
+                                    key: "status",
+                                    operator: "==",
+                                    operand: "RUNNING"
+                                },
+                                {
+                                    key: "type",
+                                    operator: "==",
+                                    operand: type
+                                }
+                            ]
+                        },
+                        length: 1
+                    });
+                    if (running_jobs.length > 0) {
                         continue;
                     }
                     let metadata = options.tasks[type].getMetadata(next_date);
@@ -78,7 +110,19 @@ async function run(options) {
         let poller = new Promise(async (resolve, reject) => {
             let getNextDate = oneSecondFromNow;
             for await (let next_date of getScheduledDates(getNextDate)) {
-                let job = (await options.jobs.lookupObjects("status", "=", "ENQUEUED")).pop();
+                let jobs = await options.jobs.lookupObjects({
+                    where: {
+                        key: "status",
+                        operator: "==",
+                        operand: "ENQUEUED"
+                    },
+                    order: {
+                        keys: ["created_utc"],
+                        sort: "ASC"
+                    },
+                    length: 1
+                });
+                let job = jobs.pop();
                 if (job == null) {
                     continue;
                 }

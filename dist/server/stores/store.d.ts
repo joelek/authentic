@@ -1,4 +1,5 @@
 import * as autoguard from "@joelek/autoguard";
+import { BooleanOperator, IntegerOperator, Operator, Order, StringOperator, Where } from "../prequel";
 export declare class ExpectedObjectError extends Error {
     readonly key: ObjectKey;
     readonly value: ObjectValue;
@@ -33,7 +34,6 @@ export type ObjectGroup<A extends ObjectProperties<A>, B extends string, C exten
     value: A[C];
     objects: Array<Object<A, B>>;
 };
-export type Operator = ">" | ">=" | "=" | "<" | "<=";
 export declare class ObjectIndex<A extends ObjectProperties<A>, B extends string, C extends keyof A> {
     protected groups: Array<ObjectGroup<A, B, C>>;
     protected id: B;
@@ -46,10 +46,41 @@ export declare class ObjectIndex<A extends ObjectProperties<A>, B extends string
     lookup(operator: Operator, value: Object<A, B>[C]): Array<Object<A, B>>;
     remove(object: Object<A, B>): void;
 }
+export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
+    [C in keyof Object<A, B>]: Object<A, B>[C] extends string | null | undefined ? {
+        key: C;
+        operator: StringOperator;
+        operand: Object<A, B>[C];
+    } : Object<A, B>[C] extends number | null | undefined ? {
+        key: C;
+        operator: IntegerOperator;
+        operand: Object<A, B>[C];
+    } : Object<A, B>[C] extends boolean | null | undefined ? {
+        key: C;
+        operator: BooleanOperator;
+        operand: Object<A, B>[C];
+    } : never;
+}[keyof Object<A, B>] | {
+    all: LookupWhere<A, B>[];
+} | {
+    any: LookupWhere<A, B>[];
+} | {
+    not: LookupWhere<A, B>;
+};
+export type LookupOrder<A extends ObjectProperties<A>, B extends string> = {
+    keys: (keyof Object<A, B>)[];
+    sort: "ASC" | "DESC";
+};
+export type LookupOptions<A extends ObjectProperties<A>, B extends string> = {
+    where?: LookupWhere<A, B>;
+    order?: LookupOrder<A, B>;
+    offset?: number;
+    length?: number;
+};
 export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
     createObject(properties: A): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
-    lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Array<Object<A, B>>>;
+    lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;
     deleteObject(id: string): Promise<Object<A, B>>;
 }
@@ -65,10 +96,11 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
     protected cloneObject(object: Object<A, B>): Object<A, B>;
     protected createId(): string;
     protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, B, C>;
+    protected matchesWhere(object: Object<A, B>, where: Where): boolean;
     constructor(id: B, unique_keys: [...C], guard: autoguard.serialization.MessageGuardBase<Object<A, B>>);
     createObject(properties: A): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
-    lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Array<Object<A, B>>>;
+    lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;
     deleteObject(id: string): Promise<Object<A, B>>;
 }
@@ -90,10 +122,26 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
     protected use_ansi_quotes: boolean;
     protected createId(): Promise<string>;
     protected escapeIdentifier(identifier: string): string;
+    protected serializeWhere(where: Where): {
+        sql: string;
+        parameters: Array<ObjectValue>;
+    };
+    protected serializeOrder(order: Order): {
+        sql: Array<string>;
+        parameters: Array<ObjectValue>;
+    };
+    protected serializeLength(length: number | undefined): {
+        sql: Array<string>;
+        parameters: Array<ObjectValue>;
+    };
+    protected serializeOffset(offset: number | undefined): {
+        sql: Array<string>;
+        parameters: Array<ObjectValue>;
+    };
     constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>, options?: DatabaseObjectStoreOptions);
     createObject(properties: A): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
-    lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Object<A, B>[]>;
+    lookupObjects(options?: LookupOptions<A, B>): Promise<Object<A, B>[]>;
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;
     deleteObject(id: string): Promise<Object<A, B>>;
 }
