@@ -234,7 +234,13 @@ export class Server {
 		session.expires_utc = this.getExpiresInDays(this.authenticated_session_validity_days);
 		await this.sessions.updateObject(session);
 		let user = await this.users.lookupObject(session.authenticated_user_id);
-		let user_roles = await this.user_roles.lookupObjects("user_id", "=", session.authenticated_user_id);
+		let user_roles = await this.user_roles.lookupObjects({
+			where: {
+				key: "user_id",
+				operator: "==",
+				operand: session.authenticated_user_id
+			}
+		});
 		let roles = await Promise.all(user_roles.map((user_role) => this.roles.lookupObject(user_role.role_id)));
 		return {
 			user_id: user.user_id,
@@ -356,7 +362,13 @@ export class Server {
 	}
 
 	protected async getOrigin(address: string): Promise<Origin> {
-		let origins = await this.origins.lookupObjects("address", "=", address);
+		let origins = await this.origins.lookupObjects({
+			where: {
+				key: "address",
+				operator: "==",
+				operand: address
+			}
+		});
 		if (origins.length > 0) {
 			let origin = origins.pop();
 			if (origin == null) {
@@ -438,7 +450,13 @@ export class Server {
 					wait_until_utc: this.getExpiresInMilliseconds(250)
 				};
 			} else {
-				let users = await this.users.lookupObjects("username", "=", session.username);
+				let users = await this.users.lookupObjects({
+					where: {
+						key: "username",
+						operator: "==",
+						operand: session.username
+					}
+				});
 				if (users.length > 0) {
 					let username_attempts = (session.username_attempts ?? 0) + 1;
 					return {
@@ -461,7 +479,13 @@ export class Server {
 				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
-		let users = await this.users.lookupObjects("email", "=", session.email);
+		let users = await this.users.lookupObjects({
+			where: {
+				key: "email",
+				operator: "==",
+				operand: session.email
+			}
+		});
 		if (users.length > 0) {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
@@ -528,7 +552,13 @@ export class Server {
 		let language = this.getUserLanguage(request);
 		if (this.require_username) {
 			if (session.username != null) {
-				let users = await this.users.lookupObjects("username", "=", session.username);
+				let users = await this.users.lookupObjects({
+					where: {
+						key: "username",
+						operator: "==",
+						operand: session.username
+					}
+				});
 				if (users.length === 0) {
 					let username_attempts = (session.username_attempts ?? 0) + 1;
 					return {
@@ -551,7 +581,13 @@ export class Server {
 				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
-		let users = await this.users.lookupObjects("email", "=", session.email);
+		let users = await this.users.lookupObjects({
+			where: {
+				key: "email",
+				operator: "==",
+				operand: session.email
+			}
+		});
 		if (users.length === 0) {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
@@ -617,7 +653,13 @@ export class Server {
 	protected async getNextRecoverSession(session: Session, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session> {
 		let language = this.getUserLanguage(request);
 		if (session.username != null) {
-			let users = await this.users.lookupObjects("username", "=", session.username);
+			let users = await this.users.lookupObjects({
+				where: {
+					key: "username",
+					operator: "==",
+					operand: session.username
+				}
+			});
 			if (users.length === 0) {
 				let username_attempts = (session.username_attempts ?? 0) + 1;
 				return {
@@ -639,7 +681,13 @@ export class Server {
 				wait_until_utc: this.getExpiresInMilliseconds(250)
 			};
 		}
-		let users = await this.users.lookupObjects("email", "=", session.email);
+		let users = await this.users.lookupObjects({
+			where: {
+				key: "email",
+				operator: "==",
+				operand: session.email
+			}
+		});
 		if (users.length === 0) {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
@@ -1053,11 +1101,23 @@ export class Server {
 		this.waiting_for_recover_code_email_template = options?.waiting_for_recover_code_email_template ?? WAITING_FOR_RECOVER_CODE_EMAIL_TEMPLATE;
 		setInterval(async () => {
 			let now = Date.now();
-			let sessions = await this.sessions.lookupObjects("expires_utc", "<=", now);
+			let sessions = await this.sessions.lookupObjects({
+				where: {
+					key: "expires_utc",
+					operator: "<=",
+					operand: now
+				}
+			});
 			for (let session of sessions) {
 				await this.sessions.deleteObject(session.session_id).catch(() => undefined);
 			}
-			let origins = await this.origins.lookupObjects("expires_utc", "<=", now);
+			let origins = await this.origins.lookupObjects({
+				where: {
+					key: "expires_utc",
+					operator: "<=",
+					operand: now
+				}
+			});
 			for (let origin of origins) {
 				await this.origins.deleteObject(origin.origin_id).catch(() => undefined);
 			}

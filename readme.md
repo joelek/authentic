@@ -106,7 +106,7 @@ Authentic is a flow-based authentication system which makes it extremely flexibl
 
 Authentic stores objects (users, roles, user_roles, sessions and origins) using volatile storage by default. This is great when integrating an application with the system but limits the application as all objects will be discarded once the server is restarted.
 
-Non-volatile object storage is expected to eventually be configured when creating the `Server` instance.
+The volatile object storage implementation is not guaranteed to perform well for all types of queries or for large object collections. Non-volatile object storage is expected to eventually be configured when creating the `Server` instance.
 
 ```ts
 const DETAIL = {

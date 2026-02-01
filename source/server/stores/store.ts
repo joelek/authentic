@@ -1,6 +1,7 @@
 import * as autoguard from "@joelek/autoguard";
 import { ExpectedUnreachableCodeError } from "../../shared";
 import * as utils from "../utils";
+import { BooleanOperator, IntegerOperator, Operator, Order, StringOperator, Where, WhereAll, WhereAny, WhereBoolean, WhereInteger, WhereNot, WhereString } from "../prequel";
 
 export class ExpectedObjectError extends Error {
 	readonly key: ObjectKey;
@@ -109,8 +110,6 @@ export type ObjectGroup<A extends ObjectProperties<A>, B extends string, C exten
 	objects: Array<Object<A, B>>;
 };
 
-export type Operator = ">" | ">=" | "=" | "<" | "<=";
-
 export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C extends keyof A> {
 	protected groups: Array<ObjectGroup<A, B, C>>;
 	protected id: B;
@@ -193,7 +192,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 				return this.collectObjects(0, group_index);
 			}
 		}
-		if (operator === "=") {
+		if (operator === "==") {
 			if (collator_result === "ONE_COMES_FIRST") {
 				return [];
 			}
@@ -202,6 +201,26 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 			}
 			if (collator_result === "TWO_COMES_FIRST") {
 				return [];
+			}
+		}
+		if (operator === "!=") {
+			if (collator_result === "ONE_COMES_FIRST") {
+				return [
+					...this.collectObjects(0, group_index + 1),
+					...this.collectObjects(group_index + 1, this.groups.length)
+				];
+			}
+			if (collator_result === "IDENTICAL") {
+				return [
+					...this.collectObjects(0, group_index),
+					...this.collectObjects(group_index + 1, this.groups.length)
+				];
+			}
+			if (collator_result === "TWO_COMES_FIRST") {
+				return [
+					...this.collectObjects(0, group_index),
+					...this.collectObjects(group_index, this.groups.length)
+				];
 			}
 		}
 		if (operator === ">") {
@@ -251,10 +270,48 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 	}
 };
 
+export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
+	[C in keyof Object<A, B>]:
+		Object<A, B>[C] extends string | null | undefined ? {
+			key: C;
+			operator: StringOperator;
+			operand: Object<A, B>[C];
+		} :
+		Object<A, B>[C] extends number | null | undefined ? {
+			key: C;
+			operator: IntegerOperator;
+			operand: Object<A, B>[C];
+		} :
+		Object<A, B>[C] extends boolean | null | undefined ? {
+			key: C;
+			operator: BooleanOperator;
+			operand: Object<A, B>[C];
+		} :
+		never;
+}[keyof Object<A, B>] | {
+	all: LookupWhere<A, B>[];
+} | {
+	any: LookupWhere<A, B>[];
+} | {
+	not: LookupWhere<A, B>;
+};
+
+export type LookupOrder<A extends ObjectProperties<A>, B extends string> = {
+	keys: (keyof Object<A, B>)[];
+	sort: "ASC" | "DESC"
+};
+
+export type LookupOptions<A extends ObjectProperties<A>, B extends string> = {
+	where?: LookupWhere<A, B>;
+	order?: LookupOrder<A, B>;
+	offset?: number;
+	length?: number;
+};
+
 export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
 	createObject(properties: A): Promise<Object<A, B>>;
 	lookupObject(id: string): Promise<Object<A, B>>;
-	lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Array<Object<A, B>>>;
+	lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
 	updateObject(object: Object<A, B>): Promise<Object<A, B>>;
 	deleteObject(id: string): Promise<Object<A, B>>;
 };
@@ -306,6 +363,92 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		return index;
 	}
 
+	protected matchesWhere(object: Object<A, B>, where: Where): boolean {
+		if (WhereString.is(where)) {
+			let one = object[where.key as keyof Object<A, B>];
+			let two = where.operand;
+			let collator_result = OBJECT_VALUE_COLLATOR(one, two);
+			if (where.operator === "<") {
+				return collator_result === "ONE_COMES_FIRST";
+			} else if (where.operator === "<=") {
+				return collator_result === "ONE_COMES_FIRST" || collator_result === "IDENTICAL";
+			} else if (where.operator === "==") {
+				return collator_result === "IDENTICAL";
+			} else if (where.operator === "!=") {
+				return collator_result === "ONE_COMES_FIRST" || collator_result === "TWO_COMES_FIRST";
+			} else if (where.operator === ">") {
+				return collator_result === "TWO_COMES_FIRST";
+			} else if (where.operator === ">=") {
+				return collator_result === "TWO_COMES_FIRST" || collator_result === "IDENTICAL";
+			} else if (where.operator === "^=") {
+				return one != null && two != null && one.startsWith(two);
+			} else if (where.operator === "*=") {
+				return one != null && two != null && one.includes(two);
+			} else if (where.operator === "$=") {
+				return one != null && two != null && one.endsWith(two);
+			} else {
+				let dummy: never = where.operator;
+			}
+		} else if (WhereInteger.is(where)) {
+			let one = object[where.key as keyof Object<A, B>];
+			let two = where.operand;
+			let collator_result = OBJECT_VALUE_COLLATOR(one, two);
+			if (where.operator === "<") {
+				return collator_result === "ONE_COMES_FIRST";
+			} else if (where.operator === "<=") {
+				return collator_result === "ONE_COMES_FIRST" || collator_result === "IDENTICAL";
+			} else if (where.operator === "==") {
+				return collator_result === "IDENTICAL";
+			} else if (where.operator === "!=") {
+				return collator_result === "ONE_COMES_FIRST" || collator_result === "TWO_COMES_FIRST";
+			} else if (where.operator === ">") {
+				return collator_result === "TWO_COMES_FIRST";
+			} else if (where.operator === ">=") {
+				return collator_result === "TWO_COMES_FIRST" || collator_result === "IDENTICAL";
+			} else {
+				let dummy: never = where.operator;
+			}
+		} else if (WhereBoolean.is(where)) {
+			let one = object[where.key as keyof Object<A, B>];
+			let two = where.operand;
+			let collator_result = OBJECT_VALUE_COLLATOR(one, two);
+			if (where.operator === "<") {
+				return collator_result === "ONE_COMES_FIRST";
+			} else if (where.operator === "<=") {
+				return collator_result === "ONE_COMES_FIRST" || collator_result === "IDENTICAL";
+			} else if (where.operator === "==") {
+				return collator_result === "IDENTICAL";
+			} else if (where.operator === "!=") {
+				return collator_result === "ONE_COMES_FIRST" || collator_result === "TWO_COMES_FIRST";
+			} else if (where.operator === ">") {
+				return collator_result === "TWO_COMES_FIRST";
+			} else if (where.operator === ">=") {
+				return collator_result === "TWO_COMES_FIRST" || collator_result === "IDENTICAL";
+			} else {
+				let dummy: never = where.operator;
+			}
+		} else if (WhereAll.is(where)) {
+			for (let subwhere of where.all) {
+				if (!this.matchesWhere(object, subwhere)) {
+					return false;
+				}
+			}
+			return true;
+		} else if (WhereAny.is(where)) {
+			for (let subwhere of where.any) {
+				if (this.matchesWhere(object, subwhere)) {
+					return true;
+				}
+			}
+			return false;
+		} else if (WhereNot.is(where)) {
+			return !this.matchesWhere(object, where.not);
+		} else {
+			let dummy: never = where;
+		}
+		throw new Error(`Expected code to be unreachable!`);
+	}
+
 	constructor(id: B, unique_keys: [...C], guard: autoguard.serialization.MessageGuardBase<Object<A, B>>) {
 		this.id = id;
 		this.unique_keys = [ ...unique_keys ];
@@ -323,7 +466,13 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		for (let unique_key of this.unique_keys) {
 			let value = object[unique_key];
 			if (value != null) {
-				let objects = await this.lookupObjects(unique_key, "=", value);
+				let objects = await this.lookupObjects({
+					where: {
+						key: unique_key,
+						operator: "==",
+						operand: value
+					} as LookupWhere<A, B> | undefined
+				});
 				if (objects.length !== 0) {
 					throw new ExpectedUniquePropertyError(unique_key, value);
 				}
@@ -342,9 +491,36 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		return this.cloneObject(object);
 	}
 
-	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Array<Object<A, B>>> {
-		let index = this.getIndex(key);
-		let objects = index.lookup(operator, value);
+	async lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>> {
+		options = options ?? {};
+		let objects = Array.from(this.objects.values());
+		if (options.where != null) {
+			let where = options.where;
+			objects = objects.filter((object) => {
+				return this.matchesWhere(object, where as Where);
+			});
+		}
+		if (options.order != null) {
+			let order = options.order;
+			objects = objects.sort((one, two) => {
+				for (let key of order.keys) {
+					let collator_result = OBJECT_VALUE_COLLATOR(one[key], two[key]);
+					if (collator_result === "ONE_COMES_FIRST") {
+						return order.sort === "ASC" ? -1 : 1;
+					}
+					if (collator_result === "TWO_COMES_FIRST") {
+						return order.sort === "ASC" ? 1 : -1;
+					}
+				}
+				return 0;
+			});
+		}
+		if (options.offset != null) {
+			objects = objects.slice(options.offset);
+		}
+		if (options.length != null) {
+			objects = objects.slice(0, options.length);
+		}
 		return objects.map((object) => this.cloneObject(object));
 	}
 
@@ -358,7 +534,13 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		for (let unique_key of this.unique_keys) {
 			let value = object[unique_key];
 			if (value != null) {
-				let objects = await this.lookupObjects(unique_key, "=", value);
+				let objects = await this.lookupObjects({
+					where: {
+						key: unique_key,
+						operator: "==",
+						operand: value
+					} as LookupWhere<A, B> | undefined
+				});
 				if (objects.length !== 0 && objects[0][this.id] !== id) {
 					throw new ExpectedUniquePropertyError(unique_key, value);
 				}
@@ -424,6 +606,223 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		}
 	}
 
+	protected serializeWhere(where: Where): {
+		sql: string;
+		parameters: Array<ObjectValue>;
+	} {
+		if (WhereString.is(where)) {
+			if (where.operator === "<") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} < ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "<=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} <= ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "==") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "!=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === ">") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} > ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === ">=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} >= ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "^=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+					parameters: [
+						where.operand == null ? null : `${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
+					]
+				};
+			} else if (where.operator === "*=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+					parameters: [
+						where.operand == null ? null : `%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
+					]
+				};
+			} else if (where.operator === "$=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+					parameters: [
+						where.operand == null ? null : `%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}`
+					]
+				};
+			} else {
+				let dummy: never = where.operator;
+			}
+		} else if (WhereInteger.is(where)) {
+			if (where.operator === "<") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} < ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "<=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} <= ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "==") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "!=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === ">") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} > ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === ">=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} >= ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else {
+				let dummy: never = where.operator;
+			}
+		} else if (WhereBoolean.is(where)) {
+			if (where.operator === "<") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} < ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "<=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} <= ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "==") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === "!=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === ">") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} > ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else if (where.operator === ">=") {
+				return {
+					sql: `${this.escapeIdentifier(where.key)} >= ?`,
+					parameters: [
+						where.operand
+					]
+				};
+			} else {
+				let dummy: never = where.operator;
+			}
+		} else if (WhereAll.is(where)) {
+			let results = where.all.map(this.serializeWhere);
+			return {
+				sql: results.map((result) => `(${result.sql})`).join(" AND ") || "TRUE",
+				parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [] as Array<ObjectValue>)
+			};
+		} else if (WhereAny.is(where)) {
+			let results = where.any.map(this.serializeWhere);
+			return {
+				sql: results.map((result) => `(${result.sql})`).join(" OR ") || "TRUE",
+				parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [] as Array<ObjectValue>)
+			};
+		} else if (WhereNot.is(where)) {
+			let result = this.serializeWhere(where.not);
+			return {
+				sql: `NOT (${result.sql})`,
+				parameters: result.parameters
+			};
+		} else {
+			let dummy: never = where;
+		}
+		throw new Error(`Expected code to be unreachable!`);
+	}
+
+	protected serializeOrder(order: Order): {
+		sql: Array<string>;
+		parameters: Array<ObjectValue>;
+	} {
+		return {
+			sql: order.keys.map((key) => `${this.escapeIdentifier(String(key))} ${order.sort}`).map((line, index, lines) => index < lines.length - 1 ? `${line},` : line),
+			parameters: []
+		};
+	}
+
+	protected serializeLength(length: number | undefined): {
+		sql: Array<string>;
+		parameters: Array<ObjectValue>;
+	} {
+		return {
+			sql: length == null ? [] : [`LIMIT ${length}`],
+			parameters: []
+		};
+	}
+
+	protected serializeOffset(offset: number | undefined): {
+		sql: Array<string>;
+		parameters: Array<ObjectValue>;
+	} {
+		return {
+			sql: offset == null ? [] : [`OFFSET ${offset}`],
+			parameters: []
+		};
+	}
+
 	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>, options?: DatabaseObjectStoreOptions) {
 		this.detail = detail;
 		this.table = table;
@@ -473,17 +872,28 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		return this.guard.as(objects[0]);
 	}
 
-	async lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Object<A, B>[]> {
+	async lookupObjects(options?: LookupOptions<A, B>): Promise<Object<A, B>[]> {
 		let connection = await this.detail.getConnection();
+		let where = this.serializeWhere((options?.where ?? { and: [] }) as Where);
+		let order = this.serializeOrder((options?.order ?? { keys: [this.id], sort: "ASC" }) as Order);
+		let length = this.serializeLength(options?.length);
+		let offset = this.serializeOffset(options?.offset);
 		let objects = await connection.query<Array<Record<string, ObjectValue>>>(`
 			SELECT
 				*
 			FROM
 				${this.escapeIdentifier(this.table)}
 			WHERE
-				${this.escapeIdentifier(String(key))} ${operator} ?
-		`, [
-			value
+				${where.sql}
+			ORDER BY
+				${order.sql.join("\n				")}
+		`
+		+ length.sql.join("\n			")
+		+ offset.sql.join("\n			"), [
+			...where.parameters,
+			...order.parameters,
+			...length.parameters,
+			...offset.parameters
 		]);
 		return autoguard.guards.Array.of(this.guard).as(objects);
 	}
