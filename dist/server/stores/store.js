@@ -723,14 +723,14 @@ class DatabaseObjectStore {
             }
         }
         else if (prequel_1.WhereAll.is(where)) {
-            let results = where.all.map(this.serializeWhere);
+            let results = where.all.map((where) => this.serializeWhere(where));
             return {
                 sql: results.map((result) => `(${result.sql})`).join(" AND ") || "TRUE",
                 parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [])
             };
         }
         else if (prequel_1.WhereAny.is(where)) {
-            let results = where.any.map(this.serializeWhere);
+            let results = where.any.map((where) => this.serializeWhere(where));
             return {
                 sql: results.map((result) => `(${result.sql})`).join(" OR ") || "TRUE",
                 parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [])
