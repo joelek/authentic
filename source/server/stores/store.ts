@@ -770,13 +770,13 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 				let dummy: never = where.operator;
 			}
 		} else if (WhereAll.is(where)) {
-			let results = where.all.map(this.serializeWhere);
+			let results = where.all.map((where) => this.serializeWhere(where));
 			return {
 				sql: results.map((result) => `(${result.sql})`).join(" AND ") || "TRUE",
 				parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [] as Array<ObjectValue>)
 			};
 		} else if (WhereAny.is(where)) {
-			let results = where.any.map(this.serializeWhere);
+			let results = where.any.map((where) => this.serializeWhere(where));
 			return {
 				sql: results.map((result) => `(${result.sql})`).join(" OR ") || "TRUE",
 				parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [] as Array<ObjectValue>)
