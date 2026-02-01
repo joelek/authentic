@@ -316,10 +316,10 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 
 	async createObject(properties: A): Promise<Object<A, B>> {
 		let id = this.createId();
-		let object = {
+		let object = this.guard.as({
 			[this.id]: id,
 			...properties
-		} as Object<A, B>;
+		});
 		for (let unique_key of this.unique_keys) {
 			let value = object[unique_key];
 			if (value != null) {
@@ -349,6 +349,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 	}
 
 	async updateObject(object: Object<A, B>): Promise<Object<A, B>> {
+		object = this.guard.as(object);
 		let id = object[this.id];
 		let existing_object = this.objects.get(id);
 		if (existing_object == null) {
@@ -434,13 +435,15 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	async createObject(properties: A): Promise<Object<A, B>> {
 		let connection = await this.detail.getConnection();
 		let id = await this.createId();
+		let object = this.guard.as({
+			[this.id]: id,
+			...properties
+		});
 		let columns = [
-			this.id,
-			...Object.keys(properties)
+			...Object.keys(object)
 		];
 		let values = [
-			id,
-			...Object.values<ObjectValue>(properties)
+			...Object.values<ObjectValue>(object)
 		];
 		await connection.query(`
 			INSERT INTO ${this.escapeIdentifier(this.table)} (
@@ -486,6 +489,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	}
 
 	async updateObject(object: Object<A, B>): Promise<Object<A, B>> {
+		object = this.guard.as(object);
 		let connection = await this.detail.getConnection();
 		let id = object[this.id];
 		let existing_object = await this.lookupObject(id).catch(() => undefined);
