@@ -10,7 +10,7 @@ export interface JobStore extends  ObjectStore<JobProperties, "job_id"> {};
 
 export class VolatileJobStore extends  VolatileObjectStore<JobProperties, "job_id", typeof UNIQUE_JOB_PROPERTIES> {
 	constructor() {
-		super("job_id", UNIQUE_JOB_PROPERTIES);
+		super("job_id", UNIQUE_JOB_PROPERTIES, Job);
 	}
 };
 

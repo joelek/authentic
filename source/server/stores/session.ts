@@ -10,7 +10,7 @@ export interface SessionStore extends ObjectStore<SessionProperties, "session_id
 
 export class VolatileSessionStore extends VolatileObjectStore<SessionProperties, "session_id", typeof UNIQUE_SESSION_PROPERTIES> {
 	constructor() {
-		super("session_id", UNIQUE_SESSION_PROPERTIES);
+		super("session_id", UNIQUE_SESSION_PROPERTIES, Session);
 	}
 };
 

@@ -262,6 +262,7 @@ export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
 export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string, C extends Array<keyof A>> implements ObjectStore<A, B> {
 	protected id: B;
 	protected unique_keys: [...C];
+	protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
 	protected objects: Map<ObjectValue, Object<A, B>>;
 	protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
 
@@ -305,9 +306,10 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		return index;
 	}
 
-	constructor(id: B, unique_keys: [...C]) {
+	constructor(id: B, unique_keys: [...C], guard: autoguard.serialization.MessageGuardBase<Object<A, B>>) {
 		this.id = id;
 		this.unique_keys = [ ...unique_keys ];
+		this.guard = guard;
 		this.objects = new Map();
 		this.indices = new Map();
 	}

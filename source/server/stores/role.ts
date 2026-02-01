@@ -12,7 +12,7 @@ export interface RoleStore extends ObjectStore<RoleProperties, "role_id"> {};
 
 export class VolatileRoleStore extends VolatileObjectStore<RoleProperties, "role_id", typeof UNIQUE_ROLE_PROPERTIES> {
 	constructor() {
-		super("role_id", UNIQUE_ROLE_PROPERTIES);
+		super("role_id", UNIQUE_ROLE_PROPERTIES, Role);
 	}
 };
 
