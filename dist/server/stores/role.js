@@ -8,7 +8,7 @@ exports.UNIQUE_ROLE_PROPERTIES = ((...values) => values)("name");
 ;
 class VolatileRoleStore extends store_1.VolatileObjectStore {
     constructor() {
-        super("role_id", exports.UNIQUE_ROLE_PROPERTIES);
+        super("role_id", exports.UNIQUE_ROLE_PROPERTIES, exports.Role);
     }
 }
 exports.VolatileRoleStore = VolatileRoleStore;

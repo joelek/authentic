@@ -8,7 +8,7 @@ exports.UNIQUE_SESSION_PROPERTIES = ((...values) => values)();
 ;
 class VolatileSessionStore extends store_1.VolatileObjectStore {
     constructor() {
-        super("session_id", exports.UNIQUE_SESSION_PROPERTIES);
+        super("session_id", exports.UNIQUE_SESSION_PROPERTIES, exports.Session);
     }
 }
 exports.VolatileSessionStore = VolatileSessionStore;

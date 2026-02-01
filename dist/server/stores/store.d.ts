@@ -56,6 +56,7 @@ export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
 export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extends string, C extends Array<keyof A>> implements ObjectStore<A, B> {
     protected id: B;
     protected unique_keys: [...C];
+    protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
     protected objects: Map<ObjectValue, Object<A, B>>;
     protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
     protected insertIntoIndices(object: Object<A, B>): void;
@@ -64,7 +65,7 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
     protected cloneObject(object: Object<A, B>): Object<A, B>;
     protected createId(): string;
     protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, B, C>;
-    constructor(id: B, unique_keys: [...C]);
+    constructor(id: B, unique_keys: [...C], guard: autoguard.serialization.MessageGuardBase<Object<A, B>>);
     createObject(properties: A): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
     lookupObjects<C extends keyof A>(key: C, operator: Operator, value: Object<A, B>[C]): Promise<Array<Object<A, B>>>;

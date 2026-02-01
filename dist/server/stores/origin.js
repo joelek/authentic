@@ -8,7 +8,7 @@ exports.UNIQUE_ORIGIN_PROPERTIES = ((...values) => values)("address");
 ;
 class VolatileOriginStore extends store_1.VolatileObjectStore {
     constructor() {
-        super("origin_id", exports.UNIQUE_ORIGIN_PROPERTIES);
+        super("origin_id", exports.UNIQUE_ORIGIN_PROPERTIES, exports.Origin);
     }
 }
 exports.VolatileOriginStore = VolatileOriginStore;

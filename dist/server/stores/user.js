@@ -8,7 +8,7 @@ exports.UNIQUE_USER_PROPERTIES = ((...values) => values)("email", "username");
 ;
 class VolatileUserStore extends store_1.VolatileObjectStore {
     constructor() {
-        super("user_id", exports.UNIQUE_USER_PROPERTIES);
+        super("user_id", exports.UNIQUE_USER_PROPERTIES, exports.User);
     }
 }
 exports.VolatileUserStore = VolatileUserStore;

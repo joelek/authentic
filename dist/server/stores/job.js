@@ -8,7 +8,7 @@ exports.UNIQUE_JOB_PROPERTIES = ((...values) => values)();
 ;
 class VolatileJobStore extends store_1.VolatileObjectStore {
     constructor() {
-        super("job_id", exports.UNIQUE_JOB_PROPERTIES);
+        super("job_id", exports.UNIQUE_JOB_PROPERTIES, exports.Job);
     }
 }
 exports.VolatileJobStore = VolatileJobStore;
