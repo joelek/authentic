@@ -19,6 +19,12 @@ function oneSecondFromNow() {
     return date;
 }
 ;
+function oneMinuteFromNow() {
+    let date = new Date();
+    date.setUTCMinutes(date.getUTCMinutes() + 1);
+    return date;
+}
+;
 async function* getScheduledDates(getNextDate) {
     while (true) {
         let next_date = getNextDate();
@@ -100,7 +106,8 @@ async function run(options) {
                         description: metadata.description ?? null,
                         status: "ENQUEUED",
                         started_utc: null,
-                        ended_utc: null
+                        ended_utc: null,
+                        expires_utc: metadata.expires_utc ?? null,
                     });
                 }
                 resolve();
@@ -131,6 +138,32 @@ async function run(options) {
             resolve();
         });
         promises.push(poller);
+        let cleaner = new Promise(async (resolve, reject) => {
+            let getNextDate = oneMinuteFromNow;
+            for await (let next_date of getScheduledDates(getNextDate)) {
+                let jobs = await options.jobs.lookupObjects({
+                    where: {
+                        all: [
+                            {
+                                key: "status",
+                                operator: "!=",
+                                operand: "RUNNING"
+                            },
+                            {
+                                key: "expires_utc",
+                                operator: "<=",
+                                operand: Date.now()
+                            }
+                        ]
+                    }
+                });
+                for (let job of jobs) {
+                    await options.jobs.deleteObject(job.job_id).catch(() => undefined);
+                }
+            }
+            resolve();
+        });
+        promises.push(cleaner);
         await Promise.all(promises);
     }
     else {
@@ -146,18 +179,13 @@ async function run(options) {
                         started_utc: Date.now()
                     });
                     try {
-                        let result = await options.tasks[job.type].run(job.job_id, job.options ?? null);
-                        if (result.delete === true) {
-                            await options.jobs.deleteObject(job.job_id);
-                        }
-                        else {
-                            job = await options.jobs.updateObject({
-                                ...job,
-                                status: "SUCCESS",
-                                updated_utc: Date.now(),
-                                ended_utc: Date.now()
-                            });
-                        }
+                        await options.tasks[job.type].run(job.job_id, job.options ?? null);
+                        job = await options.jobs.updateObject({
+                            ...job,
+                            status: "SUCCESS",
+                            updated_utc: Date.now(),
+                            ended_utc: Date.now()
+                        });
                     }
                     catch (error) {
                         job = await options.jobs.updateObject({

@@ -117,6 +117,10 @@ export type JobProperties = autoguard.guards.Object<{
         autoguard.guards.Integer,
         autoguard.guards.Null
     ]>;
+    "expires_utc": autoguard.guards.Union<[
+        autoguard.guards.Integer,
+        autoguard.guards.Null
+    ]>;
 }>;
 export declare namespace Autoguard {
     const Guards: {
@@ -156,6 +160,7 @@ export declare namespace Autoguard {
             description?: string | null | undefined;
             started_utc?: number | null | undefined;
             ended_utc?: number | null | undefined;
+            expires_utc?: number | null | undefined;
         }>;
     };
     type Guards = {

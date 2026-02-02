@@ -59,7 +59,8 @@ exports.JobProperties = autoguard.guards.Object.of({
     "options": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
     "description": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
     "started_utc": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
-    "ended_utc": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null)
+    "ended_utc": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
+    "expires_utc": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null)
 });
 var Autoguard;
 (function (Autoguard) {

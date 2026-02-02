@@ -19,6 +19,7 @@ export declare const Job: autoguard.guards.IntersectionGuard<[{
     description?: string | null | undefined;
     started_utc?: number | null | undefined;
     ended_utc?: number | null | undefined;
+    expires_utc?: number | null | undefined;
 }]>;
 export declare class DatabaseJobStore extends DatabaseObjectStore<JobProperties, "job_id"> {
     constructor(detail: DatabaseObjectStoreDetail, table: string);
