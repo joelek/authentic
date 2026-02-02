@@ -778,7 +778,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		} else if (WhereAny.is(where)) {
 			let results = where.any.map((where) => this.serializeWhere(where));
 			return {
-				sql: results.map((result) => `(${result.sql})`).join(" OR ") || "TRUE",
+				sql: results.map((result) => `(${result.sql})`).join(" OR ") || "FALSE",
 				parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [] as Array<ObjectValue>)
 			};
 		} else if (WhereNot.is(where)) {
