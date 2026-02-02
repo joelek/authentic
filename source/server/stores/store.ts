@@ -493,28 +493,24 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 
 	async lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>> {
 		options = options ?? {};
+		let where = options.where ?? { all: [] };
+		let order = options.order ?? { keys: [this.id], sort: "ASC" };
 		let objects = Array.from(this.objects.values());
-		if (options.where != null) {
-			let where = options.where;
-			objects = objects.filter((object) => {
-				return this.matchesWhere(object, where as Where);
-			});
-		}
-		if (options.order != null) {
-			let order = options.order;
-			objects = objects.sort((one, two) => {
-				for (let key of order.keys) {
-					let collator_result = OBJECT_VALUE_COLLATOR(one[key], two[key]);
-					if (collator_result === "ONE_COMES_FIRST") {
-						return order.sort === "ASC" ? -1 : 1;
-					}
-					if (collator_result === "TWO_COMES_FIRST") {
-						return order.sort === "ASC" ? 1 : -1;
-					}
+		objects = objects.filter((object) => {
+			return this.matchesWhere(object, where as Where);
+		});
+		objects = objects.sort((one, two) => {
+			for (let key of order.keys) {
+				let collator_result = OBJECT_VALUE_COLLATOR(one[key], two[key]);
+				if (collator_result === "ONE_COMES_FIRST") {
+					return order.sort === "ASC" ? -1 : 1;
 				}
-				return 0;
-			});
-		}
+				if (collator_result === "TWO_COMES_FIRST") {
+					return order.sort === "ASC" ? 1 : -1;
+				}
+			}
+			return 0;
+		});
 		if (options.offset != null) {
 			objects = objects.slice(options.offset);
 		}
