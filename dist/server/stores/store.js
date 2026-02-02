@@ -441,28 +441,24 @@ class VolatileObjectStore {
     }
     async lookupObjects(options) {
         options = options ?? {};
+        let where = options.where ?? { all: [] };
+        let order = options.order ?? { keys: [this.id], sort: "ASC" };
         let objects = Array.from(this.objects.values());
-        if (options.where != null) {
-            let where = options.where;
-            objects = objects.filter((object) => {
-                return this.matchesWhere(object, where);
-            });
-        }
-        if (options.order != null) {
-            let order = options.order;
-            objects = objects.sort((one, two) => {
-                for (let key of order.keys) {
-                    let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one[key], two[key]);
-                    if (collator_result === "ONE_COMES_FIRST") {
-                        return order.sort === "ASC" ? -1 : 1;
-                    }
-                    if (collator_result === "TWO_COMES_FIRST") {
-                        return order.sort === "ASC" ? 1 : -1;
-                    }
+        objects = objects.filter((object) => {
+            return this.matchesWhere(object, where);
+        });
+        objects = objects.sort((one, two) => {
+            for (let key of order.keys) {
+                let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one[key], two[key]);
+                if (collator_result === "ONE_COMES_FIRST") {
+                    return order.sort === "ASC" ? -1 : 1;
                 }
-                return 0;
-            });
-        }
+                if (collator_result === "TWO_COMES_FIRST") {
+                    return order.sort === "ASC" ? 1 : -1;
+                }
+            }
+            return 0;
+        });
         if (options.offset != null) {
             objects = objects.slice(options.offset);
         }
@@ -732,7 +728,7 @@ class DatabaseObjectStore {
         else if (prequel_1.WhereAny.is(where)) {
             let results = where.any.map((where) => this.serializeWhere(where));
             return {
-                sql: results.map((result) => `(${result.sql})`).join(" OR ") || "TRUE",
+                sql: results.map((result) => `(${result.sql})`).join(" OR ") || "FALSE",
                 parameters: results.reduce((parameters, result) => [...parameters, ...result.parameters], [])
             };
         }
@@ -814,7 +810,7 @@ class DatabaseObjectStore {
     }
     async lookupObjects(options) {
         let connection = await this.detail.getConnection();
-        let where = this.serializeWhere((options?.where ?? { and: [] }));
+        let where = this.serializeWhere((options?.where ?? { all: [] }));
         let order = this.serializeOrder((options?.order ?? { keys: [this.id], sort: "ASC" }));
         let length = this.serializeLength(options?.length);
         let offset = this.serializeOffset(options?.offset);
