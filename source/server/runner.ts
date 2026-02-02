@@ -20,6 +20,12 @@ function oneSecondFromNow(): Date {
 	return date;
 };
 
+function oneMinuteFromNow(): Date {
+	let date = new Date();
+	date.setUTCMinutes(date.getUTCMinutes() + 1);
+	return date;
+};
+
 async function * getScheduledDates(getNextDate: DateProvider): AsyncGenerator<Date> {
 	while (true) {
 		let next_date = getNextDate();
@@ -45,7 +51,7 @@ async function waitUntil(target_ms: number): Promise<void> {
 	}
 };
 
-export type JobMetadata = Partial<Pick<stores.job.Job, "description" | "options">>;
+export type JobMetadata = Partial<Pick<stores.job.Job, "description" | "options" | "expires_utc">>;
 
 export type Task = {
 	run(job_id: string, options: string | null): Promise<void>;
@@ -114,7 +120,8 @@ export async function run(options: RunOptions): Promise<void> {
 						description: metadata.description ?? null,
 						status: "ENQUEUED",
 						started_utc: null,
-						ended_utc: null
+						ended_utc: null,
+						expires_utc: metadata.expires_utc ?? null,
 					});
 				}
 				resolve();
@@ -145,6 +152,32 @@ export async function run(options: RunOptions): Promise<void> {
 			resolve();
 		});
 		promises.push(poller);
+		let cleaner = new Promise<void>(async (resolve, reject) => {
+			let getNextDate = oneMinuteFromNow;
+			for await (let next_date of getScheduledDates(getNextDate)) {
+				let jobs = await options.jobs.lookupObjects({
+					where: {
+						all: [
+							{
+								key: "status",
+								operator: "!=",
+								operand: "RUNNING"
+							},
+							{
+								key: "expires_utc",
+								operator: "<=",
+								operand: Date.now()
+							}
+						]
+					}
+				});
+				for (let job of jobs) {
+					await options.jobs.deleteObject(job.job_id).catch(() => undefined);
+				}
+			}
+			resolve();
+		});
+		promises.push(cleaner);
 		await Promise.all(promises);
 	} else {
 		if (process.argv.length === 3) {

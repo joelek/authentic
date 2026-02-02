@@ -212,6 +212,10 @@ export const JobProperties: autoguard.serialization.MessageGuard<JobProperties> 
 	"ended_utc": autoguard.guards.Union.of(
 		autoguard.guards.Integer,
 		autoguard.guards.Null
+	),
+	"expires_utc": autoguard.guards.Union.of(
+		autoguard.guards.Integer,
+		autoguard.guards.Null
 	)
 });
 
@@ -234,6 +238,10 @@ export type JobProperties = autoguard.guards.Object<{
 		autoguard.guards.Null
 	]>,
 	"ended_utc": autoguard.guards.Union<[
+		autoguard.guards.Integer,
+		autoguard.guards.Null
+	]>,
+	"expires_utc": autoguard.guards.Union<[
 		autoguard.guards.Integer,
 		autoguard.guards.Null
 	]>
