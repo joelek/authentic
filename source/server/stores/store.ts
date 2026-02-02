@@ -870,7 +870,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 
 	async lookupObjects(options?: LookupOptions<A, B>): Promise<Object<A, B>[]> {
 		let connection = await this.detail.getConnection();
-		let where = this.serializeWhere((options?.where ?? { and: [] }) as Where);
+		let where = this.serializeWhere((options?.where ?? { all: [] }) as Where);
 		let order = this.serializeOrder((options?.order ?? { keys: [this.id], sort: "ASC" }) as Order);
 		let length = this.serializeLength(options?.length);
 		let offset = this.serializeOffset(options?.offset);
