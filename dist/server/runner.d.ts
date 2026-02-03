@@ -21,7 +21,10 @@ export declare class Runner {
     protected generateDates(date_provider: DateProvider): AsyncGenerator<Date>;
     protected generateScheduledJobs(scheduler: TaskScheduler): AsyncGenerator<ScheduledJob>;
     protected runJob(job: stores.job.Job): Promise<void>;
+    protected startBroker(): Promise<void>;
+    protected startWorker(): Promise<void>;
     constructor(options?: RunnerOptions);
     isMainThread(): boolean;
+    enqueue(type: string, metadata?: JobMetadata): Promise<string>;
     start(): Promise<void>;
 }
