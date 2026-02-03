@@ -34,7 +34,7 @@ document.head.appendChild(html.style({}, `
 		--authentic-secondary-button-fg-color: rgb(0, 0, 0);
 
 		--authentic-active-secondary-button-bg-color: rgb(255, 255, 255);
-		--authentic-active-secondary-button-border-color: transparent;
+		--authentic-active-secondary-button-border-color: rgb(223, 223, 223);
 		--authentic-active-secondary-button-fg-color: rgb(0, 0, 0);
 
 		--authentic-input-bg-color: rgb(255, 255, 255);
