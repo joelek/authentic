@@ -46,7 +46,7 @@ export type Task = {
 	scheduler?: TaskScheduler;
 };
 
-export type RunOptions = {
+export type RunnerOptions = {
 	tasks?: Record<string, Task>;
 	jobs?: stores.job.JobStore;
 };
@@ -88,7 +88,7 @@ export class Runner {
 		console.log(`Job with type ${job.type} and id ${job.job_id} completed.`);
 	}
 
-	constructor(options?: RunOptions) {
+	constructor(options?: RunnerOptions) {
 		this.tasks = options?.tasks ?? {};
 		this.jobs = options?.jobs ?? new VolatileJobStore();
 	}
