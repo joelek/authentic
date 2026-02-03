@@ -11,7 +11,7 @@ export type Task = {
     runner: TaskRunner;
     scheduler?: TaskScheduler;
 };
-export type RunOptions = {
+export type RunnerOptions = {
     tasks?: Record<string, Task>;
     jobs?: stores.job.JobStore;
 };
@@ -21,7 +21,7 @@ export declare class Runner {
     protected generateDates(date_provider: DateProvider): AsyncGenerator<Date>;
     protected generateScheduledJobs(scheduler: TaskScheduler): AsyncGenerator<ScheduledJob>;
     protected runJob(job: stores.job.Job): Promise<void>;
-    constructor(options?: RunOptions);
+    constructor(options?: RunnerOptions);
     isMainThread(): boolean;
     start(): Promise<void>;
 }
