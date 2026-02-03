@@ -25,14 +25,25 @@ function oneMinuteFromNow() {
     return date;
 }
 ;
-async function* getScheduledDates(getNextDate) {
+async function* generateDates(date_provider) {
     while (true) {
-        let next_date = getNextDate();
-        if (next_date == null) {
+        let date = date_provider();
+        if (date == null) {
             break;
         }
-        await waitUntil(next_date.getTime());
-        yield next_date;
+        await waitUntil(date.getTime());
+        yield date;
+    }
+}
+;
+async function* generateScheduledJobs(scheduler) {
+    while (true) {
+        let scheduled_job = scheduler();
+        if (scheduled_job == null) {
+            break;
+        }
+        await waitUntil(scheduled_job.date.getTime());
+        yield scheduled_job;
     }
 }
 ;
@@ -55,73 +66,92 @@ async function run(options) {
         let promises = [];
         for (let type in options.tasks) {
             let scheduler = new Promise(async (resolve, reject) => {
-                let getNextDate = options.tasks[type].getNextDate;
-                for await (let next_date of getScheduledDates(getNextDate)) {
-                    let enqueued_jobs = await options.jobs.lookupObjects({
-                        where: {
-                            all: [
-                                {
-                                    key: "status",
-                                    operator: "==",
-                                    operand: "ENQUEUED"
-                                },
-                                {
-                                    key: "type",
-                                    operator: "==",
-                                    operand: type
-                                }
-                            ]
-                        },
-                        length: 1
-                    });
-                    if (enqueued_jobs.length > 0) {
-                        continue;
+                let scheduler = options.tasks[type].scheduler;
+                if (scheduler != null) {
+                    for await (let scheduled_job of generateScheduledJobs(scheduler)) {
+                        let enqueued_jobs = await options.jobs.lookupObjects({
+                            where: {
+                                all: [
+                                    {
+                                        key: "status",
+                                        operator: "==",
+                                        operand: "ENQUEUED"
+                                    },
+                                    {
+                                        key: "type",
+                                        operator: "==",
+                                        operand: type
+                                    }
+                                ]
+                            },
+                            length: 1
+                        });
+                        if (enqueued_jobs.length > 0) {
+                            continue;
+                        }
+                        let running_jobs = await options.jobs.lookupObjects({
+                            where: {
+                                all: [
+                                    {
+                                        key: "status",
+                                        operator: "==",
+                                        operand: "RUNNING"
+                                    },
+                                    {
+                                        key: "type",
+                                        operator: "==",
+                                        operand: type
+                                    }
+                                ]
+                            },
+                            length: 1
+                        });
+                        if (running_jobs.length > 0) {
+                            continue;
+                        }
+                        let metadata = scheduled_job.metadata;
+                        let job = await options.jobs.createObject({
+                            created_utc: Date.now(),
+                            updated_utc: Date.now(),
+                            type: type,
+                            options: metadata?.options ?? null,
+                            description: metadata?.description ?? null,
+                            status: "ENQUEUED",
+                            started_utc: null,
+                            ended_utc: null,
+                            expires_utc: metadata?.expires_utc ?? null,
+                        });
                     }
-                    let running_jobs = await options.jobs.lookupObjects({
-                        where: {
-                            all: [
-                                {
-                                    key: "status",
-                                    operator: "==",
-                                    operand: "RUNNING"
-                                },
-                                {
-                                    key: "type",
-                                    operator: "==",
-                                    operand: type
-                                }
-                            ]
-                        },
-                        length: 1
-                    });
-                    if (running_jobs.length > 0) {
-                        continue;
-                    }
-                    let metadata = options.tasks[type].getMetadata(next_date);
-                    let job = await options.jobs.createObject({
-                        created_utc: Date.now(),
-                        updated_utc: Date.now(),
-                        type: type,
-                        options: metadata.options ?? null,
-                        description: metadata.description ?? null,
-                        status: "ENQUEUED",
-                        started_utc: null,
-                        ended_utc: null,
-                        expires_utc: metadata.expires_utc ?? null,
-                    });
                 }
                 resolve();
             });
             promises.push(scheduler);
         }
         let poller = new Promise(async (resolve, reject) => {
-            let getNextDate = oneSecondFromNow;
-            for await (let next_date of getScheduledDates(getNextDate)) {
+            for await (let date of generateDates(oneSecondFromNow)) {
                 let jobs = await options.jobs.lookupObjects({
                     where: {
-                        key: "status",
-                        operator: "==",
-                        operand: "ENQUEUED"
+                        all: [
+                            {
+                                key: "status",
+                                operator: "==",
+                                operand: "ENQUEUED"
+                            },
+                            {
+                                any: [
+                                    {
+                                        key: "expires_utc",
+                                        operator: "==",
+                                        operand: null
+                                    },
+                                    {
+                                        key: "expires_utc",
+                                        operator: ">",
+                                        operand: Date.now()
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     order: {
                         keys: ["created_utc"],
@@ -139,8 +169,7 @@ async function run(options) {
         });
         promises.push(poller);
         let cleaner = new Promise(async (resolve, reject) => {
-            let getNextDate = oneMinuteFromNow;
-            for await (let next_date of getScheduledDates(getNextDate)) {
+            for await (let date of generateDates(oneMinuteFromNow)) {
                 let jobs = await options.jobs.lookupObjects({
                     where: {
                         all: [
@@ -179,7 +208,7 @@ async function run(options) {
                         started_utc: Date.now()
                     });
                     try {
-                        await options.tasks[job.type].run(job.job_id, job.options ?? null);
+                        await options.tasks[job.type].runner(job.job_id, job.options ?? null);
                         job = await options.jobs.updateObject({
                             ...job,
                             status: "SUCCESS",
