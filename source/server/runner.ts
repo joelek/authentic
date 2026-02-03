@@ -12,7 +12,14 @@ async function runJob(job: stores.job.Job): Promise<void> {
 	console.log(`Job with id ${job.job_id} completed.`);
 };
 
-type DateProvider = () => Date | null;
+type DateProvider = () => Date | undefined;
+
+export type ScheduledJob = {
+	date: Date;
+	metadata?: JobMetadata;
+};
+
+export type TaskScheduler = () => ScheduledJob | undefined;
 
 function oneSecondFromNow(): Date {
 	let date = new Date();
@@ -26,14 +33,25 @@ function oneMinuteFromNow(): Date {
 	return date;
 };
 
-async function * getScheduledDates(getNextDate: DateProvider): AsyncGenerator<Date> {
+async function * generateDates(date_provider: DateProvider): AsyncGenerator<Date> {
 	while (true) {
-		let next_date = getNextDate();
-		if (next_date == null) {
+		let date = date_provider();
+		if (date == null) {
 			break;
 		}
-		await waitUntil(next_date.getTime());
-		yield next_date;
+		await waitUntil(date.getTime());
+		yield date;
+	}
+};
+
+async function * generateScheduledJobs(scheduler: TaskScheduler): AsyncGenerator<ScheduledJob> {
+	while (true) {
+		let scheduled_job = scheduler();
+		if (scheduled_job == null) {
+			break;
+		}
+		await waitUntil(scheduled_job.date.getTime());
+		yield scheduled_job;
 	}
 };
 
@@ -53,10 +71,11 @@ async function waitUntil(target_ms: number): Promise<void> {
 
 export type JobMetadata = Partial<Pick<stores.job.Job, "description" | "options" | "expires_utc">>;
 
+export type TaskRunner = (job_id: string, options: string | null) => Promise<void>;
+
 export type Task = {
-	run(job_id: string, options: string | null): Promise<void>;
-	getNextDate(): Date | null;
-	getMetadata(next_date: Date): JobMetadata;
+	runner: TaskRunner;
+	scheduler?: TaskScheduler;
 };
 
 export type RunOptions = {
@@ -69,68 +88,69 @@ export async function run(options: RunOptions): Promise<void> {
 		let promises: Array<Promise<void>> = [];
 		for (let type in options.tasks) {
 			let scheduler = new Promise<void>(async (resolve, reject) => {
-				let getNextDate = options.tasks[type].getNextDate;
-				for await (let next_date of getScheduledDates(getNextDate)) {
-					let enqueued_jobs = await options.jobs.lookupObjects({
-						where: {
-							all: [
-								{
-									key: "status",
-									operator: "==",
-									operand: "ENQUEUED"
-								},
-								{
-									key: "type",
-									operator: "==",
-									operand: type
-								}
-							]
-						},
-						length: 1
-					});
-					if (enqueued_jobs.length > 0) {
-						continue;
+				let scheduler = options.tasks[type].scheduler;
+				if (scheduler != null) {
+					for await (let scheduled_job of generateScheduledJobs(scheduler)) {
+						let enqueued_jobs = await options.jobs.lookupObjects({
+							where: {
+								all: [
+									{
+										key: "status",
+										operator: "==",
+										operand: "ENQUEUED"
+									},
+									{
+										key: "type",
+										operator: "==",
+										operand: type
+									}
+								]
+							},
+							length: 1
+						});
+						if (enqueued_jobs.length > 0) {
+							continue;
+						}
+						let running_jobs = await options.jobs.lookupObjects({
+							where: {
+								all: [
+									{
+										key: "status",
+										operator: "==",
+										operand: "RUNNING"
+									},
+									{
+										key: "type",
+										operator: "==",
+										operand: type
+									}
+								]
+							},
+							length: 1
+						});
+						if (running_jobs.length > 0) {
+							continue;
+						}
+						let metadata = scheduled_job.metadata;
+						let job = await options.jobs.createObject({
+							created_utc: Date.now(),
+							updated_utc: Date.now(),
+							type: type,
+							options: metadata?.options ?? null,
+							description: metadata?.description ?? null,
+							status: "ENQUEUED",
+							started_utc: null,
+							ended_utc: null,
+							expires_utc: metadata?.expires_utc ?? null,
+						});
 					}
-					let running_jobs = await options.jobs.lookupObjects({
-						where: {
-							all: [
-								{
-									key: "status",
-									operator: "==",
-									operand: "RUNNING"
-								},
-								{
-									key: "type",
-									operator: "==",
-									operand: type
-								}
-							]
-						},
-						length: 1
-					});
-					if (running_jobs.length > 0) {
-						continue;
-					}
-					let metadata = options.tasks[type].getMetadata(next_date);
-					let job = await options.jobs.createObject({
-						created_utc: Date.now(),
-						updated_utc: Date.now(),
-						type: type,
-						options: metadata.options ?? null,
-						description: metadata.description ?? null,
-						status: "ENQUEUED",
-						started_utc: null,
-						ended_utc: null,
-						expires_utc: metadata.expires_utc ?? null,
-					});
 				}
 				resolve();
 			});
 			promises.push(scheduler);
 		}
 		let poller = new Promise<void>(async (resolve, reject) => {
-			let getNextDate = oneSecondFromNow;
-			for await (let next_date of getScheduledDates(getNextDate)) {
+			for await (let date of generateDates(oneSecondFromNow)) {
 				let jobs = await options.jobs.lookupObjects({
 					where: {
 						all: [
@@ -171,8 +191,7 @@ export async function run(options: RunOptions): Promise<void> {
 		});
 		promises.push(poller);
 		let cleaner = new Promise<void>(async (resolve, reject) => {
-			let getNextDate = oneMinuteFromNow;
-			for await (let next_date of getScheduledDates(getNextDate)) {
+			for await (let date of generateDates(oneMinuteFromNow)) {
 				let jobs = await options.jobs.lookupObjects({
 					where: {
 						all: [
@@ -210,7 +229,7 @@ export async function run(options: RunOptions): Promise<void> {
 						started_utc: Date.now()
 					});
 					try {
-						await options.tasks[job.type].run(job.job_id, job.options ?? null);
+						await options.tasks[job.type].runner(job.job_id, job.options ?? null);
 						job = await options.jobs.updateObject({
 							...job,
 							status: "SUCCESS",
