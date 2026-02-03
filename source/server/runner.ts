@@ -133,9 +133,27 @@ export async function run(options: RunOptions): Promise<void> {
 			for await (let next_date of getScheduledDates(getNextDate)) {
 				let jobs = await options.jobs.lookupObjects({
 					where: {
-						key: "status",
-						operator: "==",
-						operand: "ENQUEUED"
+						all: [
+							{
+								key: "status",
+								operator: "==",
+								operand: "ENQUEUED"
+							},
+							{
+								any: [
+									{
+										key: "expires_utc",
+										operator: "==",
+										operand: null
+									},
+									{
+										key: "expires_utc",
+										operator: ">",
+										operand: Date.now()
+									}
+								]
+							}
+						]
 					},
 					order: {
 						keys: ["created_utc"],
