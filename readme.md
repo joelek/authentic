@@ -268,6 +268,73 @@ controller.getTheme().update("light");
 controller.getTheme().update("dark");
 ```
 
+### Task runner
+
+Authentic includes a task runner for running background tasks. The task runner runs tasks using NodeJS workers which execute using separate, isolated processes. This makes the runner well-suited for long-running tasks.
+
+```ts
+import * as authentic from "@joelek/authentic/dist/lib/node";
+
+const MY_TASK = {
+	runner: async (options: { value: number; }) => Promise<void> {
+		// Perform the job.
+	}
+};
+
+const RUNNER = new authentic.server.runner.Runner({
+	tasks: {
+		MY_TASK
+	}
+});
+
+RUNNER.start();
+
+RUNNER.enqueue("MY_TASK", {
+	value: 1337
+});
+```
+
+The task runner stores objects (jobs) using volatile storage by default. This is great when integrating an application with the system but limits the application as all objects will be discarded once the runner is restarted.
+
+The volatile object storage implementation is not guaranteed to perform well for all types of queries or for large object collections. Non-volatile object storage is expected to eventually be configured when creating the `Runner` instance.
+
+```ts
+const DETAIL = {
+	async getConnection() {
+		return {
+			async query(sql, parameters) {
+				// Should execute the provided sql using the provided parameters and return the result, preferrably using a prepared statement.
+			}
+		};
+	}
+};
+
+const RUNNER = new authentic.server.runner.Runner({
+	jobs: new authentic.server.stores.job.DatabaseJobStore(DETAIL, "jobs"),
+	tasks: {
+		MY_TASK
+	}
+});
+```
+
+The tables are expected to be compatible with the following `CREATE` statements.
+
+```sql
+CREATE TABLE jobs (
+	job_id VARCHAR(32) PRIMARY KEY NOT NULL,
+	created_utc BIGINT NOT NULL,
+	updated_utc BIGINT NOT NULL,
+	type VARCHAR(63) NOT NULL,
+	options VARCHAR(1023),
+	description VARCHAR(255),
+	status ENUM('ENQUEUED', 'RUNNING', 'SUCCESS', 'FAILURE', 'INVALID') NOT NULL,
+	started_utc BIGINT,
+	ended_utc BIGINT,
+	expires_utc BIGINT,
+	INDEX status (status)
+);
+```
+
 ## Sponsorship
 
 The continued development of this software depends on your sponsorship. Please consider sponsoring this project if you find that the software creates value for you and your organization.
