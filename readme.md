@@ -290,7 +290,9 @@ const RUNNER = new authentic.server.runner.Runner({
 RUNNER.start();
 
 RUNNER.enqueue("MY_TASK", {
-	value: 1337
+	options: {
+		value: 1337
+	}
 });
 ```
 
