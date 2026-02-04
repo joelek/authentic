@@ -76,7 +76,10 @@ function FormSelect(managers, { enabled: $enabled, groups: $groups, value: $valu
     }, title), (0, Icon_1.Icon)(managers, {
         class: [`${CLASS_NAME}__box-icon`],
         graphic: "chevron-down",
-        size: "20px"
+        size: "16px",
+        style: {
+            padding: "2px"
+        }
     })), (0, Block_1.Block)("select", {
         class: [`${CLASS_NAME}__select`],
         disabled: enabled.compute((enabled) => enabled !== false ? undefined : ""),
