@@ -261,20 +261,21 @@ export class Runner {
 		return libwt.isMainThread;
 	}
 
-	async enqueue(type: string, metadata?: JobMetadata): Promise<string> {
-		let now = Date.now();
-		let job = await this.jobs.createObject({
-			created_utc: now,
-			updated_utc: now,
-			type: type,
-			options: metadata?.options ?? null,
-			description: metadata?.description ?? null,
-			status: "ENQUEUED",
-			started_utc: null,
-			ended_utc: null,
-			expires_utc: metadata?.expires_utc ?? null
-		});
-		return job.job_id;
+	async enqueue(type: string, metadata?: JobMetadata): Promise<void> {
+		if (this.isMainThread()) {
+			let now = Date.now();
+			let job = await this.jobs.createObject({
+				created_utc: now,
+				updated_utc: now,
+				type: type,
+				options: metadata?.options ?? null,
+				description: metadata?.description ?? null,
+				status: "ENQUEUED",
+				started_utc: null,
+				ended_utc: null,
+				expires_utc: metadata?.expires_utc ?? null
+			});
+		}
 	}
 
 	start(): Promise<void> {
