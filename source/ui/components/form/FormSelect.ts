@@ -99,7 +99,10 @@ export function FormSelect<A extends string>(managers: Managers, { enabled: $ena
 				Icon(managers, {
 					class: [`${CLASS_NAME}__box-icon`],
 					graphic: "chevron-down",
-					size: "20px"
+					size: "16px",
+					style: {
+						padding: "2px"
+					}
 				})
 			),
 			Block("select", {

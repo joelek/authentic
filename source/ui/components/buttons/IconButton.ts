@@ -11,7 +11,10 @@ export function IconButton(managers: Managers, { graphic, ...rest }: IconButton)
 		FormButton(managers, rest,
 			Icon(managers, {
 				graphic: graphic,
-				size: "20px"
+				size: "16px",
+				style: {
+					padding: "2px"
+				}
 			})
 		)
 	);
