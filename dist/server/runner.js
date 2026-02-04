@@ -3,6 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Runner = void 0;
 const libwt = require("worker_threads");
 const job_1 = require("./stores/job");
+const CODE_FROM_STATUS = {
+    ENQUEUED: 0,
+    RUNNING: 1,
+    SUCCESS: 2,
+    FAILURE: 3,
+    INVALID: 4
+};
+const STATUS_FROM_CODE = {
+    0: "ENQUEUED",
+    1: "RUNNING",
+    2: "SUCCESS",
+    3: "FAILURE",
+    4: "INVALID"
+};
 function oneSecondFromNow() {
     let date = new Date();
     date.setUTCSeconds(date.getUTCSeconds() + 1);
@@ -54,13 +68,27 @@ class Runner {
     }
     async runJob(job) {
         console.log(`Running job with type ${job.type} and id ${job.job_id}...`);
-        await new Promise((resolve, reject) => {
-            let worker = new libwt.Worker(__filename, {
-                argv: [job.job_id]
-            });
-            worker.on("exit", resolve);
+        job = await this.jobs.updateObject({
+            ...job,
+            status: "RUNNING",
+            updated_utc: Date.now(),
+            started_utc: Date.now()
         });
-        console.log(`Job with type ${job.type} and id ${job.job_id} completed.`);
+        let status = await new Promise((resolve, reject) => {
+            let worker = new libwt.Worker(__filename, {
+                workerData: job
+            });
+            worker.on("exit", (code) => {
+                resolve(STATUS_FROM_CODE[code]);
+            });
+        });
+        job = await this.jobs.updateObject({
+            ...job,
+            status: status,
+            updated_utc: Date.now(),
+            ended_utc: Date.now()
+        });
+        console.log(`Job with type ${job.type} and id ${job.job_id} completed with status ${job.status}.`);
     }
     async startBroker() {
         let promises = [];
@@ -185,46 +213,22 @@ class Runner {
         await Promise.all(promises);
     }
     async startWorker() {
-        if (process.argv.length === 3) {
-            let job_id = process.argv[2];
-            let job = await this.jobs.lookupObject(job_id);
-            if (job.status === "ENQUEUED") {
-                if (job.type in this.tasks) {
-                    job = await this.jobs.updateObject({
-                        ...job,
-                        status: "RUNNING",
-                        updated_utc: Date.now(),
-                        started_utc: Date.now()
-                    });
-                    try {
-                        await this.tasks[job.type].runner(job.job_id, job.options ?? null);
-                        job = await this.jobs.updateObject({
-                            ...job,
-                            status: "SUCCESS",
-                            updated_utc: Date.now(),
-                            ended_utc: Date.now()
-                        });
-                    }
-                    catch (error) {
-                        job = await this.jobs.updateObject({
-                            ...job,
-                            status: "FAILURE",
-                            updated_utc: Date.now(),
-                            ended_utc: Date.now()
-                        });
-                    }
+        if (job_1.Job.is(libwt.workerData)) {
+            let job = job_1.Job.as(libwt.workerData);
+            if (job.type in this.tasks) {
+                try {
+                    await this.tasks[job.type].runner(job.job_id, job.options ?? null);
+                    return "SUCCESS";
                 }
-                else {
-                    job = await this.jobs.updateObject({
-                        ...job,
-                        status: "INVALID",
-                        updated_utc: Date.now()
-                    });
+                catch (error) {
+                    return "FAILURE";
                 }
             }
+            else {
+                return "INVALID";
+            }
         }
-        // Exit explicitly to close open database connections.
-        process.exit();
+        return "INVALID";
     }
     constructor(options) {
         this.tasks = options?.tasks ?? {};
@@ -234,26 +238,30 @@ class Runner {
         return libwt.isMainThread;
     }
     async enqueue(type, metadata) {
-        let now = Date.now();
-        let job = await this.jobs.createObject({
-            created_utc: now,
-            updated_utc: now,
-            type: type,
-            options: metadata?.options ?? null,
-            description: metadata?.description ?? null,
-            status: "ENQUEUED",
-            started_utc: null,
-            ended_utc: null,
-            expires_utc: metadata?.expires_utc ?? null
-        });
-        return job.job_id;
+        if (this.isMainThread()) {
+            let now = Date.now();
+            let job = await this.jobs.createObject({
+                created_utc: now,
+                updated_utc: now,
+                type: type,
+                options: metadata?.options ?? null,
+                description: metadata?.description ?? null,
+                status: "ENQUEUED",
+                started_utc: null,
+                ended_utc: null,
+                expires_utc: metadata?.expires_utc ?? null
+            });
+        }
     }
     start() {
         if (this.isMainThread()) {
             return this.startBroker();
         }
         else {
-            return this.startWorker();
+            return this.startWorker().then((status) => {
+                // Exit explicitly to close open database connections and send status.
+                process.exit(CODE_FROM_STATUS[status]);
+            });
         }
     }
 }
