@@ -6,7 +6,7 @@ const CLASS_NAME = "authentic-form-input";
 
 document.head.appendChild(html.style({}, `
 	.${CLASS_NAME} {
-		border-radius: 3px;
+		border-radius: 6px;
 		border-style: solid;
 		border-width: 1px;
 		font-family: sans-serif;

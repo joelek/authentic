@@ -52,7 +52,7 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}__window {
-		border-radius: 3px;
+		border-radius: 6px;
 		box-shadow: 0px 0px 12px rgb(0, 0, 0, 0.25);
 		display: grid;
 		grid-template-rows: auto minmax(0%, 100%) auto;
