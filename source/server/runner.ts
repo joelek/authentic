@@ -1,6 +1,23 @@
 import * as libwt from "worker_threads";
 import * as stores from "./stores";
-import { VolatileJobStore } from "./stores/job";
+import { Job, VolatileJobStore } from "./stores/job";
+import { JobStatus } from "./objects";
+
+const CODE_FROM_STATUS: Record<JobStatus, number> = {
+	ENQUEUED: 0,
+	RUNNING: 1,
+	SUCCESS: 2,
+	FAILURE: 3,
+	INVALID: 4
+};
+
+const STATUS_FROM_CODE: Record<number, JobStatus> = {
+	0: "ENQUEUED",
+	1: "RUNNING",
+	2: "SUCCESS",
+	3: "FAILURE",
+	4: "INVALID"
+};
 
 function oneSecondFromNow(): Date {
 	let date = new Date();
@@ -79,13 +96,27 @@ export class Runner {
 
 	protected async runJob(job: stores.job.Job): Promise<void> {
 		console.log(`Running job with type ${job.type} and id ${job.job_id}...`);
-		await new Promise((resolve, reject) => {
-			let worker = new libwt.Worker(__filename, {
-				argv: [job.job_id]
-			});
-			worker.on("exit", resolve);
+		job = await this.jobs.updateObject({
+			...job,
+			status: "RUNNING",
+			updated_utc: Date.now(),
+			started_utc: Date.now()
 		});
-		console.log(`Job with type ${job.type} and id ${job.job_id} completed.`);
+		let status = await new Promise<JobStatus>((resolve, reject) => {
+			let worker = new libwt.Worker(__filename, {
+				workerData: job
+			});
+			worker.on("exit", (code) => {
+				resolve(STATUS_FROM_CODE[code]);
+			});
+		});
+		job = await this.jobs.updateObject({
+			...job,
+			status: status,
+			updated_utc: Date.now(),
+			ended_utc: Date.now()
+		});
+		console.log(`Job with type ${job.type} and id ${job.job_id} completed with status ${job.status}.`);
 	}
 
 	protected async startBroker(): Promise<void> {
@@ -211,45 +242,21 @@ export class Runner {
 		await Promise.all(promises);
 	}
 
-	protected async startWorker(): Promise<void> {
-		if (process.argv.length === 3) {
-			let job_id = process.argv[2];
-			let job = await this.jobs.lookupObject(job_id);
-			if (job.status === "ENQUEUED") {
-				if (job.type in this.tasks) {
-					job = await this.jobs.updateObject({
-						...job,
-						status: "RUNNING",
-						updated_utc: Date.now(),
-						started_utc: Date.now()
-					});
-					try {
-						await this.tasks[job.type].runner(job.job_id, job.options ?? null);
-						job = await this.jobs.updateObject({
-							...job,
-							status: "SUCCESS",
-							updated_utc: Date.now(),
-							ended_utc: Date.now()
-						});
-					} catch (error) {
-						job = await this.jobs.updateObject({
-							...job,
-							status: "FAILURE",
-							updated_utc: Date.now(),
-							ended_utc: Date.now()
-						});
-					}
-				} else {
-					job = await this.jobs.updateObject({
-						...job,
-						status: "INVALID",
-						updated_utc: Date.now()
-					});
+	protected async startWorker(): Promise<JobStatus> {
+		if (Job.is(libwt.workerData)) {
+			let job = Job.as(libwt.workerData);
+			if (job.type in this.tasks) {
+				try {
+					await this.tasks[job.type].runner(job.job_id, job.options ?? null);
+					return "SUCCESS";
+				} catch (error) {
+					return "FAILURE";
 				}
+			} else {
+				return "INVALID";
 			}
 		}
-		// Exit explicitly to close open database connections.
-		process.exit();
+		return "INVALID";
 	}
 
 	constructor(options?: RunnerOptions) {
@@ -282,7 +289,10 @@ export class Runner {
 		if (this.isMainThread()) {
 			return this.startBroker();
 		} else {
-			return this.startWorker();
+			return this.startWorker().then((status) => {
+				// Exit explicitly to close open database connections and send status.
+				process.exit(CODE_FROM_STATUS[status]);
+			});
 		}
 	}
 };
