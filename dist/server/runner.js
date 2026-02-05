@@ -76,6 +76,7 @@ class Runner {
                 ended_utc: Date.now()
             });
             console.log(`Job with type ${job.type} and id ${job.job_id} completed with status ${job.status}.`);
+            resolve();
         });
         let onSignal = async () => {
             await promise;
