@@ -373,4 +373,5 @@ NB: This project targets TypeScript 4 in strict mode.
 * Consider adding display name.
 * Consider adding registration keys.
 * Add functionality for creating and updating database tables.
-* Remove job_id from runner.
+* Investigate behaviour when receiving SIGTERM etc.
+* Add parsing of options.
