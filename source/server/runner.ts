@@ -79,28 +79,39 @@ export class Runner {
 	}
 
 	protected async runJob(job: stores.job.Job): Promise<void> {
-		console.log(`Running job with type ${job.type} and id ${job.job_id}...`);
-		job = await this.jobs.updateObject({
-			...job,
-			status: "RUNNING",
-			updated_utc: Date.now(),
-			started_utc: Date.now()
-		});
-		let status = await new Promise<JobStatus>((resolve, reject) => {
-			let worker = new libwt.Worker(__filename, {
-				workerData: job
+		let promise = new Promise(async (resolve, reject) => {
+			console.log(`Running job with type ${job.type} and id ${job.job_id}...`);
+			job = await this.jobs.updateObject({
+				...job,
+				status: "RUNNING",
+				updated_utc: Date.now(),
+				started_utc: Date.now()
 			});
-			worker.on("exit", (code) => {
-				resolve(code === 0 ? "SUCCESS" : "FAILURE");
+			let success = await new Promise<boolean>((resolve, reject) => {
+				let worker = new libwt.Worker(__filename, {
+					workerData: job
+				});
+				worker.on("exit", (code) => {
+					resolve(code === 0);
+				});
 			});
+			job = await this.jobs.updateObject({
+				...job,
+				status: success ? "SUCCESS" : "FAILURE",
+				updated_utc: Date.now(),
+				ended_utc: Date.now()
+			});
+			console.log(`Job with type ${job.type} and id ${job.job_id} completed with status ${job.status}.`);
 		});
-		job = await this.jobs.updateObject({
-			...job,
-			status: status,
-			updated_utc: Date.now(),
-			ended_utc: Date.now()
-		});
-		console.log(`Job with type ${job.type} and id ${job.job_id} completed with status ${job.status}.`);
+		let onSignal = async () => {
+			await promise;
+			process.exit(1);
+		};
+		process.on("SIGINT", onSignal);
+		process.on("SIGTERM", onSignal);
+		await promise;
+		process.off("SIGINT", onSignal);
+		process.off("SIGTERM", onSignal);
 	}
 
 	protected async startBroker(): Promise<void> {
