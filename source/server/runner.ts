@@ -3,22 +3,6 @@ import * as stores from "./stores";
 import { Job, VolatileJobStore } from "./stores/job";
 import { JobStatus } from "./objects";
 
-const CODE_FROM_STATUS: Record<JobStatus, number> = {
-	ENQUEUED: 0,
-	RUNNING: 1,
-	SUCCESS: 2,
-	FAILURE: 3,
-	INVALID: 4
-};
-
-const STATUS_FROM_CODE: Record<number, JobStatus> = {
-	0: "ENQUEUED",
-	1: "RUNNING",
-	2: "SUCCESS",
-	3: "FAILURE",
-	4: "INVALID"
-};
-
 function oneSecondFromNow(): Date {
 	let date = new Date();
 	date.setUTCSeconds(date.getUTCSeconds() + 1);
@@ -107,7 +91,7 @@ export class Runner {
 				workerData: job
 			});
 			worker.on("exit", (code) => {
-				resolve(STATUS_FROM_CODE[code]);
+				resolve(code === 0 ? "SUCCESS" : "FAILURE");
 			});
 		});
 		job = await this.jobs.updateObject({
@@ -242,21 +226,19 @@ export class Runner {
 		await Promise.all(promises);
 	}
 
-	protected async startWorker(): Promise<JobStatus> {
+	protected async startWorker(): Promise<boolean> {
 		if (Job.is(libwt.workerData)) {
 			let job = Job.as(libwt.workerData);
 			if (job.type in this.tasks) {
 				try {
 					await this.tasks[job.type].runner(job.job_id, job.options ?? null);
-					return "SUCCESS";
+					return true;
 				} catch (error) {
-					return "FAILURE";
+					console.log(error);
 				}
-			} else {
-				return "INVALID";
 			}
 		}
-		return "INVALID";
+		return false;
 	}
 
 	constructor(options?: RunnerOptions) {
@@ -289,9 +271,9 @@ export class Runner {
 		if (this.isMainThread()) {
 			return this.startBroker();
 		} else {
-			return this.startWorker().then((status) => {
+			return this.startWorker().then((success) => {
 				// Exit explicitly to close open database connections and send status.
-				process.exit(CODE_FROM_STATUS[status]);
+				process.exit(success ? 0 : 1);
 			});
 		}
 	}
