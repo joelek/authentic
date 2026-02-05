@@ -50,8 +50,7 @@ guard JobStatus:
 	"ENQUEUED" |
 	"RUNNING" |
 	"SUCCESS" |
-	"FAILURE" |
-	"INVALID";
+	"FAILURE";
 
 guard JobProperties: {
 	created_utc: integer,

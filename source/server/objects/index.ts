@@ -179,16 +179,14 @@ export const JobStatus: autoguard.serialization.MessageGuard<JobStatus> = autogu
 	autoguard.guards.StringLiteral.of("ENQUEUED"),
 	autoguard.guards.StringLiteral.of("RUNNING"),
 	autoguard.guards.StringLiteral.of("SUCCESS"),
-	autoguard.guards.StringLiteral.of("FAILURE"),
-	autoguard.guards.StringLiteral.of("INVALID")
+	autoguard.guards.StringLiteral.of("FAILURE")
 );
 
 export type JobStatus = autoguard.guards.Union<[
 	autoguard.guards.StringLiteral<"ENQUEUED">,
 	autoguard.guards.StringLiteral<"RUNNING">,
 	autoguard.guards.StringLiteral<"SUCCESS">,
-	autoguard.guards.StringLiteral<"FAILURE">,
-	autoguard.guards.StringLiteral<"INVALID">
+	autoguard.guards.StringLiteral<"FAILURE">
 ]>;
 
 export const JobProperties: autoguard.serialization.MessageGuard<JobProperties> = autoguard.guards.Object.of({

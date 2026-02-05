@@ -329,7 +329,7 @@ CREATE TABLE jobs (
 	type VARCHAR(63) NOT NULL,
 	options VARCHAR(1023),
 	description VARCHAR(255),
-	status ENUM('ENQUEUED', 'RUNNING', 'SUCCESS', 'FAILURE', 'INVALID') NOT NULL,
+	status ENUM('ENQUEUED', 'RUNNING', 'SUCCESS', 'FAILURE') NOT NULL,
 	started_utc BIGINT,
 	ended_utc BIGINT,
 	expires_utc BIGINT,
