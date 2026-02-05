@@ -14,7 +14,7 @@ export declare const Job: autoguard.guards.IntersectionGuard<[{
     created_utc: number;
     updated_utc: number;
     type: string;
-    status: "ENQUEUED" | "RUNNING" | "SUCCESS" | "FAILURE" | "INVALID";
+    status: "ENQUEUED" | "RUNNING" | "SUCCESS" | "FAILURE";
     options?: string | null | undefined;
     description?: string | null | undefined;
     started_utc?: number | null | undefined;

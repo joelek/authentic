@@ -49,7 +49,7 @@ exports.OriginProperties = autoguard.guards.Object.of({
     "expires_utc": autoguard.guards.Integer,
     "wait_until_utc": autoguard.guards.Integer
 }, {});
-exports.JobStatus = autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("ENQUEUED"), autoguard.guards.StringLiteral.of("RUNNING"), autoguard.guards.StringLiteral.of("SUCCESS"), autoguard.guards.StringLiteral.of("FAILURE"), autoguard.guards.StringLiteral.of("INVALID"));
+exports.JobStatus = autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("ENQUEUED"), autoguard.guards.StringLiteral.of("RUNNING"), autoguard.guards.StringLiteral.of("SUCCESS"), autoguard.guards.StringLiteral.of("FAILURE"));
 exports.JobProperties = autoguard.guards.Object.of({
     "created_utc": autoguard.guards.Integer,
     "updated_utc": autoguard.guards.Integer,

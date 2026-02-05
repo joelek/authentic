@@ -1,5 +1,4 @@
 import * as stores from "./stores";
-import { JobStatus } from "./objects";
 export type DateProvider = () => Date | undefined;
 export type ScheduledJob = {
     date: Date;
@@ -23,7 +22,7 @@ export declare class Runner {
     protected generateScheduledJobs(scheduler: TaskScheduler): AsyncGenerator<ScheduledJob>;
     protected runJob(job: stores.job.Job): Promise<void>;
     protected startBroker(): Promise<void>;
-    protected startWorker(): Promise<JobStatus>;
+    protected startWorker(): Promise<boolean>;
     constructor(options?: RunnerOptions);
     isMainThread(): boolean;
     enqueue(type: string, metadata?: JobMetadata): Promise<void>;
