@@ -79,7 +79,7 @@ export class Runner {
 	}
 
 	protected async runJob(job: stores.job.Job): Promise<void> {
-		let promise = new Promise(async (resolve, reject) => {
+		let promise = new Promise<void>(async (resolve, reject) => {
 			console.log(`Running job with type ${job.type} and id ${job.job_id}...`);
 			job = await this.jobs.updateObject({
 				...job,
@@ -102,6 +102,7 @@ export class Runner {
 				ended_utc: Date.now()
 			});
 			console.log(`Job with type ${job.type} and id ${job.job_id} completed with status ${job.status}.`);
+			resolve();
 		});
 		let onSignal = async () => {
 			await promise;
