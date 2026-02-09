@@ -41,8 +41,8 @@ const WAITING_FOR_REGISTER_EMAIL = {
 
 const WAITING_FOR_REGISTER_CODE = {
 	"WAITING_FOR_REGISTER_CODE": {
-		en: "Please enter the verification code that was sent to your email address.",
-		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
+		en: "Please enter the verification code that was sent to your email address. The message may have ended up in the junkmail folder.",
+		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress. Meddelandet kan ha hamnat i mappen för skräppost."
 	},
 	"REGISTER_CODE_REQUIRED": {
 		en: "A verification code has not yet been entered.",
@@ -116,8 +116,8 @@ const WAITING_FOR_AUTHENTICATE_EMAIL = {
 
 const WAITING_FOR_AUTHENTICATE_CODE = {
 	"WAITING_FOR_AUTHENTICATE_CODE": {
-		en: "Please enter the verification code that was sent to your email address.",
-		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
+		en: "Please enter the verification code that was sent to your email address. The message may have ended up in the junkmail folder.",
+		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress. Meddelandet kan ha hamnat i mappen för skräppost."
 	},
 	"AUTHENTICATE_CODE_REQUIRED": {
 		en: "A verification code has not yet been entered.",
@@ -191,8 +191,8 @@ const WAITING_FOR_RECOVER_EMAIL = {
 
 const WAITING_FOR_RECOVER_CODE = {
 	"WAITING_FOR_RECOVER_CODE": {
-		en: "Please enter the verification code that was sent to your email address.",
-		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress."
+		en: "Please enter the verification code that was sent to your email address. The message may have ended up in the junkmail folder.",
+		sv: "Vänligen ange den verifieringskod som skickades till din e-postadress. Meddelandet kan ha hamnat i mappen för skräppost."
 	},
 	"RECOVER_CODE_REQUIRED": {
 		en: "A verification code has not yet been entered.",
