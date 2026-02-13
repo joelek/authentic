@@ -239,16 +239,18 @@ export class Runner {
 	}
 
 	protected async startWorker(): Promise<boolean> {
-		if (Job.is(libwt.workerData)) {
-			let job = Job.as(libwt.workerData);
-			if (job.type in this.tasks) {
-				try {
-					await this.tasks[job.type].runner(job.job_id, job.options ?? null);
-					return true;
-				} catch (error) {
-					console.log(error);
-				}
+		try {
+			if (!Job.is(libwt.workerData)) {
+				throw new Error(`Expected worker data to contain a job!`);
 			}
+			let job = Job.as(libwt.workerData);
+			if (!(job.type in this.tasks)) {
+				throw new Error(`Expected "${job.type}" to be a known job type!`);
+			}
+			await this.tasks[job.type].runner(job.job_id, job.options ?? null);
+			return true;
+		} catch (error) {
+			console.log(error);
 		}
 		return false;
 	}
