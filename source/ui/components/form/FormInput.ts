@@ -24,7 +24,7 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}:hover,
-	.${CLASS_NAME}:focus {
+	.${CLASS_NAME}:focus-visible {
 		background-color: var(--authentic-active-input-bg-color);
 		border-color: var(--authentic-active-input-border-color);
 		color: var(--authentic-active-input-fg-color);

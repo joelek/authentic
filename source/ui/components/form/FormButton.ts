@@ -30,7 +30,7 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}--primary:hover,
-	.${CLASS_NAME}--primary:focus {
+	.${CLASS_NAME}--primary:focus-visible {
 		background-color: var(--authentic-active-primary-button-bg-color);
 		border-color: var(--authentic-active-primary-button-border-color);
 		color: var(--authentic-active-primary-button-fg-color);
@@ -43,7 +43,7 @@ document.head.appendChild(html.style({}, `
 	}
 
 	.${CLASS_NAME}--secondary:hover,
-	.${CLASS_NAME}--secondary:focus {
+	.${CLASS_NAME}--secondary:focus-visible {
 		background-color: var(--authentic-active-secondary-button-bg-color);
 		border-color: var(--authentic-active-secondary-button-border-color);
 		color: var(--authentic-active-secondary-button-fg-color);

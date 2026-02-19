@@ -119,7 +119,7 @@ document.head.appendChild(html.style({}, `
 		background-color: var(--authentic-active-scrollbar-color);
 	}
 
-	.${CLASS_NAME}__scroll:focus::-webkit-scrollbar-thumb {
+	.${CLASS_NAME}__scroll:focus-visible::-webkit-scrollbar-thumb {
 		background-color: var(--authentic-active-scrollbar-color);
 	}
 
