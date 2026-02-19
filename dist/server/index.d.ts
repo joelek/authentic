@@ -1,4 +1,5 @@
 export * as objects from "./objects";
+export * as prequel from "./prequel";
 export * as stores from "./stores";
 export * as runner from "./runner";
 export * as server from "./server";
