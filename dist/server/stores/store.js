@@ -410,8 +410,8 @@ class VolatileObjectStore {
     async createObject(properties) {
         let id = this.createId();
         let object = this.guard.as({
-            [this.id]: id,
-            ...properties
+            ...properties,
+            [this.id]: id
         });
         for (let unique_key of this.unique_keys) {
             let value = object[unique_key];
@@ -773,8 +773,8 @@ class DatabaseObjectStore {
         let connection = await this.detail.getConnection();
         let id = await this.createId();
         let object = this.guard.as({
-            [this.id]: id,
-            ...properties
+            ...properties,
+            [this.id]: id
         });
         let columns = [
             ...Object.keys(object)
