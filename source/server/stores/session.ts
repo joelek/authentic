@@ -8,7 +8,7 @@ export type Session = Object<SessionProperties, "session_id">;
 
 export interface SessionStore extends ObjectStore<SessionProperties, "session_id"> {};
 
-export class VolatileSessionStore extends VolatileObjectStore<SessionProperties, "session_id", typeof UNIQUE_SESSION_PROPERTIES> {
+export class VolatileSessionStore extends VolatileObjectStore<SessionProperties, "session_id"> {
 	constructor() {
 		super("session_id", UNIQUE_SESSION_PROPERTIES, Session);
 	}

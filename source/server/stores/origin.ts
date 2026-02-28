@@ -10,7 +10,7 @@ export type Origin = Object<OriginProperties, "origin_id">;
 
 export interface OriginStore extends ObjectStore<OriginProperties, "origin_id"> {};
 
-export class VolatileOriginStore extends VolatileObjectStore<OriginProperties, "origin_id", typeof UNIQUE_ORIGIN_PROPERTIES> {
+export class VolatileOriginStore extends VolatileObjectStore<OriginProperties, "origin_id"> {
 	constructor() {
 		super("origin_id", UNIQUE_ORIGIN_PROPERTIES, Origin);
 	}

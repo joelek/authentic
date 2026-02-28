@@ -316,9 +316,9 @@ export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
 	deleteObject(id: string): Promise<Object<A, B>>;
 };
 
-export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string, C extends Array<keyof A>> implements ObjectStore<A, B> {
+export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
 	protected id: B;
-	protected unique_keys: [...C];
+	protected unique_keys: Array<keyof A>;
 	protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
 	protected objects: Map<ObjectValue, Object<A, B>>;
 	protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
@@ -449,7 +449,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		throw new Error(`Expected code to be unreachable!`);
 	}
 
-	constructor(id: B, unique_keys: [...C], guard: autoguard.serialization.MessageGuardBase<Object<A, B>>) {
+	constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>) {
 		this.id = id;
 		this.unique_keys = [ ...unique_keys ];
 		this.guard = guard;

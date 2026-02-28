@@ -11,7 +11,7 @@ export type User = Object<UserProperties, "user_id">;
 
 export interface UserStore extends ObjectStore<UserProperties, "user_id"> {};
 
-export class VolatileUserStore extends VolatileObjectStore<UserProperties, "user_id", typeof UNIQUE_USER_PROPERTIES> {
+export class VolatileUserStore extends VolatileObjectStore<UserProperties, "user_id"> {
 	constructor() {
 		super("user_id", UNIQUE_USER_PROPERTIES, User);
 	}
