@@ -319,7 +319,7 @@ export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
 export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
 	protected id: B;
 	protected unique_keys: Array<keyof A>;
-	protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
+	protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
 	protected objects: Map<ObjectValue, Object<A, B>>;
 	protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
 
@@ -449,7 +449,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		throw new Error(`Expected code to be unreachable!`);
 	}
 
-	constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>) {
+	constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuard<Object<A, B>>) {
 		this.id = id;
 		this.unique_keys = [ ...unique_keys ];
 		this.guard = guard;
@@ -575,7 +575,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	protected detail: DatabaseObjectStoreDetail;
 	protected table: string;
 	protected id: B;
-	protected guard: autoguard.serialization.MessageGuardBase<Object<A, B>>;
+	protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
 	protected use_ansi_quotes: boolean;
 
 	protected async createId(): Promise<string> {
@@ -818,7 +818,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		};
 	}
 
-	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuardBase<Object<A, B>>, options?: DatabaseObjectStoreOptions) {
+	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: DatabaseObjectStoreOptions) {
 		this.detail = detail;
 		this.table = table;
 		this.id = id;
@@ -890,7 +890,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 			...length.parameters,
 			...offset.parameters
 		]);
-		return autoguard.guards.Array.of(this.guard).to(objects);
+		return objects.map((object) => this.guard.to(object));
 	}
 
 	async updateObject(object: Object<A, B>): Promise<Object<A, B>> {
