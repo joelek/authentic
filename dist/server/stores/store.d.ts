@@ -92,13 +92,13 @@ export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
     deleteObject(id: string): Promise<Object<A, B>>;
 }
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
-    immutable_keys: Array<keyof Object<A, B>>;
+    immutable_keys: Array<keyof A>;
 };
 export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
     protected id: B;
     protected unique_keys: Array<keyof A>;
     protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
-    protected immutable_keys: Array<keyof Object<A, B>>;
+    protected immutable_keys: Array<keyof A>;
     protected objects: Map<ObjectValue, Object<A, B>>;
     protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
     protected insertIntoIndices(object: Object<A, B>): void;
@@ -124,7 +124,7 @@ export type DatabaseObjectStoreDetail = {
 };
 export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
     use_ansi_quotes?: boolean;
-    immutable_keys: Array<keyof Object<A, B>>;
+    immutable_keys: Array<keyof A>;
 };
 export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
     protected detail: DatabaseObjectStoreDetail;
@@ -132,7 +132,7 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
     protected id: B;
     protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
     protected use_ansi_quotes: boolean;
-    protected immutable_keys: Array<keyof Object<A, B>>;
+    protected immutable_keys: Array<keyof A>;
     protected createId(): Promise<string>;
     protected escapeIdentifier(identifier: string): string;
     protected serializeWhere(where: Where): {
