@@ -33,6 +33,23 @@ export class ExpectedUniquePropertyError extends Error {
 	}
 };
 
+export class ExpectedImmutablePropertyError extends Error {
+	readonly key: ObjectKey;
+	readonly one: ObjectValue;
+	readonly two: ObjectValue;
+
+	constructor(key: ObjectKey, one: ObjectValue, two: ObjectValue) {
+		super();
+		this.key = key;
+		this.one = one;
+		this.two = two;
+	}
+
+	toString(): string {
+		return `Expected object with "${String(this.key)}" equal to "${String(this.two)}" to be immutable and not change to "${String(this.one)}"!`;
+	}
+};
+
 export class ExpectedSafeIdentifierError extends Error {
 	readonly identifer: string;
 
@@ -316,10 +333,15 @@ export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
 	deleteObject(id: string): Promise<Object<A, B>>;
 };
 
+export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
+	immutable_keys: Array<keyof Object<A, B>>;
+};
+
 export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
 	protected id: B;
 	protected unique_keys: Array<keyof A>;
 	protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
+	protected immutable_keys: Array<keyof Object<A, B>>;
 	protected objects: Map<ObjectValue, Object<A, B>>;
 	protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
 
@@ -449,10 +471,11 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		throw new Error(`Expected code to be unreachable!`);
 	}
 
-	constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuard<Object<A, B>>) {
+	constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: VolatileObjectStoreOptions<A, B>) {
 		this.id = id;
 		this.unique_keys = [ ...unique_keys ];
 		this.guard = guard;
+		this.immutable_keys = options?.immutable_keys ?? [];
 		this.objects = new Map();
 		this.indices = new Map();
 	}
@@ -542,6 +565,15 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 				}
 			}
 		}
+		for (let key of Object.keys(object) as Array<keyof Object<A, B>>) {
+			if (this.immutable_keys.includes(key)) {
+				let one = object[key];
+				let two = existing_object[key];
+				if (one !== two) {
+					throw new ExpectedImmutablePropertyError(key, one, two);
+				}
+			}
+		}
 		this.objects.set(id, object);
 		this.updateObjectIndices(existing_object, object);
 		return this.cloneObject(object);
@@ -567,8 +599,9 @@ export type DatabaseObjectStoreDetail = {
 	generateId?(): string;
 };
 
-export type DatabaseObjectStoreOptions = {
+export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
 	use_ansi_quotes?: boolean;
+	immutable_keys: Array<keyof Object<A, B>>;
 };
 
 export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
@@ -577,6 +610,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	protected id: B;
 	protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
 	protected use_ansi_quotes: boolean;
+	protected immutable_keys: Array<keyof Object<A, B>>;
 
 	protected async createId(): Promise<string> {
 		let id = this.detail.generateId?.() ?? utils.generateHexId(32);
@@ -818,12 +852,13 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		};
 	}
 
-	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: DatabaseObjectStoreOptions) {
+	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: DatabaseObjectStoreOptions<A, B>) {
 		this.detail = detail;
 		this.table = table;
 		this.id = id;
 		this.guard = guard;
 		this.use_ansi_quotes = options?.use_ansi_quotes ?? true;
+		this.immutable_keys = options?.immutable_keys ?? [];
 	}
 
 	async createObject(properties: A): Promise<Object<A, B>> {
@@ -907,6 +942,15 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		let values = [
 			...Object.values<ObjectValue>(object)
 		];
+		for (let key of Object.keys(object) as Array<keyof Object<A, B>>) {
+			if (this.immutable_keys.includes(key)) {
+				let one = object[key];
+				let two = existing_object[key];
+				if (one !== two) {
+					throw new ExpectedImmutablePropertyError(key, one, two);
+				}
+			}
+		}
 		await connection.query(`
 			UPDATE
 				${this.escapeIdentifier(this.table)}
