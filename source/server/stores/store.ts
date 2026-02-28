@@ -857,7 +857,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		this.table = table;
 		this.id = id;
 		this.guard = guard;
-		this.use_ansi_quotes = options?.use_ansi_quotes ?? true;
+		this.use_ansi_quotes = options?.use_ansi_quotes ?? false;
 		this.immutable_keys = options?.immutable_keys ?? [];
 	}
 
