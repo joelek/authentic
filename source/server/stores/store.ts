@@ -460,8 +460,8 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 	async createObject(properties: A): Promise<Object<A, B>> {
 		let id = this.createId();
 		let object = this.guard.as({
-			[this.id]: id,
-			...properties
+			...properties,
+			[this.id]: id
 		});
 		for (let unique_key of this.unique_keys) {
 			let value = object[unique_key];
@@ -831,8 +831,8 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		let connection = await this.detail.getConnection();
 		let id = await this.createId();
 		let object = this.guard.as({
-			[this.id]: id,
-			...properties
+			...properties,
+			[this.id]: id
 		});
 		let columns = [
 			...Object.keys(object)
