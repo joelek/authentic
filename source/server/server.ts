@@ -5,7 +5,7 @@ import * as libnet from "net";
 import * as api from "../api/server";
 import { Command } from "../api/server";
 import { Mailer, TestMailer } from "../email";
-import { ExpectedUnreachableCodeError } from "../shared";
+import { ExpectedUnreachableCodeError, Nullable } from "../shared";
 import { Origin, OriginStore, VolatileOriginStore } from "./stores/origin";
 import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
@@ -13,6 +13,19 @@ import { UserStore, VolatileUserStore } from "./stores/user";
 import { UserRoleStore, VolatileUserRoleStore } from "./stores/user_role";
 import * as utils from "./utils";
 import { Validator } from "./validator";
+
+const NULL_SESSION: Nullable<Session> = {
+	username: null,
+	username_attempts: null,
+	email: null,
+	email_attempts: null,
+	code_hash: null,
+	code_hash_attempts: null,
+	passdata: null,
+	passdata_attempts: null,
+	authenticated_user_id: null,
+	ticket_hash: null
+};
 
 type AutoguardRoute<A extends autoguard.api.EndpointRequest, B extends autoguard.api.EndpointResponse> = (request: autoguard.api.ClientRequest<A>) => Promise<B>;
 
@@ -415,6 +428,7 @@ export class Server {
 			if (session != null) {
 				if (session.expires_utc <= Date.now()) {
 					return this.sessions.updateObject({
+						...NULL_SESSION,
 						session_id: session.session_id,
 						created_utc: session.created_utc,
 						updated_utc: Date.now(),
@@ -429,6 +443,7 @@ export class Server {
 			}
 		}
 		return this.sessions.createObject({
+			...NULL_SESSION,
 			created_utc: Date.now(),
 			updated_utc: Date.now(),
 			type: "WAITING_FOR_COMMAND",
@@ -490,8 +505,8 @@ export class Server {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
-				code_hash: undefined,
-				code_hash_attempts: undefined,
+				code_hash: null,
+				code_hash_attempts: null,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_REGISTER_EMAIL",
 				reason: "REGISTER_EMAIL_NOT_AVAILABLE",
@@ -537,6 +552,7 @@ export class Server {
 			passdata: session.passdata ?? Validator.fromPassphrase(this.generateTicket(32)).toChunk()
 		});
 		return {
+			...NULL_SESSION,
 			session_id: session.session_id,
 			created_utc: session.created_utc,
 			updated_utc: session.updated_utc,
@@ -592,8 +608,8 @@ export class Server {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
-				code_hash: undefined,
-				code_hash_attempts: undefined,
+				code_hash: null,
+				code_hash_attempts: null,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_AUTHENTICATE_EMAIL",
 				reason: "AUTHENTICATE_EMAIL_NOT_AVAILABLE",
@@ -639,6 +655,7 @@ export class Server {
 			}
 		}
 		return {
+			...NULL_SESSION,
 			session_id: session.session_id,
 			created_utc: session.created_utc,
 			updated_utc: session.updated_utc,
@@ -692,8 +709,8 @@ export class Server {
 			let email_attempts = (session.email_attempts ?? 0) + 1;
 			return {
 				...session,
-				code_hash: undefined,
-				code_hash_attempts: undefined,
+				code_hash: null,
+				code_hash_attempts: null,
 				email_attempts: email_attempts,
 				type: "WAITING_FOR_RECOVER_EMAIL",
 				reason: "RECOVER_EMAIL_NOT_AVAILABLE",
@@ -742,6 +759,7 @@ export class Server {
 			}
 		}
 		return {
+			...NULL_SESSION,
 			session_id: session.session_id,
 			created_utc: session.created_utc,
 			updated_utc: session.updated_utc,
@@ -756,6 +774,7 @@ export class Server {
 	protected async getNextSession(session: Session, command: Command, request: autoguard.api.ClientRequest<autoguard.api.EndpointRequest>): Promise<Session> {
 		if (api.ResetStateCommand.is(command)) {
 			return {
+				...NULL_SESSION,
 				session_id: session.session_id,
 				created_utc: session.created_utc,
 				updated_utc: session.updated_utc,
@@ -979,6 +998,7 @@ export class Server {
 			}
 		}
 		return {
+			...NULL_SESSION,
 			session_id: session.session_id,
 			created_utc: session.created_utc,
 			updated_utc: session.updated_utc,
@@ -1055,7 +1075,7 @@ export class Server {
 				session.ticket_hash = this.computeHash(ticket);
 			} else {
 				ticket = undefined;
-				session.ticket_hash = undefined;
+				session.ticket_hash = null;
 			}
 			session.updated_utc = Date.now();
 			await this.sessions.updateObject(session);

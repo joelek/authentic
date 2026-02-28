@@ -3,7 +3,7 @@ guard UserProperties: {
 	updated_utc: integer,
 	email: string,
 	passdata: string,
-	username?: string | null
+	username: string | null
 };
 
 guard RoleProperties: {
@@ -26,16 +26,16 @@ guard SessionProperties: {
 	reason: string,
 	expires_utc: integer,
 	wait_until_utc: integer,
-	username?: string | null,
-	username_attempts?: integer | null,
-	email?: string | null,
-	email_attempts?: integer | null,
-	code_hash?: string | null,
-	code_hash_attempts?: integer | null,
-	passdata?: string | null,
-	passdata_attempts?: integer | null,
-	authenticated_user_id?: string | null,
-	ticket_hash?: string | null
+	username: string | null,
+	username_attempts: integer | null,
+	email: string | null,
+	email_attempts: integer | null,
+	code_hash: string | null,
+	code_hash_attempts: integer | null,
+	passdata: string | null,
+	passdata_attempts: integer | null,
+	authenticated_user_id: string | null,
+	ticket_hash: string | null
 } & ../api/server/State;
 
 guard OriginProperties: {
@@ -56,10 +56,10 @@ guard JobProperties: {
 	created_utc: integer,
 	updated_utc: integer,
 	type: string,
-	options?: string | null,
-	description?: string | null,
+	options: string | null,
+	description: string | null,
 	status: JobStatus,
-	started_utc?: integer | null,
-	ended_utc?: integer | null,
-	expires_utc?: integer | null
+	started_utc: integer | null,
+	ended_utc: integer | null,
+	expires_utc: integer | null
 };

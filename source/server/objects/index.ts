@@ -7,25 +7,23 @@ export const UserProperties: autoguard.serialization.MessageGuard<UserProperties
 	"created_utc": autoguard.guards.Integer,
 	"updated_utc": autoguard.guards.Integer,
 	"email": autoguard.guards.String,
-	"passdata": autoguard.guards.String
-}, {
+	"passdata": autoguard.guards.String,
 	"username": autoguard.guards.Union.of(
 		autoguard.guards.String,
 		autoguard.guards.Null
 	)
-});
+}, {});
 
 export type UserProperties = autoguard.guards.Object<{
 	"created_utc": autoguard.guards.Integer,
 	"updated_utc": autoguard.guards.Integer,
 	"email": autoguard.guards.String,
-	"passdata": autoguard.guards.String
-}, {
+	"passdata": autoguard.guards.String,
 	"username": autoguard.guards.Union<[
 		autoguard.guards.String,
 		autoguard.guards.Null
 	]>
-}>;
+}, {}>;
 
 export const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties> = autoguard.guards.Object.of({
 	"created_utc": autoguard.guards.Integer,
@@ -60,8 +58,7 @@ export const SessionProperties: autoguard.serialization.MessageGuard<SessionProp
 		"type": autoguard.guards.String,
 		"reason": autoguard.guards.String,
 		"expires_utc": autoguard.guards.Integer,
-		"wait_until_utc": autoguard.guards.Integer
-	}, {
+		"wait_until_utc": autoguard.guards.Integer,
 		"username": autoguard.guards.Union.of(
 			autoguard.guards.String,
 			autoguard.guards.Null
@@ -102,7 +99,7 @@ export const SessionProperties: autoguard.serialization.MessageGuard<SessionProp
 			autoguard.guards.String,
 			autoguard.guards.Null
 		)
-	}),
+	}, {}),
 	autoguard.guards.Reference.of(() => State)
 );
 
@@ -113,8 +110,7 @@ export type SessionProperties = autoguard.guards.Intersection<[
 		"type": autoguard.guards.String,
 		"reason": autoguard.guards.String,
 		"expires_utc": autoguard.guards.Integer,
-		"wait_until_utc": autoguard.guards.Integer
-	}, {
+		"wait_until_utc": autoguard.guards.Integer,
 		"username": autoguard.guards.Union<[
 			autoguard.guards.String,
 			autoguard.guards.Null
@@ -155,7 +151,7 @@ export type SessionProperties = autoguard.guards.Intersection<[
 			autoguard.guards.String,
 			autoguard.guards.Null
 		]>
-	}>,
+	}, {}>,
 	autoguard.guards.Reference<State>
 ]>;
 
@@ -193,8 +189,6 @@ export const JobProperties: autoguard.serialization.MessageGuard<JobProperties> 
 	"created_utc": autoguard.guards.Integer,
 	"updated_utc": autoguard.guards.Integer,
 	"type": autoguard.guards.String,
-	"status": autoguard.guards.Reference.of(() => JobStatus)
-}, {
 	"options": autoguard.guards.Union.of(
 		autoguard.guards.String,
 		autoguard.guards.Null
@@ -203,6 +197,7 @@ export const JobProperties: autoguard.serialization.MessageGuard<JobProperties> 
 		autoguard.guards.String,
 		autoguard.guards.Null
 	),
+	"status": autoguard.guards.Reference.of(() => JobStatus),
 	"started_utc": autoguard.guards.Union.of(
 		autoguard.guards.Integer,
 		autoguard.guards.Null
@@ -215,14 +210,12 @@ export const JobProperties: autoguard.serialization.MessageGuard<JobProperties> 
 		autoguard.guards.Integer,
 		autoguard.guards.Null
 	)
-});
+}, {});
 
 export type JobProperties = autoguard.guards.Object<{
 	"created_utc": autoguard.guards.Integer,
 	"updated_utc": autoguard.guards.Integer,
 	"type": autoguard.guards.String,
-	"status": autoguard.guards.Reference<JobStatus>
-}, {
 	"options": autoguard.guards.Union<[
 		autoguard.guards.String,
 		autoguard.guards.Null
@@ -231,6 +224,7 @@ export type JobProperties = autoguard.guards.Object<{
 		autoguard.guards.String,
 		autoguard.guards.Null
 	]>,
+	"status": autoguard.guards.Reference<JobStatus>,
 	"started_utc": autoguard.guards.Union<[
 		autoguard.guards.Integer,
 		autoguard.guards.Null
@@ -243,7 +237,7 @@ export type JobProperties = autoguard.guards.Object<{
 		autoguard.guards.Integer,
 		autoguard.guards.Null
 	]>
-}>;
+}, {}>;
 
 export namespace Autoguard {
 	export const Guards = {
