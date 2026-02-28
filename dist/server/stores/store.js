@@ -409,7 +409,7 @@ class VolatileObjectStore {
     }
     async createObject(properties) {
         let id = this.createId();
-        let object = this.guard.as({
+        let object = this.guard.to({
             ...properties,
             [this.id]: id
         });
@@ -468,7 +468,7 @@ class VolatileObjectStore {
         return objects.map((object) => this.cloneObject(object));
     }
     async updateObject(object) {
-        object = this.guard.as(object);
+        object = this.guard.to(object);
         let id = object[this.id];
         let existing_object = this.objects.get(id);
         if (existing_object == null) {
@@ -489,7 +489,6 @@ class VolatileObjectStore {
                 }
             }
         }
-        object = this.cloneObject(object);
         this.objects.set(id, object);
         this.updateObjectIndices(existing_object, object);
         return this.cloneObject(object);
@@ -772,7 +771,7 @@ class DatabaseObjectStore {
     async createObject(properties) {
         let connection = await this.detail.getConnection();
         let id = await this.createId();
-        let object = this.guard.as({
+        let object = this.guard.to({
             ...properties,
             [this.id]: id
         });
@@ -806,7 +805,7 @@ class DatabaseObjectStore {
         if (objects.length === 0) {
             throw new ExpectedObjectError(this.id, id);
         }
-        return this.guard.as(objects[0]);
+        return this.guard.to(objects[0]);
     }
     async lookupObjects(options) {
         let connection = await this.detail.getConnection();
@@ -831,10 +830,10 @@ class DatabaseObjectStore {
             ...length.parameters,
             ...offset.parameters
         ]);
-        return autoguard.guards.Array.of(this.guard).as(objects);
+        return autoguard.guards.Array.of(this.guard).to(objects);
     }
     async updateObject(object) {
-        object = this.guard.as(object);
+        object = this.guard.to(object);
         let connection = await this.detail.getConnection();
         let id = object[this.id];
         let existing_object = await this.lookupObject(id).catch(() => undefined);
