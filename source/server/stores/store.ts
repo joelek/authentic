@@ -459,7 +459,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 
 	async createObject(properties: A): Promise<Object<A, B>> {
 		let id = this.createId();
-		let object = this.guard.as({
+		let object = this.guard.to({
 			...properties,
 			[this.id]: id
 		});
@@ -521,7 +521,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 	}
 
 	async updateObject(object: Object<A, B>): Promise<Object<A, B>> {
-		object = this.guard.as(object);
+		object = this.guard.to(object);
 		let id = object[this.id];
 		let existing_object = this.objects.get(id);
 		if (existing_object == null) {
@@ -542,7 +542,6 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 				}
 			}
 		}
-		object = this.cloneObject(object);
 		this.objects.set(id, object);
 		this.updateObjectIndices(existing_object, object);
 		return this.cloneObject(object);
@@ -830,7 +829,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	async createObject(properties: A): Promise<Object<A, B>> {
 		let connection = await this.detail.getConnection();
 		let id = await this.createId();
-		let object = this.guard.as({
+		let object = this.guard.to({
 			...properties,
 			[this.id]: id
 		});
@@ -865,7 +864,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		if (objects.length === 0) {
 			throw new ExpectedObjectError(this.id, id);
 		}
-		return this.guard.as(objects[0]);
+		return this.guard.to(objects[0]);
 	}
 
 	async lookupObjects(options?: LookupOptions<A, B>): Promise<Object<A, B>[]> {
@@ -891,11 +890,11 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 			...length.parameters,
 			...offset.parameters
 		]);
-		return autoguard.guards.Array.of(this.guard).as(objects);
+		return autoguard.guards.Array.of(this.guard).to(objects);
 	}
 
 	async updateObject(object: Object<A, B>): Promise<Object<A, B>> {
-		object = this.guard.as(object);
+		object = this.guard.to(object);
 		let connection = await this.detail.getConnection();
 		let id = object[this.id];
 		let existing_object = await this.lookupObject(id).catch(() => undefined);
