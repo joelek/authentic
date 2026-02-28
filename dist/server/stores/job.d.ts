@@ -5,7 +5,7 @@ export declare const UNIQUE_JOB_PROPERTIES: [];
 export type Job = Object<JobProperties, "job_id">;
 export interface JobStore extends ObjectStore<JobProperties, "job_id"> {
 }
-export declare class VolatileJobStore extends VolatileObjectStore<JobProperties, "job_id", typeof UNIQUE_JOB_PROPERTIES> {
+export declare class VolatileJobStore extends VolatileObjectStore<JobProperties, "job_id"> {
     constructor();
 }
 export declare const Job: autoguard.guards.IntersectionGuard<[{

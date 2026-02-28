@@ -5,7 +5,7 @@ export declare const UNIQUE_SESSION_PROPERTIES: [];
 export type Session = Object<SessionProperties, "session_id">;
 export interface SessionStore extends ObjectStore<SessionProperties, "session_id"> {
 }
-export declare class VolatileSessionStore extends VolatileObjectStore<SessionProperties, "session_id", typeof UNIQUE_SESSION_PROPERTIES> {
+export declare class VolatileSessionStore extends VolatileObjectStore<SessionProperties, "session_id"> {
     constructor();
 }
 export declare const Session: autoguard.guards.IntersectionGuard<[{

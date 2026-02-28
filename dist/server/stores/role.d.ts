@@ -5,7 +5,7 @@ export declare const UNIQUE_ROLE_PROPERTIES: ["name"];
 export type Role = Object<RoleProperties, "role_id">;
 export interface RoleStore extends ObjectStore<RoleProperties, "role_id"> {
 }
-export declare class VolatileRoleStore extends VolatileObjectStore<RoleProperties, "role_id", typeof UNIQUE_ROLE_PROPERTIES> {
+export declare class VolatileRoleStore extends VolatileObjectStore<RoleProperties, "role_id"> {
     constructor();
 }
 export declare const Role: autoguard.guards.IntersectionGuard<[{

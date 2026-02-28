@@ -5,7 +5,7 @@ export declare const UNIQUE_ORIGIN_PROPERTIES: ["address"];
 export type Origin = Object<OriginProperties, "origin_id">;
 export interface OriginStore extends ObjectStore<OriginProperties, "origin_id"> {
 }
-export declare class VolatileOriginStore extends VolatileObjectStore<OriginProperties, "origin_id", typeof UNIQUE_ORIGIN_PROPERTIES> {
+export declare class VolatileOriginStore extends VolatileObjectStore<OriginProperties, "origin_id"> {
     constructor();
 }
 export declare const Origin: autoguard.guards.IntersectionGuard<[{
