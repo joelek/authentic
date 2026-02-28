@@ -15,7 +15,7 @@ export declare const User: autoguard.guards.IntersectionGuard<[{
     updated_utc: number;
     email: string;
     passdata: string;
-    username?: string | null | undefined;
+    username: string | null;
 }]>;
 export declare class DatabaseUserStore extends DatabaseObjectStore<UserProperties, "user_id"> {
     constructor(detail: DatabaseObjectStoreDetail, table: string);

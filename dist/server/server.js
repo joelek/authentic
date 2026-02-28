@@ -14,6 +14,18 @@ const user_1 = require("./stores/user");
 const user_role_1 = require("./stores/user_role");
 const utils = require("./utils");
 const validator_1 = require("./validator");
+const NULL_SESSION = {
+    username: null,
+    username_attempts: null,
+    email: null,
+    email_attempts: null,
+    code_hash: null,
+    code_hash_attempts: null,
+    passdata: null,
+    passdata_attempts: null,
+    authenticated_user_id: null,
+    ticket_hash: null
+};
 const WAITING_FOR_REGISTER_CODE_EMAIL_TEMPLATE = {
     en: {
         subject: "Verification code",
@@ -342,6 +354,7 @@ class Server {
             if (session != null) {
                 if (session.expires_utc <= Date.now()) {
                     return this.sessions.updateObject({
+                        ...NULL_SESSION,
                         session_id: session.session_id,
                         created_utc: session.created_utc,
                         updated_utc: Date.now(),
@@ -357,6 +370,7 @@ class Server {
             }
         }
         return this.sessions.createObject({
+            ...NULL_SESSION,
             created_utc: Date.now(),
             updated_utc: Date.now(),
             type: "WAITING_FOR_COMMAND",
@@ -418,8 +432,8 @@ class Server {
             let email_attempts = (session.email_attempts ?? 0) + 1;
             return {
                 ...session,
-                code_hash: undefined,
-                code_hash_attempts: undefined,
+                code_hash: null,
+                code_hash_attempts: null,
                 email_attempts: email_attempts,
                 type: "WAITING_FOR_REGISTER_EMAIL",
                 reason: "REGISTER_EMAIL_NOT_AVAILABLE",
@@ -465,6 +479,7 @@ class Server {
             passdata: session.passdata ?? validator_1.Validator.fromPassphrase(this.generateTicket(32)).toChunk()
         });
         return {
+            ...NULL_SESSION,
             session_id: session.session_id,
             created_utc: session.created_utc,
             updated_utc: session.updated_utc,
@@ -519,8 +534,8 @@ class Server {
             let email_attempts = (session.email_attempts ?? 0) + 1;
             return {
                 ...session,
-                code_hash: undefined,
-                code_hash_attempts: undefined,
+                code_hash: null,
+                code_hash_attempts: null,
                 email_attempts: email_attempts,
                 type: "WAITING_FOR_AUTHENTICATE_EMAIL",
                 reason: "AUTHENTICATE_EMAIL_NOT_AVAILABLE",
@@ -566,6 +581,7 @@ class Server {
             }
         }
         return {
+            ...NULL_SESSION,
             session_id: session.session_id,
             created_utc: session.created_utc,
             updated_utc: session.updated_utc,
@@ -618,8 +634,8 @@ class Server {
             let email_attempts = (session.email_attempts ?? 0) + 1;
             return {
                 ...session,
-                code_hash: undefined,
-                code_hash_attempts: undefined,
+                code_hash: null,
+                code_hash_attempts: null,
                 email_attempts: email_attempts,
                 type: "WAITING_FOR_RECOVER_EMAIL",
                 reason: "RECOVER_EMAIL_NOT_AVAILABLE",
@@ -669,6 +685,7 @@ class Server {
             }
         }
         return {
+            ...NULL_SESSION,
             session_id: session.session_id,
             created_utc: session.created_utc,
             updated_utc: session.updated_utc,
@@ -682,6 +699,7 @@ class Server {
     async getNextSession(session, command, request) {
         if (api.ResetStateCommand.is(command)) {
             return {
+                ...NULL_SESSION,
                 session_id: session.session_id,
                 created_utc: session.created_utc,
                 updated_utc: session.updated_utc,
@@ -917,6 +935,7 @@ class Server {
             }
         }
         return {
+            ...NULL_SESSION,
             session_id: session.session_id,
             created_utc: session.created_utc,
             updated_utc: session.updated_utc,
@@ -988,7 +1007,7 @@ class Server {
             }
             else {
                 ticket = undefined;
-                session.ticket_hash = undefined;
+                session.ticket_hash = null;
             }
             session.updated_utc = Date.now();
             await this.sessions.updateObject(session);

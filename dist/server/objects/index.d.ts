@@ -6,12 +6,11 @@ export type UserProperties = autoguard.guards.Object<{
     "updated_utc": autoguard.guards.Integer;
     "email": autoguard.guards.String;
     "passdata": autoguard.guards.String;
-}, {
     "username": autoguard.guards.Union<[
         autoguard.guards.String,
         autoguard.guards.Null
     ]>;
-}>;
+}, {}>;
 export declare const RoleProperties: autoguard.serialization.MessageGuard<RoleProperties>;
 export type RoleProperties = autoguard.guards.Object<{
     "created_utc": autoguard.guards.Integer;
@@ -34,7 +33,6 @@ export type SessionProperties = autoguard.guards.Intersection<[
         "reason": autoguard.guards.String;
         "expires_utc": autoguard.guards.Integer;
         "wait_until_utc": autoguard.guards.Integer;
-    }, {
         "username": autoguard.guards.Union<[
             autoguard.guards.String,
             autoguard.guards.Null
@@ -75,7 +73,7 @@ export type SessionProperties = autoguard.guards.Intersection<[
             autoguard.guards.String,
             autoguard.guards.Null
         ]>;
-    }>,
+    }, {}>,
     autoguard.guards.Reference<State>
 ]>;
 export declare const OriginProperties: autoguard.serialization.MessageGuard<OriginProperties>;
@@ -98,8 +96,6 @@ export type JobProperties = autoguard.guards.Object<{
     "created_utc": autoguard.guards.Integer;
     "updated_utc": autoguard.guards.Integer;
     "type": autoguard.guards.String;
-    "status": autoguard.guards.Reference<JobStatus>;
-}, {
     "options": autoguard.guards.Union<[
         autoguard.guards.String,
         autoguard.guards.Null
@@ -108,6 +104,7 @@ export type JobProperties = autoguard.guards.Object<{
         autoguard.guards.String,
         autoguard.guards.Null
     ]>;
+    "status": autoguard.guards.Reference<JobStatus>;
     "started_utc": autoguard.guards.Union<[
         autoguard.guards.Integer,
         autoguard.guards.Null
@@ -120,7 +117,7 @@ export type JobProperties = autoguard.guards.Object<{
         autoguard.guards.Integer,
         autoguard.guards.Null
     ]>;
-}>;
+}, {}>;
 export declare namespace Autoguard {
     const Guards: {
         UserProperties: autoguard.guards.ReferenceGuard<{
@@ -128,7 +125,7 @@ export declare namespace Autoguard {
             updated_utc: number;
             email: string;
             passdata: string;
-            username?: string | null | undefined;
+            username: string | null;
         }>;
         RoleProperties: autoguard.guards.ReferenceGuard<{
             created_utc: number;
@@ -154,12 +151,12 @@ export declare namespace Autoguard {
             created_utc: number;
             updated_utc: number;
             type: string;
+            options: string | null;
+            description: string | null;
             status: "ENQUEUED" | "RUNNING" | "SUCCESS" | "FAILURE";
-            options?: string | null | undefined;
-            description?: string | null | undefined;
-            started_utc?: number | null | undefined;
-            ended_utc?: number | null | undefined;
-            expires_utc?: number | null | undefined;
+            started_utc: number | null;
+            ended_utc: number | null;
+            expires_utc: number | null;
         }>;
     };
     type Guards = {

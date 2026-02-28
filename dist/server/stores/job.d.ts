@@ -14,12 +14,12 @@ export declare const Job: autoguard.guards.IntersectionGuard<[{
     created_utc: number;
     updated_utc: number;
     type: string;
+    options: string | null;
+    description: string | null;
     status: "ENQUEUED" | "RUNNING" | "SUCCESS" | "FAILURE";
-    options?: string | null | undefined;
-    description?: string | null | undefined;
-    started_utc?: number | null | undefined;
-    ended_utc?: number | null | undefined;
-    expires_utc?: number | null | undefined;
+    started_utc: number | null;
+    ended_utc: number | null;
+    expires_utc: number | null;
 }]>;
 export declare class DatabaseJobStore extends DatabaseObjectStore<JobProperties, "job_id"> {
     constructor(detail: DatabaseObjectStoreDetail, table: string);

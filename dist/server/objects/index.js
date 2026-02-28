@@ -8,10 +8,9 @@ exports.UserProperties = autoguard.guards.Object.of({
     "created_utc": autoguard.guards.Integer,
     "updated_utc": autoguard.guards.Integer,
     "email": autoguard.guards.String,
-    "passdata": autoguard.guards.String
-}, {
+    "passdata": autoguard.guards.String,
     "username": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null)
-});
+}, {});
 exports.RoleProperties = autoguard.guards.Object.of({
     "created_utc": autoguard.guards.Integer,
     "updated_utc": autoguard.guards.Integer,
@@ -29,8 +28,7 @@ exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Ob
     "type": autoguard.guards.String,
     "reason": autoguard.guards.String,
     "expires_utc": autoguard.guards.Integer,
-    "wait_until_utc": autoguard.guards.Integer
-}, {
+    "wait_until_utc": autoguard.guards.Integer,
     "username": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
     "username_attempts": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
     "email": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
@@ -41,7 +39,7 @@ exports.SessionProperties = autoguard.guards.Intersection.of(autoguard.guards.Ob
     "passdata_attempts": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
     "authenticated_user_id": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
     "ticket_hash": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null)
-}), autoguard.guards.Reference.of(() => server_1.State));
+}, {}), autoguard.guards.Reference.of(() => server_1.State));
 exports.OriginProperties = autoguard.guards.Object.of({
     "created_utc": autoguard.guards.Integer,
     "updated_utc": autoguard.guards.Integer,
@@ -54,14 +52,13 @@ exports.JobProperties = autoguard.guards.Object.of({
     "created_utc": autoguard.guards.Integer,
     "updated_utc": autoguard.guards.Integer,
     "type": autoguard.guards.String,
-    "status": autoguard.guards.Reference.of(() => exports.JobStatus)
-}, {
     "options": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
     "description": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.Null),
+    "status": autoguard.guards.Reference.of(() => exports.JobStatus),
     "started_utc": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
     "ended_utc": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null),
     "expires_utc": autoguard.guards.Union.of(autoguard.guards.Integer, autoguard.guards.Null)
-});
+}, {});
 var Autoguard;
 (function (Autoguard) {
     Autoguard.Guards = {
