@@ -907,12 +907,6 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		let values = [
 			...Object.values<ObjectValue>(object)
 		];
-		for (let key in existing_object) {
-			if (!(key in object)) {
-				columns.push(key);
-				values.push(undefined);
-			}
-		}
 		await connection.query(`
 			UPDATE
 				${this.escapeIdentifier(this.table)}
