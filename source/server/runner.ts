@@ -1,7 +1,6 @@
 import * as libwt from "worker_threads";
 import * as stores from "./stores";
 import { Job, VolatileJobStore } from "./stores/job";
-import { JobStatus } from "./objects";
 
 function oneSecondFromNow(): Date {
 	let date = new Date();
