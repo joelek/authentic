@@ -1,5 +1,3 @@
-import { guards } from "@joelek/autoguard";
-
 export class ExpectedUnreachableCodeError extends Error {
 	constructor() {
 		super();
