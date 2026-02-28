@@ -375,3 +375,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add functionality for creating and updating database tables.
 * Investigate behaviour when receiving SIGTERM etc.
 * Add parsing of options.
+* Stop passing unique keys to VolatileObjectStore.
