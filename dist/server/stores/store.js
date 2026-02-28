@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedSafeIdentifierError = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
-const autoguard = require("@joelek/autoguard");
+exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedSafeIdentifierError = exports.ExpectedImmutablePropertyError = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
 const shared_1 = require("../../shared");
 const utils = require("../utils");
 const prequel_1 = require("../prequel");
@@ -32,6 +31,22 @@ class ExpectedUniquePropertyError extends Error {
     }
 }
 exports.ExpectedUniquePropertyError = ExpectedUniquePropertyError;
+;
+class ExpectedImmutablePropertyError extends Error {
+    key;
+    one;
+    two;
+    constructor(key, one, two) {
+        super();
+        this.key = key;
+        this.one = one;
+        this.two = two;
+    }
+    toString() {
+        return `Expected object with "${String(this.key)}" equal to "${String(this.two)}" to be immutable and not change to "${String(this.one)}"!`;
+    }
+}
+exports.ExpectedImmutablePropertyError = ExpectedImmutablePropertyError;
 ;
 class ExpectedSafeIdentifierError extends Error {
     identifer;
@@ -252,6 +267,7 @@ class VolatileObjectStore {
     id;
     unique_keys;
     guard;
+    immutable_keys;
     objects;
     indices;
     insertIntoIndices(object) {
@@ -400,10 +416,11 @@ class VolatileObjectStore {
         }
         throw new Error(`Expected code to be unreachable!`);
     }
-    constructor(id, unique_keys, guard) {
+    constructor(id, unique_keys, guard, options) {
         this.id = id;
         this.unique_keys = [...unique_keys];
         this.guard = guard;
+        this.immutable_keys = options?.immutable_keys ?? [];
         this.objects = new Map();
         this.indices = new Map();
     }
@@ -489,6 +506,15 @@ class VolatileObjectStore {
                 }
             }
         }
+        for (let key of Object.keys(object)) {
+            if (this.immutable_keys.includes(key)) {
+                let one = object[key];
+                let two = existing_object[key];
+                if (one !== two) {
+                    throw new ExpectedImmutablePropertyError(key, one, two);
+                }
+            }
+        }
         this.objects.set(id, object);
         this.updateObjectIndices(existing_object, object);
         return this.cloneObject(object);
@@ -511,6 +537,7 @@ class DatabaseObjectStore {
     id;
     guard;
     use_ansi_quotes;
+    immutable_keys;
     async createId() {
         let id = this.detail.generateId?.() ?? utils.generateHexId(32);
         while (true) {
@@ -767,6 +794,7 @@ class DatabaseObjectStore {
         this.id = id;
         this.guard = guard;
         this.use_ansi_quotes = options?.use_ansi_quotes ?? true;
+        this.immutable_keys = options?.immutable_keys ?? [];
     }
     async createObject(properties) {
         let connection = await this.detail.getConnection();
@@ -830,7 +858,7 @@ class DatabaseObjectStore {
             ...length.parameters,
             ...offset.parameters
         ]);
-        return autoguard.guards.Array.of(this.guard).to(objects);
+        return objects.map((object) => this.guard.to(object));
     }
     async updateObject(object) {
         object = this.guard.to(object);
@@ -846,10 +874,13 @@ class DatabaseObjectStore {
         let values = [
             ...Object.values(object)
         ];
-        for (let key in existing_object) {
-            if (!(key in object)) {
-                columns.push(key);
-                values.push(undefined);
+        for (let key of Object.keys(object)) {
+            if (this.immutable_keys.includes(key)) {
+                let one = object[key];
+                let two = existing_object[key];
+                if (one !== two) {
+                    throw new ExpectedImmutablePropertyError(key, one, two);
+                }
             }
         }
         await connection.query(`
