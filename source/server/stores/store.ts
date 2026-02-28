@@ -334,14 +334,14 @@ export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
 };
 
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
-	immutable_keys: Array<keyof Object<A, B>>;
+	immutable_keys: Array<keyof A>;
 };
 
 export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
 	protected id: B;
 	protected unique_keys: Array<keyof A>;
 	protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
-	protected immutable_keys: Array<keyof Object<A, B>>;
+	protected immutable_keys: Array<keyof A>;
 	protected objects: Map<ObjectValue, Object<A, B>>;
 	protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
 
@@ -565,7 +565,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 				}
 			}
 		}
-		for (let key of Object.keys(object) as Array<keyof Object<A, B>>) {
+		for (let key of Object.keys(object) as Array<keyof A>) {
 			if (this.immutable_keys.includes(key)) {
 				let one = object[key];
 				let two = existing_object[key];
@@ -601,7 +601,7 @@ export type DatabaseObjectStoreDetail = {
 
 export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
 	use_ansi_quotes?: boolean;
-	immutable_keys: Array<keyof Object<A, B>>;
+	immutable_keys: Array<keyof A>;
 };
 
 export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
@@ -610,7 +610,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	protected id: B;
 	protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
 	protected use_ansi_quotes: boolean;
-	protected immutable_keys: Array<keyof Object<A, B>>;
+	protected immutable_keys: Array<keyof A>;
 
 	protected async createId(): Promise<string> {
 		let id = this.detail.generateId?.() ?? utils.generateHexId(32);
@@ -942,7 +942,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		let values = [
 			...Object.values<ObjectValue>(object)
 		];
-		for (let key of Object.keys(object) as Array<keyof Object<A, B>>) {
+		for (let key of Object.keys(object) as Array<keyof A>) {
 			if (this.immutable_keys.includes(key)) {
 				let one = object[key];
 				let two = existing_object[key];
