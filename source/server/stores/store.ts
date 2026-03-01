@@ -288,7 +288,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 };
 
 export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
-	[C in keyof Object<A, B>]:
+	[C in Extract<keyof Object<A, B>, string>]:
 		Object<A, B>[C] extends string | null | undefined ? {
 			key: C;
 			operator: StringOperator;
@@ -305,7 +305,7 @@ export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
 			operand: Object<A, B>[C];
 		} :
 		never;
-}[keyof Object<A, B>] | {
+}[Extract<keyof Object<A, B>, string>] | {
 	all: LookupWhere<A, B>[];
 } | {
 	any: LookupWhere<A, B>[];
@@ -314,7 +314,7 @@ export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
 };
 
 export type LookupOrder<A extends ObjectProperties<A>, B extends string> = {
-	keys: (keyof Object<A, B>)[];
+	keys: Extract<keyof Object<A, B>, string>[];
 	sort: "ASC" | "DESC"
 };
 
