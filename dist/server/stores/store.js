@@ -304,6 +304,48 @@ class VolatileObjectStore {
         }
         return index;
     }
+    async getOptions(lookup_options) {
+        lookup_options = lookup_options ?? {};
+        let where = lookup_options.where ?? { all: [] };
+        let order = lookup_options.order ?? { keys: [this.id], sort: "ASC" };
+        let offset = lookup_options.offset;
+        let length = lookup_options.length;
+        if (lookup_options.anchor != null) {
+            let anchor = await this.lookupObject(lookup_options.anchor);
+            if (order.keys[order.keys.length - 1] !== this.id) {
+                order = { keys: [...order.keys, this.id], sort: order.sort };
+            }
+            let any = {
+                any: []
+            };
+            for (let where_index = 0; where_index < order.keys.length; where_index += 1) {
+                let all = {
+                    all: []
+                };
+                for (let key_index = 0; key_index < order.keys.length - where_index; key_index += 1) {
+                    let key = order.keys[key_index];
+                    all.all.push({
+                        key: key,
+                        operator: key_index + 1 < order.keys.length - where_index ? "==" : order.sort === "ASC" ? ">" : "<",
+                        operand: anchor[key]
+                    });
+                }
+                any.any.push(all);
+            }
+            where = {
+                all: [
+                    where,
+                    any
+                ]
+            };
+        }
+        return {
+            where,
+            order,
+            offset,
+            length
+        };
+    }
     matchesWhere(object, where) {
         if (prequel_1.WhereString.is(where)) {
             let one = object[where.key];
@@ -456,22 +498,20 @@ class VolatileObjectStore {
         }
         return this.cloneObject(object);
     }
-    async lookupObjects(options) {
-        options = options ?? {};
-        let where = options.where ?? { all: [] };
-        let order = options.order ?? { keys: [this.id], sort: "ASC" };
+    async lookupObjects(lookup_options) {
+        let options = await this.getOptions(lookup_options);
         let objects = Array.from(this.objects.values());
         objects = objects.filter((object) => {
-            return this.matchesWhere(object, where);
+            return this.matchesWhere(object, options.where);
         });
         objects = objects.sort((one, two) => {
-            for (let key of order.keys) {
+            for (let key of options.order.keys) {
                 let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one[key], two[key]);
                 if (collator_result === "ONE_COMES_FIRST") {
-                    return order.sort === "ASC" ? -1 : 1;
+                    return options.order.sort === "ASC" ? -1 : 1;
                 }
                 if (collator_result === "TWO_COMES_FIRST") {
-                    return order.sort === "ASC" ? 1 : -1;
+                    return options.order.sort === "ASC" ? 1 : -1;
                 }
             }
             return 0;
@@ -559,6 +599,48 @@ class DatabaseObjectStore {
             }
             return identifier;
         }
+    }
+    async getOptions(lookup_options) {
+        lookup_options = lookup_options ?? {};
+        let where = lookup_options.where ?? { all: [] };
+        let order = lookup_options.order ?? { keys: [this.id], sort: "ASC" };
+        let offset = lookup_options.offset;
+        let length = lookup_options.length;
+        if (lookup_options.anchor != null) {
+            let anchor = await this.lookupObject(lookup_options.anchor);
+            if (order.keys[order.keys.length - 1] !== this.id) {
+                order = { keys: [...order.keys, this.id], sort: order.sort };
+            }
+            let any = {
+                any: []
+            };
+            for (let where_index = 0; where_index < order.keys.length; where_index += 1) {
+                let all = {
+                    all: []
+                };
+                for (let key_index = 0; key_index < order.keys.length - where_index; key_index += 1) {
+                    let key = order.keys[key_index];
+                    all.all.push({
+                        key: key,
+                        operator: key_index + 1 < order.keys.length - where_index ? "==" : order.sort === "ASC" ? ">" : "<",
+                        operand: anchor[key]
+                    });
+                }
+                any.any.push(all);
+            }
+            where = {
+                all: [
+                    where,
+                    any
+                ]
+            };
+        }
+        return {
+            where,
+            order,
+            offset,
+            length
+        };
     }
     serializeWhere(where) {
         if (prequel_1.WhereString.is(where)) {
@@ -835,12 +917,13 @@ class DatabaseObjectStore {
         }
         return this.guard.to(objects[0]);
     }
-    async lookupObjects(options) {
+    async lookupObjects(lookup_options) {
         let connection = await this.detail.getConnection();
-        let where = this.serializeWhere((options?.where ?? { all: [] }));
-        let order = this.serializeOrder((options?.order ?? { keys: [this.id], sort: "ASC" }));
-        let length = this.serializeLength(options?.length);
-        let offset = this.serializeOffset(options?.offset);
+        let options = await this.getOptions(lookup_options);
+        let where = this.serializeWhere(options.where);
+        let order = this.serializeOrder(options.order);
+        let length = this.serializeLength(options.length);
+        let offset = this.serializeOffset(options.offset);
         let objects = await connection.query(`
 			SELECT
 				*

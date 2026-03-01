@@ -25,7 +25,7 @@ export declare class ExpectedSafeIdentifierError extends Error {
     toString(): string;
 }
 export type ObjectKey = PropertyKey;
-export type ObjectValue = string | number | boolean | undefined | null | bigint;
+export type ObjectValue = string | number | boolean | null;
 export type ObjectProperties<A> = {
     [B in keyof A]: ObjectValue;
 };
@@ -54,7 +54,7 @@ export declare class ObjectIndex<A extends ObjectProperties<A>, B extends string
     remove(object: Object<A, B>): void;
 }
 export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
-    [C in keyof Object<A, B>]: Object<A, B>[C] extends string | null | undefined ? {
+    [C in Extract<keyof Object<A, B>, string>]: Object<A, B>[C] extends string | null | undefined ? {
         key: C;
         operator: StringOperator;
         operand: Object<A, B>[C];
@@ -67,7 +67,7 @@ export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
         operator: BooleanOperator;
         operand: Object<A, B>[C];
     } : never;
-}[keyof Object<A, B>] | {
+}[Extract<keyof Object<A, B>, string>] | {
     all: LookupWhere<A, B>[];
 } | {
     any: LookupWhere<A, B>[];
@@ -75,12 +75,13 @@ export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
     not: LookupWhere<A, B>;
 };
 export type LookupOrder<A extends ObjectProperties<A>, B extends string> = {
-    keys: (keyof Object<A, B>)[];
+    keys: Extract<keyof Object<A, B>, string>[];
     sort: "ASC" | "DESC";
 };
 export type LookupOptions<A extends ObjectProperties<A>, B extends string> = {
     where?: LookupWhere<A, B>;
     order?: LookupOrder<A, B>;
+    anchor?: string;
     offset?: number;
     length?: number;
 };
@@ -107,11 +108,17 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
     protected cloneObject(object: Object<A, B>): Object<A, B>;
     protected createId(): string;
     protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, B, C>;
+    protected getOptions(lookup_options?: LookupOptions<A, B>): Promise<{
+        where: Where;
+        order: Order;
+        offset?: number;
+        length?: number;
+    }>;
     protected matchesWhere(object: Object<A, B>, where: Where): boolean;
     constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: VolatileObjectStoreOptions<A, B>);
     createObject(properties: A): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
-    lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
+    lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;
     deleteObject(id: string): Promise<Object<A, B>>;
 }
@@ -135,6 +142,12 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
     protected immutable_keys: Array<keyof A>;
     protected createId(): Promise<string>;
     protected escapeIdentifier(identifier: string): string;
+    protected getOptions(lookup_options?: LookupOptions<A, B>): Promise<{
+        where: Where;
+        order: Order;
+        offset?: number;
+        length?: number;
+    }>;
     protected serializeWhere(where: Where): {
         sql: string;
         parameters: Array<ObjectValue>;
@@ -154,7 +167,7 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
     constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: DatabaseObjectStoreOptions<A, B>);
     createObject(properties: A): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
-    lookupObjects(options?: LookupOptions<A, B>): Promise<Object<A, B>[]>;
+    lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Object<A, B>[]>;
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;
     deleteObject(id: string): Promise<Object<A, B>>;
 }
