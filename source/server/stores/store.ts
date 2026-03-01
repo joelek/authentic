@@ -65,7 +65,7 @@ export class ExpectedSafeIdentifierError extends Error {
 
 export type ObjectKey = PropertyKey;
 
-export type ObjectValue = string | number | boolean | undefined | null | bigint;
+export type ObjectValue = string | number | boolean | null;
 
 export type ObjectProperties<A> = {
 	[B in keyof A]: ObjectValue;
