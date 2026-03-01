@@ -326,19 +326,69 @@ export type LookupOptions<A extends ObjectProperties<A>, B extends string> = {
 	length?: number;
 };
 
-export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
-	createObject(properties: A): Promise<Object<A, B>>;
-	lookupObject(id: string): Promise<Object<A, B>>;
-	lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
-	updateObject(object: Object<A, B>): Promise<Object<A, B>>;
-	deleteObject(id: string): Promise<Object<A, B>>;
+type Options = {
+	where: Where;
+	order: Order;
+	offset?: number;
+	length?: number;
+};
+
+export abstract class ObjectStore<A extends ObjectProperties<A>, B extends string> {
+	protected async getOptions(id: B, lookup_options?: LookupOptions<A, B>): Promise<Options> {
+		lookup_options = lookup_options ?? {};
+		let where: Where = lookup_options.where ?? { all: [] };
+		let order: Order = lookup_options.order ?? { keys: [id], sort: "ASC" };
+		let offset = lookup_options.offset;
+		let length = lookup_options.length;
+		if (lookup_options.anchor != null) {
+			let anchor = await this.lookupObject(lookup_options.anchor);
+			if (order.keys[order.keys.length - 1] !== id) {
+				order = { keys: [...order.keys, id], sort: order.sort };
+			}
+			let any: WhereAny = {
+				any: []
+			};
+			for (let where_index = 0; where_index < order.keys.length; where_index += 1) {
+				let all: WhereAll = {
+					all: []
+				};
+				for (let key_index = 0; key_index < order.keys.length - where_index; key_index += 1) {
+					let key = order.keys[key_index];
+					all.all.push({
+						key: key,
+						operator: key_index + 1 < order.keys.length - where_index ? "==" : order.sort === "ASC" ? ">" : "<",
+						operand: anchor[key as keyof Object<A, B>]
+					});
+				}
+				any.any.push(all);
+			}
+			where = {
+				all: [
+					where,
+					any
+				]
+			};
+		}
+		return {
+			where,
+			order,
+			offset,
+			length
+		};
+	}
+
+	abstract createObject(properties: A): Promise<Object<A, B>>;
+	abstract lookupObject(id: string): Promise<Object<A, B>>;
+	abstract lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
+	abstract updateObject(object: Object<A, B>): Promise<Object<A, B>>;
+	abstract deleteObject(id: string): Promise<Object<A, B>>;
 };
 
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
 	immutable_keys: Array<keyof A>;
 };
 
-export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
+export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
 	protected id: B;
 	protected unique_keys: Array<keyof A>;
 	protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
@@ -384,54 +434,6 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 			this.indices.set(key, index);
 		}
 		return index;
-	}
-
-	protected async getOptions(lookup_options?: LookupOptions<A, B>): Promise<{
-		where: Where;
-		order: Order;
-		offset?: number;
-		length?: number;
-	}> {
-		lookup_options = lookup_options ?? {};
-		let where: Where = lookup_options.where ?? { all: [] };
-		let order: Order = lookup_options.order ?? { keys: [this.id], sort: "ASC" };
-		let offset = lookup_options.offset;
-		let length = lookup_options.length;
-		if (lookup_options.anchor != null) {
-			let anchor = await this.lookupObject(lookup_options.anchor);
-			if (order.keys[order.keys.length - 1] !== this.id) {
-				order = { keys: [...order.keys, this.id], sort: order.sort };
-			}
-			let any: WhereAny = {
-				any: []
-			};
-			for (let where_index = 0; where_index < order.keys.length; where_index += 1) {
-				let all: WhereAll = {
-					all: []
-				};
-				for (let key_index = 0; key_index < order.keys.length - where_index; key_index += 1) {
-					let key = order.keys[key_index];
-					all.all.push({
-						key: key,
-						operator: key_index + 1 < order.keys.length - where_index ? "==" : order.sort === "ASC" ? ">" : "<",
-						operand: anchor[key as keyof Object<A, B>]
-					});
-				}
-				any.any.push(all);
-			}
-			where = {
-				all: [
-					where,
-					any
-				]
-			};
-		}
-		return {
-			where,
-			order,
-			offset,
-			length
-		};
 	}
 
 	protected matchesWhere(object: Object<A, B>, where: Where): boolean {
@@ -521,6 +523,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 	}
 
 	constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: VolatileObjectStoreOptions<A, B>) {
+		super();
 		this.id = id;
 		this.unique_keys = [ ...unique_keys ];
 		this.guard = guard;
@@ -564,7 +567,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 	}
 
 	async lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>> {
-		let options = await this.getOptions(lookup_options);
+		let options = await this.getOptions(this.id, lookup_options);
 		let objects = Array.from(this.objects.values());
 		objects = objects.filter((object) => {
 			return this.matchesWhere(object, options.where);
@@ -651,7 +654,7 @@ export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends 
 	immutable_keys: Array<keyof A>;
 };
 
-export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
+export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
 	protected detail: DatabaseObjectStoreDetail;
 	protected table: string;
 	protected id: B;
@@ -680,54 +683,6 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 			}
 			return identifier;
 		}
-	}
-
-	protected async getOptions(lookup_options?: LookupOptions<A, B>): Promise<{
-		where: Where;
-		order: Order;
-		offset?: number;
-		length?: number;
-	}> {
-		lookup_options = lookup_options ?? {};
-		let where: Where = lookup_options.where ?? { all: [] };
-		let order: Order = lookup_options.order ?? { keys: [this.id], sort: "ASC" };
-		let offset = lookup_options.offset;
-		let length = lookup_options.length;
-		if (lookup_options.anchor != null) {
-			let anchor = await this.lookupObject(lookup_options.anchor);
-			if (order.keys[order.keys.length - 1] !== this.id) {
-				order = { keys: [...order.keys, this.id], sort: order.sort };
-			}
-			let any: WhereAny = {
-				any: []
-			};
-			for (let where_index = 0; where_index < order.keys.length; where_index += 1) {
-				let all: WhereAll = {
-					all: []
-				};
-				for (let key_index = 0; key_index < order.keys.length - where_index; key_index += 1) {
-					let key = order.keys[key_index];
-					all.all.push({
-						key: key,
-						operator: key_index + 1 < order.keys.length - where_index ? "==" : order.sort === "ASC" ? ">" : "<",
-						operand: anchor[key as keyof Object<A, B>]
-					});
-				}
-				any.any.push(all);
-			}
-			where = {
-				all: [
-					where,
-					any
-				]
-			};
-		}
-		return {
-			where,
-			order,
-			offset,
-			length
-		};
 	}
 
 	protected serializeWhere(where: Where): {
@@ -948,6 +903,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 	}
 
 	constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: DatabaseObjectStoreOptions<A, B>) {
+		super();
 		this.detail = detail;
 		this.table = table;
 		this.id = id;
@@ -999,7 +955,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 
 	async lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Object<A, B>[]> {
 		let connection = await this.detail.getConnection();
-		let options = await this.getOptions(lookup_options);
+		let options = await this.getOptions(this.id, lookup_options);
 		let where = this.serializeWhere(options.where);
 		let order = this.serializeOrder(options.order);
 		let length = this.serializeLength(options.length);
