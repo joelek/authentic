@@ -85,17 +85,24 @@ export type LookupOptions<A extends ObjectProperties<A>, B extends string> = {
     offset?: number;
     length?: number;
 };
-export interface ObjectStore<A extends ObjectProperties<A>, B extends string> {
-    createObject(properties: A): Promise<Object<A, B>>;
-    lookupObject(id: string): Promise<Object<A, B>>;
-    lookupObjects(options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
-    updateObject(object: Object<A, B>): Promise<Object<A, B>>;
-    deleteObject(id: string): Promise<Object<A, B>>;
+type Options = {
+    where: Where;
+    order: Order;
+    offset?: number;
+    length?: number;
+};
+export declare abstract class ObjectStore<A extends ObjectProperties<A>, B extends string> {
+    protected getOptions(id: B, lookup_options?: LookupOptions<A, B>): Promise<Options>;
+    abstract createObject(properties: A): Promise<Object<A, B>>;
+    abstract lookupObject(id: string): Promise<Object<A, B>>;
+    abstract lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
+    abstract updateObject(object: Object<A, B>): Promise<Object<A, B>>;
+    abstract deleteObject(id: string): Promise<Object<A, B>>;
 }
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
     immutable_keys: Array<keyof A>;
 };
-export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
+export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
     protected id: B;
     protected unique_keys: Array<keyof A>;
     protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
@@ -108,12 +115,6 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
     protected cloneObject(object: Object<A, B>): Object<A, B>;
     protected createId(): string;
     protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, B, C>;
-    protected getOptions(lookup_options?: LookupOptions<A, B>): Promise<{
-        where: Where;
-        order: Order;
-        offset?: number;
-        length?: number;
-    }>;
     protected matchesWhere(object: Object<A, B>, where: Where): boolean;
     constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: VolatileObjectStoreOptions<A, B>);
     createObject(properties: A): Promise<Object<A, B>>;
@@ -133,7 +134,7 @@ export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends 
     use_ansi_quotes?: boolean;
     immutable_keys: Array<keyof A>;
 };
-export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> implements ObjectStore<A, B> {
+export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
     protected detail: DatabaseObjectStoreDetail;
     protected table: string;
     protected id: B;
@@ -142,12 +143,6 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
     protected immutable_keys: Array<keyof A>;
     protected createId(): Promise<string>;
     protected escapeIdentifier(identifier: string): string;
-    protected getOptions(lookup_options?: LookupOptions<A, B>): Promise<{
-        where: Where;
-        order: Order;
-        offset?: number;
-        length?: number;
-    }>;
     protected serializeWhere(where: Where): {
         sql: string;
         parameters: Array<ObjectValue>;
@@ -171,3 +166,4 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;
     deleteObject(id: string): Promise<Object<A, B>>;
 }
+export {};
