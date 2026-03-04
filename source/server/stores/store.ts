@@ -691,7 +691,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 			ORDER BY
 				value ASC;
 		`, []);
-		return objects == null ? "NULLS_FIRST" : "NULLS_LAST";
+		return objects[0].value == null ? "NULLS_FIRST" : "NULLS_LAST";
 	}
 
 	protected escapeIdentifier(identifier: string): string {
