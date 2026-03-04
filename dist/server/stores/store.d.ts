@@ -100,7 +100,7 @@ export declare abstract class ObjectStore<A extends ObjectProperties<A>, B exten
     abstract deleteObject(id: string): Promise<Object<A, B>>;
 }
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
-    immutable_keys: Array<keyof A>;
+    immutable_keys?: Array<keyof A>;
 };
 export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
     protected id: B;
@@ -132,8 +132,10 @@ export type DatabaseObjectStoreDetail = {
 };
 export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
     use_ansi_quotes?: boolean;
-    immutable_keys: Array<keyof A>;
+    immutable_keys?: Array<keyof A>;
+    null_order?: NullOrder;
 };
+export type NullOrder = "NULLS_FIRST" | "NULLS_LAST";
 export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
     protected detail: DatabaseObjectStoreDetail;
     protected table: string;
@@ -141,9 +143,19 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
     protected guard: autoguard.serialization.MessageGuard<Object<A, B>>;
     protected use_ansi_quotes: boolean;
     protected immutable_keys: Array<keyof A>;
+    protected null_order: NullOrder | undefined;
     protected createId(): Promise<string>;
+    protected detectNullOrder(): Promise<NullOrder>;
     protected escapeIdentifier(identifier: string): string;
-    protected serializeWhere(where: Where): {
+    protected serializeWherePrimitive(where: {
+        key: string;
+        operator: Operator;
+        operand: string | boolean | number | null;
+    }, null_order: NullOrder): {
+        sql: string;
+        parameters: Array<ObjectValue>;
+    };
+    protected serializeWhere(where: Where, null_order: NullOrder): {
         sql: string;
         parameters: Array<ObjectValue>;
     };
