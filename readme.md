@@ -372,4 +372,3 @@ NB: This project targets TypeScript 4 in strict mode.
 * Consider adding registration keys.
 * Add functionality for creating and updating database tables.
 * Add parsing of options.
-* Fix anchor logic for nullable fields.
