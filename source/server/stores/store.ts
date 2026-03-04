@@ -385,7 +385,7 @@ export abstract class ObjectStore<A extends ObjectProperties<A>, B extends strin
 };
 
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
-	immutable_keys: Array<keyof A>;
+	immutable_keys?: Array<keyof A>;
 };
 
 export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
@@ -651,7 +651,7 @@ export type DatabaseObjectStoreDetail = {
 
 export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
 	use_ansi_quotes?: boolean;
-	immutable_keys: Array<keyof A>;
+	immutable_keys?: Array<keyof A>;
 };
 
 export type NullOrder = "NULLS_FIRST" | "NULLS_LAST";
