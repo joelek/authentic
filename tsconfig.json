@@ -29,6 +29,9 @@
 			"path": "./source/shared/"
 		},
 		{
+			"path": "./source/test/"
+		},
+		{
 			"path": "./source/ui/"
 		}
 	]

@@ -7,6 +7,7 @@
 	"devDependencies": {
 		"@joelek/wtf": "github:joelek/wtf#semver:^1.3",
 		"@types/node": "^22",
+		"mariadb": "3.4",
 		"typescript": "^4"
 	},
 	"license": "MIT",
