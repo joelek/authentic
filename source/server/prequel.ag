@@ -44,7 +44,9 @@ guard Where:
 	WhereAny |
 	WhereNot;
 
+guard Sort: "ASC" | "DESC";
+
 guard Order: {
 	keys: string[],
-	sort: "ASC" | "DESC"
+	sort: Sort
 };

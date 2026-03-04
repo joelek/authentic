@@ -138,20 +138,24 @@ export type Where = autoguard.guards.Union<[
 	autoguard.guards.Reference<WhereNot>
 ]>;
 
+export const Sort: autoguard.serialization.MessageGuard<Sort> = autoguard.guards.Union.of(
+	autoguard.guards.StringLiteral.of("ASC"),
+	autoguard.guards.StringLiteral.of("DESC")
+);
+
+export type Sort = autoguard.guards.Union<[
+	autoguard.guards.StringLiteral<"ASC">,
+	autoguard.guards.StringLiteral<"DESC">
+]>;
+
 export const Order: autoguard.serialization.MessageGuard<Order> = autoguard.guards.Object.of({
 	"keys": autoguard.guards.Array.of(autoguard.guards.String),
-	"sort": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("ASC"),
-		autoguard.guards.StringLiteral.of("DESC")
-	)
+	"sort": autoguard.guards.Reference.of(() => Sort)
 }, {});
 
 export type Order = autoguard.guards.Object<{
 	"keys": autoguard.guards.Array<autoguard.guards.String>,
-	"sort": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"ASC">,
-		autoguard.guards.StringLiteral<"DESC">
-	]>
+	"sort": autoguard.guards.Reference<Sort>
 }, {}>;
 
 export namespace Autoguard {
@@ -167,6 +171,7 @@ export namespace Autoguard {
 		"WhereAny": autoguard.guards.Reference.of(() => WhereAny),
 		"WhereNot": autoguard.guards.Reference.of(() => WhereNot),
 		"Where": autoguard.guards.Reference.of(() => Where),
+		"Sort": autoguard.guards.Reference.of(() => Sort),
 		"Order": autoguard.guards.Reference.of(() => Order)
 	};
 

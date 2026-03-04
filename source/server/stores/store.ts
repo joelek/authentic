@@ -1,7 +1,7 @@
 import * as autoguard from "@joelek/autoguard";
 import { ExpectedUnreachableCodeError } from "../../shared";
 import * as utils from "../utils";
-import { BooleanOperator, IntegerOperator, Operator, Order, StringOperator, Where, WhereAll, WhereAny, WhereBoolean, WhereInteger, WhereNot, WhereString } from "../prequel";
+import { BooleanOperator, IntegerOperator, Operator, Order, Sort, StringOperator, Where, WhereAll, WhereAny, WhereBoolean, WhereInteger, WhereNot, WhereString } from "../prequel";
 
 export class ExpectedObjectError extends Error {
 	readonly key: ObjectKey;
@@ -315,7 +315,7 @@ export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
 
 export type LookupOrder<A extends ObjectProperties<A>, B extends string> = {
 	keys: Extract<keyof Object<A, B>, string>[];
-	sort: "ASC" | "DESC"
+	sort: Sort;
 };
 
 export type LookupOptions<A extends ObjectProperties<A>, B extends string> = {
