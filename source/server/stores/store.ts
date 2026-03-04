@@ -740,7 +740,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 					};
 				} else {
 					return {
-						sql: `${this.escapeIdentifier(where.key)} <> ?`,
+						sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <> ?)`,
 						parameters: [
 							where.operand
 						]
@@ -849,7 +849,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 					};
 				} else {
 					return {
-						sql: `${this.escapeIdentifier(where.key)} <> ?`,
+						sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <> ?)`,
 						parameters: [
 							where.operand
 						]
@@ -937,7 +937,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 					};
 				} else {
 					return {
-						sql: `${this.escapeIdentifier(where.key)} <> ?`,
+						sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <> ?)`,
 						parameters: [
 							where.operand
 						]
