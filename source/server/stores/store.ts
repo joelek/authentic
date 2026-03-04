@@ -791,26 +791,47 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 					};
 				}
 			} else if (where.operator === "^=") {
-				return {
-					sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
-					parameters: [
-						where.operand == null ? null : `${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
-					]
-				};
+				if (where.operand == null) {
+					return {
+						sql: `(FALSE)`,
+						parameters: []
+					};
+				} else {
+					return {
+						sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+						parameters: [
+							`${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
+						]
+					};
+				}
 			} else if (where.operator === "*=") {
-				return {
-					sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
-					parameters: [
-						where.operand == null ? null : `%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
-					]
-				};
+				if (where.operand == null) {
+					return {
+						sql: `(FALSE)`,
+						parameters: []
+					};
+				} else {
+					return {
+						sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+						parameters: [
+							`%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}%`
+						]
+					};
+				}
 			} else if (where.operator === "$=") {
-				return {
-					sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
-					parameters: [
-						where.operand == null ? null : `%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}`
-					]
-				};
+				if (where.operand == null) {
+					return {
+						sql: `(FALSE)`,
+						parameters: []
+					};
+				} else {
+					return {
+						sql: `${this.escapeIdentifier(where.key)} LIKE ? ESCAPE '\\\\'`,
+						parameters: [
+							`%${where.operand.replace(/[\\%_]/g, (match) => `\\${match}`)}`
+						]
+					};
+				}
 			} else {
 				let dummy: never = where.operator;
 			}
