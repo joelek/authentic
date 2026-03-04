@@ -652,6 +652,7 @@ export type DatabaseObjectStoreDetail = {
 export type DatabaseObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
 	use_ansi_quotes?: boolean;
 	immutable_keys?: Array<keyof A>;
+	null_order?: NullOrder;
 };
 
 export type NullOrder = "NULLS_FIRST" | "NULLS_LAST";
@@ -1012,7 +1013,7 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		this.guard = guard;
 		this.use_ansi_quotes = options?.use_ansi_quotes ?? false;
 		this.immutable_keys = options?.immutable_keys ?? [];
-		this.null_order = undefined;
+		this.null_order = options?.null_order ?? undefined;
 	}
 
 	async createObject(properties: A): Promise<Object<A, B>> {
