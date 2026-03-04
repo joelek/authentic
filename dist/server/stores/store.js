@@ -607,52 +607,100 @@ class DatabaseObjectStore extends ObjectStore {
     serializeWhere(where) {
         if (prequel_1.WhereString.is(where)) {
             if (where.operator === "<") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} < ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(FALSE)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} < ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "<=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} <= ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <= ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "==") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} IS NULL`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} = ?`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "!=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} IS NOT NULL`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} <> ?`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === ">") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} > ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NOT NULL)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} > ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === ">=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} >= ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(TRUE)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} >= ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "^=") {
                 return {
@@ -684,52 +732,100 @@ class DatabaseObjectStore extends ObjectStore {
         }
         else if (prequel_1.WhereInteger.is(where)) {
             if (where.operator === "<") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} < ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(FALSE)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} < ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "<=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} <= ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <= ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "==") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} IS NULL`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} = ?`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "!=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} IS NOT NULL`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} <> ?`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === ">") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} > ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NOT NULL)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} > ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === ">=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} >= ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(TRUE)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} >= ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else {
                 let dummy = where.operator;
@@ -737,52 +833,100 @@ class DatabaseObjectStore extends ObjectStore {
         }
         else if (prequel_1.WhereBoolean.is(where)) {
             if (where.operator === "<") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} < ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(FALSE)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} < ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "<=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} <= ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <= ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "==") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS" : "="} ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} IS NULL`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} = ?`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === "!=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} ${where.operand == null ? "IS NOT" : "<>"} ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} IS NOT NULL`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `${this.escapeIdentifier(where.key)} <> ?`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === ">") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} > ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} IS NOT NULL)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} > ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else if (where.operator === ">=") {
-                return {
-                    sql: `${this.escapeIdentifier(where.key)} >= ?`,
-                    parameters: [
-                        where.operand
-                    ]
-                };
+                if (where.operand == null) {
+                    return {
+                        sql: `(TRUE)`,
+                        parameters: []
+                    };
+                }
+                else {
+                    return {
+                        sql: `(${this.escapeIdentifier(where.key)} >= ?)`,
+                        parameters: [
+                            where.operand
+                        ]
+                    };
+                }
             }
             else {
                 let dummy = where.operator;
