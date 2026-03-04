@@ -674,6 +674,22 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		return id;
 	}
 
+	protected async detectNullOrdering(): Promise<"NULLS_FIRST" | "NULLS_LAST"> {
+		let connection = await this.detail.getConnection();
+		let objects = await connection.query<Array<{ value: number | null; }>>(`
+			SELECT
+				value
+			FROM (
+				(SELECT 0 AS value)
+				UNION ALL
+				(SELECT NULL AS value)
+			) AS source
+			ORDER BY
+				value ASC;
+		`, []);
+		return objects == null ? "NULLS_FIRST" : "NULLS_LAST";
+	}
+
 	protected escapeIdentifier(identifier: string): string {
 		if (this.use_ansi_quotes) {
 			return `"${identifier.replaceAll("\"", "\"\"")}"`;
