@@ -663,7 +663,7 @@ class DatabaseObjectStore extends ObjectStore {
                 }
                 else {
                     return {
-                        sql: `${this.escapeIdentifier(where.key)} <> ?`,
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <> ?)`,
                         parameters: [
                             where.operand
                         ]
@@ -788,7 +788,7 @@ class DatabaseObjectStore extends ObjectStore {
                 }
                 else {
                     return {
-                        sql: `${this.escapeIdentifier(where.key)} <> ?`,
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <> ?)`,
                         parameters: [
                             where.operand
                         ]
@@ -889,7 +889,7 @@ class DatabaseObjectStore extends ObjectStore {
                 }
                 else {
                     return {
-                        sql: `${this.escapeIdentifier(where.key)} <> ?`,
+                        sql: `(${this.escapeIdentifier(where.key)} IS NULL) OR (${this.escapeIdentifier(where.key)} <> ?)`,
                         parameters: [
                             where.operand
                         ]
