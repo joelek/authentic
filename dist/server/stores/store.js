@@ -607,7 +607,7 @@ class DatabaseObjectStore extends ObjectStore {
 			ORDER BY
 				value ASC;
 		`, []);
-        return objects == null ? "NULLS_FIRST" : "NULLS_LAST";
+        return objects[0].value == null ? "NULLS_FIRST" : "NULLS_LAST";
     }
     escapeIdentifier(identifier) {
         if (this.use_ansi_quotes) {
