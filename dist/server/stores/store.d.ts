@@ -93,7 +93,7 @@ type Options = {
 };
 export declare abstract class ObjectStore<A extends ObjectProperties<A>, B extends string> {
     protected getOptions(id: B, lookup_options?: LookupOptions<A, B>): Promise<Options>;
-    abstract createObject(properties: A): Promise<Object<A, B>>;
+    abstract createObject(properties: A | Object<A, B>): Promise<Object<A, B>>;
     abstract lookupObject(id: string): Promise<Object<A, B>>;
     abstract lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
     abstract updateObject(object: Object<A, B>): Promise<Object<A, B>>;
@@ -117,7 +117,7 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
     protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, B, C>;
     protected matchesWhere(object: Object<A, B>, where: Where): boolean;
     constructor(id: B, unique_keys: Array<keyof A>, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: VolatileObjectStoreOptions<A, B>);
-    createObject(properties: A): Promise<Object<A, B>>;
+    createObject(properties: A | Object<A, B>): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
     lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;
@@ -172,7 +172,7 @@ export declare class DatabaseObjectStore<A extends ObjectProperties<A>, B extend
         parameters: Array<ObjectValue>;
     };
     constructor(detail: DatabaseObjectStoreDetail, table: string, id: B, guard: autoguard.serialization.MessageGuard<Object<A, B>>, options?: DatabaseObjectStoreOptions<A, B>);
-    createObject(properties: A): Promise<Object<A, B>>;
+    createObject(properties: A | Object<A, B>): Promise<Object<A, B>>;
     lookupObject(id: string): Promise<Object<A, B>>;
     lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Object<A, B>[]>;
     updateObject(object: Object<A, B>): Promise<Object<A, B>>;

@@ -471,7 +471,7 @@ class VolatileObjectStore extends ObjectStore {
         this.indices = new Map();
     }
     async createObject(properties) {
-        let id = this.createId();
+        let id = this.guard.is(properties) ? properties[this.id] : this.createId();
         let object = this.guard.to({
             ...properties,
             [this.id]: id
@@ -950,7 +950,7 @@ class DatabaseObjectStore extends ObjectStore {
     }
     async createObject(properties) {
         let connection = await this.detail.getConnection();
-        let id = await this.createId();
+        let id = this.guard.is(properties) ? properties[this.id] : await this.createId();
         let object = this.guard.to({
             ...properties,
             [this.id]: id
