@@ -377,7 +377,7 @@ export abstract class ObjectStore<A extends ObjectProperties<A>, B extends strin
 		};
 	}
 
-	abstract createObject(properties: A): Promise<Object<A, B>>;
+	abstract createObject(properties: A | Object<A, B>): Promise<Object<A, B>>;
 	abstract lookupObject(id: string): Promise<Object<A, B>>;
 	abstract lookupObjects(lookup_options?: LookupOptions<A, B>): Promise<Array<Object<A, B>>>;
 	abstract updateObject(object: Object<A, B>): Promise<Object<A, B>>;
@@ -532,8 +532,8 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		this.indices = new Map();
 	}
 
-	async createObject(properties: A): Promise<Object<A, B>> {
-		let id = this.createId();
+	async createObject(properties: A | Object<A, B>): Promise<Object<A, B>> {
+		let id = this.guard.is(properties) ? properties[this.id] : this.createId();
 		let object = this.guard.to({
 			...properties,
 			[this.id]: id
@@ -1016,9 +1016,9 @@ export class DatabaseObjectStore<A extends ObjectProperties<A>, B extends string
 		this.null_order = options?.null_order ?? undefined;
 	}
 
-	async createObject(properties: A): Promise<Object<A, B>> {
+	async createObject(properties: A | Object<A, B>): Promise<Object<A, B>> {
 		let connection = await this.detail.getConnection();
-		let id = await this.createId();
+		let id = this.guard.is(properties) ? properties[this.id] : await this.createId();
 		let object = this.guard.to({
 			...properties,
 			[this.id]: id
