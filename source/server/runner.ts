@@ -1,6 +1,8 @@
+import * as autoguard from "@joelek/autoguard";
 import * as libwt from "worker_threads";
 import * as stores from "./stores";
 import { Job, VolatileJobStore } from "./stores/job";
+import { JSON } from "../shared";
 
 function oneSecondFromNow(): Date {
 	let date = new Date();
@@ -30,29 +32,42 @@ async function waitUntil(target_ms: number): Promise<void> {
 
 export type DateProvider = () => Date | undefined;
 
-export type ScheduledJob = {
+export type ScheduledJob<A extends JSON> = {
 	date: Date;
-	metadata?: JobMetadata;
+	metadata: JobMetadata<A>;
 };
 
-export type TaskScheduler = () => ScheduledJob | undefined;
+export type TaskScheduler<A extends JSON> = () => ScheduledJob<A> | undefined;
 
-export type JobMetadata = Partial<Pick<stores.job.Job, "description" | "options" | "expires_utc">>;
-
-export type TaskRunner = (job_id: string, options: string | null) => Promise<void>;
-
-export type Task = {
-	runner: TaskRunner;
-	scheduler?: TaskScheduler;
+export type JobMetadata<A extends JSON> = {
+	description?: string | null;
+	options: A;
+	expires_utc?: number | null;
 };
 
-export type RunnerOptions = {
-	tasks?: Record<string, Task>;
+export type TaskRunner<A extends JSON> = (job_id: string, options: A) => Promise<void>;
+
+export type Task<A extends JSON> = {
+	runner: TaskRunner<A>;
+	scheduler?: TaskScheduler<A>;
+	guard?: autoguard.serialization.MessageGuard<A>;
+};
+
+export type Options<A extends Options<A>> = {
+	[B in keyof A]: JSON;
+};
+
+export type TasksFromOptions<A extends Options<A>> = {
+	[B in keyof A]: Task<A[B]>;
+};
+
+export type RunnerOptions<A extends Options<A>> = {
+	tasks: TasksFromOptions<A>;
 	jobs?: stores.job.JobStore;
 };
 
-export class Runner {
-	protected tasks: Record<string, Task>;
+export class Runner<A extends Options<A>> {
+	protected tasks: TasksFromOptions<A>;
 	protected jobs: stores.job.JobStore;
 
 	protected async * generateDates(date_provider: DateProvider): AsyncGenerator<Date> {
@@ -66,7 +81,7 @@ export class Runner {
 		}
 	}
 
-	protected async * generateScheduledJobs(scheduler: TaskScheduler): AsyncGenerator<ScheduledJob> {
+	protected async * generateScheduledJobs<A extends JSON>(scheduler: TaskScheduler<A>): AsyncGenerator<ScheduledJob<A>> {
 		while (true) {
 			let scheduled_job = scheduler();
 			if (scheduled_job == null) {
@@ -246,7 +261,14 @@ export class Runner {
 			if (!(job.type in this.tasks)) {
 				throw new Error(`Expected "${job.type}" to be a known job type!`);
 			}
-			await this.tasks[job.type].runner(job.job_id, job.options ?? null);
+			let task = this.tasks[job.type as keyof A];
+			let options = JSON.parse(job.options);
+			if (task.guard != null) {
+				if (!task.guard.is(options)) {
+					throw new Error(`Expected job with type "${job.type}" to be initialized with valid options!`);
+				}
+			}
+			await task.runner(job.job_id, options);
 			return true;
 		} catch (error) {
 			console.log(error);
@@ -254,8 +276,8 @@ export class Runner {
 		return false;
 	}
 
-	constructor(options?: RunnerOptions) {
-		this.tasks = options?.tasks ?? {};
+	constructor(options: RunnerOptions<A>) {
+		this.tasks = options.tasks;
 		this.jobs = options?.jobs ?? new VolatileJobStore();
 	}
 
@@ -263,14 +285,14 @@ export class Runner {
 		return libwt.isMainThread;
 	}
 
-	async enqueue(type: string, metadata?: JobMetadata): Promise<void> {
+	async enqueue<C extends keyof A & string>(type: C, metadata: JobMetadata<A[C]>): Promise<void> {
 		if (this.isMainThread()) {
 			let now = Date.now();
 			let job = await this.jobs.createObject({
 				created_utc: now,
 				updated_utc: now,
 				type: type,
-				options: metadata?.options ?? null,
+				options: JSON.stringify(metadata.options),
 				description: metadata?.description ?? null,
 				status: "ENQUEUED",
 				started_utc: null,
