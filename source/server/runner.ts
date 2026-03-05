@@ -234,9 +234,18 @@ export class Runner<A extends Options<A>> {
 								operand: "RUNNING"
 							},
 							{
-								key: "expires_utc",
-								operator: "<=",
-								operand: Date.now()
+								all: [
+									{
+										key: "expires_utc",
+										operator: "!=",
+										operand: null
+									},
+									{
+										key: "expires_utc",
+										operator: "<=",
+										operand: Date.now()
+									}
+								]
 							}
 						]
 					}
