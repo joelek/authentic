@@ -270,7 +270,13 @@ export class Runner<A extends Options<A>> {
 				throw new Error(`Expected "${job.type}" to be a known job type!`);
 			}
 			let task = this.tasks[job.type as keyof A];
-			let options = JSON.parse(job.options);
+			let options = (() => {
+				try {
+					return JSON.parse(job.options);
+				} catch (error) {
+					throw new Error(`Expected job with type "${job.type}" to be initialized with options containing valid JSON!`);
+				}
+			})();
 			if (task.guard != null) {
 				if (!task.guard.is(options)) {
 					throw new Error(`Expected job with type "${job.type}" to be initialized with valid options!`);
