@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.OBJECT_VALUE_COLLATOR = exports.ExpectedSafeIdentifierError = exports.ExpectedImmutablePropertyError = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
+exports.DatabaseObjectStore = exports.VolatileObjectStore = exports.ObjectStore = exports.ObjectIndex = exports.bisectSortedArray = exports.NULLS_LAST_OBJECT_VALUE_COLLATOR = exports.NULLS_FIRST_OBJECT_VALUE_COLLATOR = exports.ExpectedSafeIdentifierError = exports.ExpectedImmutablePropertyError = exports.ExpectedUniquePropertyError = exports.ExpectedObjectError = void 0;
 const shared_1 = require("../../shared");
 const utils = require("../utils");
 const prequel_1 = require("../prequel");
@@ -61,7 +61,7 @@ class ExpectedSafeIdentifierError extends Error {
 }
 exports.ExpectedSafeIdentifierError = ExpectedSafeIdentifierError;
 ;
-const OBJECT_VALUE_COLLATOR = (one, two) => {
+const NULLS_FIRST_OBJECT_VALUE_COLLATOR = (one, two) => {
     if (one == null) {
         if (two == null) {
             return "IDENTICAL";
@@ -85,7 +85,32 @@ const OBJECT_VALUE_COLLATOR = (one, two) => {
         }
     }
 };
-exports.OBJECT_VALUE_COLLATOR = OBJECT_VALUE_COLLATOR;
+exports.NULLS_FIRST_OBJECT_VALUE_COLLATOR = NULLS_FIRST_OBJECT_VALUE_COLLATOR;
+const NULLS_LAST_OBJECT_VALUE_COLLATOR = (one, two) => {
+    if (one == null) {
+        if (two == null) {
+            return "IDENTICAL";
+        }
+        else {
+            return "TWO_COMES_FIRST";
+        }
+    }
+    else {
+        if (two == null) {
+            return "ONE_COMES_FIRST";
+        }
+        else {
+            if (one < two) {
+                return "ONE_COMES_FIRST";
+            }
+            if (two < one) {
+                return "TWO_COMES_FIRST";
+            }
+            return "IDENTICAL";
+        }
+    }
+};
+exports.NULLS_LAST_OBJECT_VALUE_COLLATOR = NULLS_LAST_OBJECT_VALUE_COLLATOR;
 function bisectSortedArray(objects, object, mapper, collator) {
     function recurse(offset, length) {
         if (length <= 0) {
@@ -112,6 +137,7 @@ class ObjectIndex {
     groups;
     id;
     key;
+    collator;
     collectObjects(min_group_index, max_group_index) {
         let objects = [];
         min_group_index = Math.max(0, Math.min(min_group_index, this.groups.length));
@@ -122,15 +148,16 @@ class ObjectIndex {
         return objects;
     }
     findGroupIndex(value) {
-        return bisectSortedArray(this.groups, { value, objects: [] }, (group) => group.value, exports.OBJECT_VALUE_COLLATOR);
+        return bisectSortedArray(this.groups, { value, objects: [] }, (group) => group.value, this.collator);
     }
     findObjectIndex(objects, object) {
-        return bisectSortedArray(objects, object, (object) => object[this.key], exports.OBJECT_VALUE_COLLATOR);
+        return bisectSortedArray(objects, object, (object) => object[this.key], this.collator);
     }
-    constructor(objects, id, key) {
+    constructor(objects, id, key, collator) {
         this.groups = [];
         this.id = id;
         this.key = key;
+        this.collator = collator;
         for (let object of objects) {
             this.insert(object);
         }
@@ -140,7 +167,7 @@ class ObjectIndex {
         let group_index = this.findGroupIndex(value);
         if (group_index >= 0 && group_index < this.groups.length) {
             let group = this.groups[group_index];
-            if ((0, exports.OBJECT_VALUE_COLLATOR)(value, group.value) === "IDENTICAL") {
+            if (this.collator(value, group.value) === "IDENTICAL") {
                 let object_index = this.findObjectIndex(group.objects, object);
                 if (object_index >= 0 && object_index < group.objects.length) {
                     let existing_object = group.objects[object_index];
@@ -161,7 +188,7 @@ class ObjectIndex {
     }
     lookup(operator, value) {
         let group_index = this.findGroupIndex(value);
-        let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(this.groups[group_index]?.value, value);
+        let collator_result = this.collator(this.groups[group_index]?.value, value);
         if (operator === "<") {
             if (collator_result === "ONE_COMES_FIRST") {
                 return this.collectObjects(0, group_index + 1);
@@ -244,7 +271,7 @@ class ObjectIndex {
         let group_index = this.findGroupIndex(value);
         if (group_index >= 0 && group_index < this.groups.length) {
             let group = this.groups[group_index];
-            if ((0, exports.OBJECT_VALUE_COLLATOR)(value, group.value) === "IDENTICAL") {
+            if (this.collator(value, group.value) === "IDENTICAL") {
                 let object_index = this.findObjectIndex(group.objects, object);
                 if (object_index >= 0 && object_index < group.objects.length) {
                     let existing_object = group.objects[object_index];
@@ -315,6 +342,7 @@ class VolatileObjectStore extends ObjectStore {
     immutable_keys;
     objects;
     indices;
+    collator;
     insertIntoIndices(object) {
         for (let [key, index] of this.indices) {
             index.insert(object);
@@ -344,7 +372,7 @@ class VolatileObjectStore extends ObjectStore {
     getIndex(key) {
         let index = this.indices.get(key);
         if (index == null) {
-            index = new ObjectIndex(this.objects.values(), this.id, key);
+            index = new ObjectIndex(this.objects.values(), this.id, key, this.collator);
             this.indices.set(key, index);
         }
         return index;
@@ -353,7 +381,7 @@ class VolatileObjectStore extends ObjectStore {
         if (prequel_1.WhereString.is(where)) {
             let one = object[where.key];
             let two = where.operand;
-            let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one, two);
+            let collator_result = this.collator(one, two);
             if (where.operator === "<") {
                 return collator_result === "ONE_COMES_FIRST";
             }
@@ -388,7 +416,7 @@ class VolatileObjectStore extends ObjectStore {
         else if (prequel_1.WhereInteger.is(where)) {
             let one = object[where.key];
             let two = where.operand;
-            let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one, two);
+            let collator_result = this.collator(one, two);
             if (where.operator === "<") {
                 return collator_result === "ONE_COMES_FIRST";
             }
@@ -414,7 +442,7 @@ class VolatileObjectStore extends ObjectStore {
         else if (prequel_1.WhereBoolean.is(where)) {
             let one = object[where.key];
             let two = where.operand;
-            let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one, two);
+            let collator_result = this.collator(one, two);
             if (where.operator === "<") {
                 return collator_result === "ONE_COMES_FIRST";
             }
@@ -467,6 +495,7 @@ class VolatileObjectStore extends ObjectStore {
         this.unique_keys = [...unique_keys];
         this.guard = guard;
         this.immutable_keys = options?.immutable_keys ?? [];
+        this.collator = options?.null_order === "NULLS_LAST" ? exports.NULLS_LAST_OBJECT_VALUE_COLLATOR : exports.NULLS_FIRST_OBJECT_VALUE_COLLATOR;
         this.objects = new Map();
         this.indices = new Map();
     }
@@ -510,7 +539,7 @@ class VolatileObjectStore extends ObjectStore {
         });
         objects = objects.sort((one, two) => {
             for (let key of options.order.keys) {
-                let collator_result = (0, exports.OBJECT_VALUE_COLLATOR)(one[key], two[key]);
+                let collator_result = this.collator(one[key], two[key]);
                 if (collator_result === "ONE_COMES_FIRST") {
                     return options.order.sort === "ASC" ? -1 : 1;
                 }

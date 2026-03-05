@@ -67,13 +67,15 @@ export type Where = autoguard.guards.Union<[
     autoguard.guards.Reference<WhereAny>,
     autoguard.guards.Reference<WhereNot>
 ]>;
+export declare const Sort: autoguard.serialization.MessageGuard<Sort>;
+export type Sort = autoguard.guards.Union<[
+    autoguard.guards.StringLiteral<"ASC">,
+    autoguard.guards.StringLiteral<"DESC">
+]>;
 export declare const Order: autoguard.serialization.MessageGuard<Order>;
 export type Order = autoguard.guards.Object<{
     "keys": autoguard.guards.Array<autoguard.guards.String>;
-    "sort": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"ASC">,
-        autoguard.guards.StringLiteral<"DESC">
-    ]>;
+    "sort": autoguard.guards.Reference<Sort>;
 }, {}>;
 export declare namespace Autoguard {
     const Guards: {
@@ -308,6 +310,7 @@ export declare namespace Autoguard {
                 operand: boolean | null;
             } | any | any | any;
         }>;
+        Sort: autoguard.guards.ReferenceGuard<"ASC" | "DESC">;
         Order: autoguard.guards.ReferenceGuard<{
             keys: autoguard.guards.Array<string>;
             sort: "ASC" | "DESC";

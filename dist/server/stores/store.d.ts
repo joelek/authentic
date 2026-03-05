@@ -1,5 +1,5 @@
 import * as autoguard from "@joelek/autoguard";
-import { BooleanOperator, IntegerOperator, Operator, Order, StringOperator, Where } from "../prequel";
+import { BooleanOperator, IntegerOperator, Operator, Order, Sort, StringOperator, Where } from "../prequel";
 export declare class ExpectedObjectError extends Error {
     readonly key: ObjectKey;
     readonly value: ObjectValue;
@@ -34,7 +34,8 @@ export type Object<A extends ObjectProperties<A>, B extends string> = A & {
 };
 export type CollatorResult = "ONE_COMES_FIRST" | "IDENTICAL" | "TWO_COMES_FIRST";
 export type Collator<A> = (one: A, two: A) => CollatorResult;
-export declare const OBJECT_VALUE_COLLATOR: Collator<ObjectValue>;
+export declare const NULLS_FIRST_OBJECT_VALUE_COLLATOR: Collator<ObjectValue>;
+export declare const NULLS_LAST_OBJECT_VALUE_COLLATOR: Collator<ObjectValue>;
 export type Mapper<A, B> = (value: A) => B;
 export declare function bisectSortedArray<A, B>(objects: Array<A>, object: A, mapper: Mapper<A, B>, collator: Collator<B>): number;
 export type ObjectGroup<A extends ObjectProperties<A>, B extends string, C extends keyof A> = {
@@ -45,10 +46,11 @@ export declare class ObjectIndex<A extends ObjectProperties<A>, B extends string
     protected groups: Array<ObjectGroup<A, B, C>>;
     protected id: B;
     protected key: C;
+    protected collator: Collator<ObjectValue>;
     protected collectObjects(min_group_index: number, max_group_index: number): Array<Object<A, B>>;
     protected findGroupIndex(value: Object<A, B>[C]): number;
     protected findObjectIndex(objects: Array<Object<A, B>>, object: Object<A, B>): number;
-    constructor(objects: Iterable<Object<A, B>>, id: B, key: C);
+    constructor(objects: Iterable<Object<A, B>>, id: B, key: C, collator: Collator<ObjectValue>);
     insert(object: Object<A, B>): void;
     lookup(operator: Operator, value: Object<A, B>[C]): Array<Object<A, B>>;
     remove(object: Object<A, B>): void;
@@ -76,7 +78,7 @@ export type LookupWhere<A extends ObjectProperties<A>, B extends string> = {
 };
 export type LookupOrder<A extends ObjectProperties<A>, B extends string> = {
     keys: Extract<keyof Object<A, B>, string>[];
-    sort: "ASC" | "DESC";
+    sort: Sort;
 };
 export type LookupOptions<A extends ObjectProperties<A>, B extends string> = {
     where?: LookupWhere<A, B>;
@@ -101,6 +103,7 @@ export declare abstract class ObjectStore<A extends ObjectProperties<A>, B exten
 }
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
     immutable_keys?: Array<keyof A>;
+    null_order?: NullOrder;
 };
 export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
     protected id: B;
@@ -109,6 +112,7 @@ export declare class VolatileObjectStore<A extends ObjectProperties<A>, B extend
     protected immutable_keys: Array<keyof A>;
     protected objects: Map<ObjectValue, Object<A, B>>;
     protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
+    protected collator: Collator<ObjectValue>;
     protected insertIntoIndices(object: Object<A, B>): void;
     protected updateObjectIndices(existing_object: Object<A, B>, object: Object<A, B>): void;
     protected removeFromIndices(object: Object<A, B>): void;
