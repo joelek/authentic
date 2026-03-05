@@ -79,7 +79,7 @@ export type CollatorResult = "ONE_COMES_FIRST" | "IDENTICAL" | "TWO_COMES_FIRST"
 
 export type Collator<A> = (one: A, two: A) => CollatorResult;
 
-export const OBJECT_VALUE_COLLATOR: Collator<ObjectValue> = (one, two) => {
+export const NULLS_FIRST_OBJECT_VALUE_COLLATOR: Collator<ObjectValue> = (one, two) => {
 	if (one == null) {
 		if (two == null) {
 			return "IDENTICAL";
@@ -89,6 +89,28 @@ export const OBJECT_VALUE_COLLATOR: Collator<ObjectValue> = (one, two) => {
 	} else {
 		if (two == null) {
 			return "TWO_COMES_FIRST";
+		} else {
+			if (one < two) {
+				return "ONE_COMES_FIRST";
+			}
+			if (two < one) {
+				return "TWO_COMES_FIRST";
+			}
+			return "IDENTICAL";
+		}
+	}
+};
+
+export const NULLS_LAST_OBJECT_VALUE_COLLATOR: Collator<ObjectValue> = (one, two) => {
+	if (one == null) {
+		if (two == null) {
+			return "IDENTICAL";
+		} else {
+			return "TWO_COMES_FIRST";
+		}
+	} else {
+		if (two == null) {
+			return "ONE_COMES_FIRST";
 		} else {
 			if (one < two) {
 				return "ONE_COMES_FIRST";
@@ -131,6 +153,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 	protected groups: Array<ObjectGroup<A, B, C>>;
 	protected id: B;
 	protected key: C;
+	protected collator: Collator<ObjectValue>;
 
 	protected collectObjects(min_group_index: number, max_group_index: number): Array<Object<A, B>> {
 		let objects: Array<Object<A, B>> = [];
@@ -143,17 +166,18 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 	}
 
 	protected findGroupIndex(value: Object<A, B>[C]): number {
-		return bisectSortedArray(this.groups, { value, objects: [] }, (group) => group.value, OBJECT_VALUE_COLLATOR);
+		return bisectSortedArray(this.groups, { value, objects: [] }, (group) => group.value, this.collator);
 	}
 
 	protected findObjectIndex(objects: Array<Object<A, B>>, object: Object<A, B>): number {
-		return bisectSortedArray(objects, object, (object) => object[this.key], OBJECT_VALUE_COLLATOR);
+		return bisectSortedArray(objects, object, (object) => object[this.key], this.collator);
 	}
 
-	constructor(objects: Iterable<Object<A, B>>, id: B, key: C) {
+	constructor(objects: Iterable<Object<A, B>>, id: B, key: C, collator: Collator<ObjectValue>) {
 		this.groups = [];
 		this.id = id;
 		this.key = key;
+		this.collator = collator;
 		for (let object of objects) {
 			this.insert(object);
 		}
@@ -164,7 +188,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 		let group_index = this.findGroupIndex(value);
 		if (group_index >= 0 && group_index < this.groups.length) {
 			let group = this.groups[group_index];
-			if (OBJECT_VALUE_COLLATOR(value, group.value) === "IDENTICAL") {
+			if (this.collator(value, group.value) === "IDENTICAL") {
 				let object_index = this.findObjectIndex(group.objects, object);
 				if (object_index >= 0 && object_index < group.objects.length) {
 					let existing_object = group.objects[object_index];
@@ -186,7 +210,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 
 	lookup(operator: Operator, value: Object<A, B>[C]): Array<Object<A, B>> {
 		let group_index = this.findGroupIndex(value);
-		let collator_result = OBJECT_VALUE_COLLATOR(this.groups[group_index]?.value, value);
+		let collator_result = this.collator(this.groups[group_index]?.value, value);
 		if (operator === "<") {
 			if (collator_result === "ONE_COMES_FIRST") {
 				return this.collectObjects(0, group_index + 1);
@@ -270,7 +294,7 @@ export class ObjectIndex<A extends ObjectProperties<A>, B extends string, C exte
 		let group_index = this.findGroupIndex(value);
 		if (group_index >= 0 && group_index < this.groups.length) {
 			let group = this.groups[group_index];
-			if (OBJECT_VALUE_COLLATOR(value, group.value) === "IDENTICAL") {
+			if (this.collator(value, group.value) === "IDENTICAL") {
 				let object_index = this.findObjectIndex(group.objects, object);
 				if (object_index >= 0 && object_index < group.objects.length) {
 					let existing_object = group.objects[object_index];
@@ -386,6 +410,7 @@ export abstract class ObjectStore<A extends ObjectProperties<A>, B extends strin
 
 export type VolatileObjectStoreOptions<A extends ObjectProperties<A>, B extends string> = {
 	immutable_keys?: Array<keyof A>;
+	null_order?: NullOrder;
 };
 
 export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string> extends ObjectStore<A, B> {
@@ -395,6 +420,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 	protected immutable_keys: Array<keyof A>;
 	protected objects: Map<ObjectValue, Object<A, B>>;
 	protected indices: Map<keyof A, ObjectIndex<A, B, keyof A>>;
+	protected collator: Collator<ObjectValue>;
 
 	protected insertIntoIndices(object: Object<A, B>): void {
 		for (let [key, index] of this.indices) {
@@ -430,7 +456,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 	protected getIndex<C extends keyof A>(key: C): ObjectIndex<A, B, C> {
 		let index = this.indices.get(key) as ObjectIndex<A, B, C>;
 		if (index == null) {
-			index = new ObjectIndex(this.objects.values(), this.id, key);
+			index = new ObjectIndex(this.objects.values(), this.id, key, this.collator);
 			this.indices.set(key, index);
 		}
 		return index;
@@ -440,7 +466,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		if (WhereString.is(where)) {
 			let one = object[where.key as keyof Object<A, B>];
 			let two = where.operand;
-			let collator_result = OBJECT_VALUE_COLLATOR(one, two);
+			let collator_result = this.collator(one, two);
 			if (where.operator === "<") {
 				return collator_result === "ONE_COMES_FIRST";
 			} else if (where.operator === "<=") {
@@ -465,7 +491,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		} else if (WhereInteger.is(where)) {
 			let one = object[where.key as keyof Object<A, B>];
 			let two = where.operand;
-			let collator_result = OBJECT_VALUE_COLLATOR(one, two);
+			let collator_result = this.collator(one, two);
 			if (where.operator === "<") {
 				return collator_result === "ONE_COMES_FIRST";
 			} else if (where.operator === "<=") {
@@ -484,7 +510,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		} else if (WhereBoolean.is(where)) {
 			let one = object[where.key as keyof Object<A, B>];
 			let two = where.operand;
-			let collator_result = OBJECT_VALUE_COLLATOR(one, two);
+			let collator_result = this.collator(one, two);
 			if (where.operator === "<") {
 				return collator_result === "ONE_COMES_FIRST";
 			} else if (where.operator === "<=") {
@@ -528,6 +554,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		this.unique_keys = [ ...unique_keys ];
 		this.guard = guard;
 		this.immutable_keys = options?.immutable_keys ?? [];
+		this.collator = options?.null_order === "NULLS_LAST" ? NULLS_LAST_OBJECT_VALUE_COLLATOR : NULLS_FIRST_OBJECT_VALUE_COLLATOR
 		this.objects = new Map();
 		this.indices = new Map();
 	}
@@ -574,7 +601,7 @@ export class VolatileObjectStore<A extends ObjectProperties<A>, B extends string
 		});
 		objects = objects.sort((one, two) => {
 			for (let key of options.order.keys) {
-				let collator_result = OBJECT_VALUE_COLLATOR(one[key as keyof Object<A, B>], two[key as keyof Object<A, B>]);
+				let collator_result = this.collator(one[key as keyof Object<A, B>], two[key as keyof Object<A, B>]);
 				if (collator_result === "ONE_COMES_FIRST") {
 					return options.order.sort === "ASC" ? -1 : 1;
 				}
