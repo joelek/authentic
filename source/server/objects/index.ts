@@ -190,10 +190,6 @@ export const JobProperties: autoguard.serialization.MessageGuard<JobProperties> 
 	"updated_utc": autoguard.guards.Integer,
 	"type": autoguard.guards.String,
 	"options": autoguard.guards.String,
-	"description": autoguard.guards.Union.of(
-		autoguard.guards.String,
-		autoguard.guards.Null
-	),
 	"status": autoguard.guards.Reference.of(() => JobStatus),
 	"started_utc": autoguard.guards.Union.of(
 		autoguard.guards.Integer,
@@ -214,10 +210,6 @@ export type JobProperties = autoguard.guards.Object<{
 	"updated_utc": autoguard.guards.Integer,
 	"type": autoguard.guards.String,
 	"options": autoguard.guards.String,
-	"description": autoguard.guards.Union<[
-		autoguard.guards.String,
-		autoguard.guards.Null
-	]>,
 	"status": autoguard.guards.Reference<JobStatus>,
 	"started_utc": autoguard.guards.Union<[
 		autoguard.guards.Integer,

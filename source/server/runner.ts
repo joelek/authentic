@@ -40,7 +40,6 @@ export type ScheduledJob<A extends JSON> = {
 export type TaskScheduler<A extends JSON> = () => ScheduledJob<A> | undefined;
 
 export type JobMetadata<A extends JSON> = {
-	description?: string | null;
 	options: A;
 	expires_utc?: number | null;
 };
@@ -293,7 +292,6 @@ export class Runner<A extends Options<A>> {
 				updated_utc: now,
 				type: type,
 				options: JSON.stringify(metadata.options),
-				description: metadata?.description ?? null,
 				status: "ENQUEUED",
 				started_utc: null,
 				ended_utc: null,
