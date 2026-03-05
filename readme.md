@@ -328,7 +328,6 @@ CREATE TABLE jobs (
 	updated_utc BIGINT NOT NULL,
 	type VARCHAR(63) NOT NULL,
 	options VARCHAR(1023) NOT NULL,
-	description VARCHAR(255),
 	status ENUM('ENQUEUED', 'RUNNING', 'SUCCESS', 'FAILURE') NOT NULL,
 	started_utc BIGINT,
 	ended_utc BIGINT,

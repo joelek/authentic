@@ -219,7 +219,14 @@ class Runner {
             if (!(job.type in this.tasks)) {
                 throw new Error(`Expected "${job.type}" to be a known job type!`);
             }
-            await this.tasks[job.type].runner(job.job_id, job.options ?? null);
+            let task = this.tasks[job.type];
+            let options = JSON.parse(job.options);
+            if (task.guard != null) {
+                if (!task.guard.is(options)) {
+                    throw new Error(`Expected job with type "${job.type}" to be initialized with valid options!`);
+                }
+            }
+            await task.runner(job.job_id, options);
             return true;
         }
         catch (error) {
@@ -228,7 +235,7 @@ class Runner {
         return false;
     }
     constructor(options) {
-        this.tasks = options?.tasks ?? {};
+        this.tasks = options.tasks;
         this.jobs = options?.jobs ?? new job_1.VolatileJobStore();
     }
     isMainThread() {
@@ -241,8 +248,7 @@ class Runner {
                 created_utc: now,
                 updated_utc: now,
                 type: type,
-                options: metadata?.options ?? null,
-                description: metadata?.description ?? null,
+                options: JSON.stringify(metadata.options),
                 status: "ENQUEUED",
                 started_utc: null,
                 ended_utc: null,
