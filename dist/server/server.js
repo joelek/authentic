@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = exports.CookieData = exports.AccessHandler = void 0;
 const autoguard = require("@joelek/autoguard/dist/lib-server");
+const prequel = require("@joelek/prequel");
 const libcrypto = require("crypto");
 const libnet = require("net");
 const api = require("../api/server");
@@ -12,7 +13,6 @@ const role_1 = require("./stores/role");
 const session_1 = require("./stores/session");
 const user_1 = require("./stores/user");
 const user_role_1 = require("./stores/user_role");
-const utils = require("./utils");
 const validator_1 = require("./validator");
 const NULL_SESSION = {
     username: null,
@@ -157,10 +157,10 @@ class Server {
         return formatted_code.split(" ").join("");
     }
     generateCode(length) {
-        return utils.generateDigitId(length);
+        return prequel.ids.generateDigitId(length);
     }
     generateTicket(length) {
-        return utils.generateHexId(length);
+        return prequel.ids.generateHexId(length);
     }
     getApiState(session) {
         return api.State.as({

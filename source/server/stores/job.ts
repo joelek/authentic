@@ -1,14 +1,14 @@
 import * as autoguard from "@joelek/autoguard";
+import * as prequel from "@joelek/prequel";
 import { JobProperties } from "../objects";
-import { DatabaseObjectStoreDetail, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 
 export const UNIQUE_JOB_PROPERTIES = (<A extends PropertyKey[]>(...values: A) => values)();
 
-export type Job = Object<JobProperties, "job_id">;
+export type Job = prequel.stores.Object<JobProperties, "job_id">;
 
-export interface JobStore extends  ObjectStore<JobProperties, "job_id"> {};
+export interface JobStore extends prequel.stores.ObjectStore<JobProperties, "job_id"> {};
 
-export class VolatileJobStore extends VolatileObjectStore<JobProperties, "job_id"> {
+export class VolatileJobStore extends prequel.stores.VolatileObjectStore<JobProperties, "job_id"> {
 	constructor() {
 		super("job_id", UNIQUE_JOB_PROPERTIES, Job);
 	}
@@ -21,8 +21,8 @@ export const Job = autoguard.guards.Intersection.of(
 	JobProperties
 );
 
-export class DatabaseJobStore extends DatabaseObjectStore<JobProperties, "job_id"> {
-	constructor(detail:  DatabaseObjectStoreDetail, table: string) {
+export class DatabaseJobStore extends prequel.stores.DatabaseObjectStore<JobProperties, "job_id"> {
+	constructor(detail: prequel.stores.DatabaseObjectStoreDetail, table: string) {
 		super(detail, table, "job_id", Job);
 	}
 };

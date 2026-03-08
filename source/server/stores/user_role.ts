@@ -1,16 +1,16 @@
 import * as autoguard from "@joelek/autoguard";
+import * as prequel from "@joelek/prequel";
 import { UserRoleProperties } from "../objects";
-import { DatabaseObjectStoreDetail, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 
 export const UNIQUE_USER_ROLE_PROPERTIES = (<A extends PropertyKey[]>(...values: A) => values)(
 
 );
 
-export type UserRole = Object<UserRoleProperties, "user_role_id">;
+export type UserRole = prequel.stores.Object<UserRoleProperties, "user_role_id">;
 
-export interface UserRoleStore extends ObjectStore<UserRoleProperties, "user_role_id"> {};
+export interface UserRoleStore extends prequel.stores.ObjectStore<UserRoleProperties, "user_role_id"> {};
 
-export class VolatileUserRoleStore extends VolatileObjectStore<UserRoleProperties, "user_role_id"> {
+export class VolatileUserRoleStore extends prequel.stores.VolatileObjectStore<UserRoleProperties, "user_role_id"> {
 	constructor() {
 		super("user_role_id", UNIQUE_USER_ROLE_PROPERTIES, UserRole);
 	}
@@ -23,8 +23,8 @@ export const UserRole = autoguard.guards.Intersection.of(
 	UserRoleProperties
 );
 
-export class DatabaseUserRoleStore extends DatabaseObjectStore<UserRoleProperties, "user_role_id"> {
-	constructor(detail: DatabaseObjectStoreDetail, table: string) {
+export class DatabaseUserRoleStore extends prequel.stores.DatabaseObjectStore<UserRoleProperties, "user_role_id"> {
+	constructor(detail: prequel.stores.DatabaseObjectStoreDetail, table: string) {
 		super(detail, table, "user_role_id", UserRole);
 	}
 };

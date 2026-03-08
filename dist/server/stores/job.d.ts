@@ -1,11 +1,11 @@
 import * as autoguard from "@joelek/autoguard";
+import * as prequel from "@joelek/prequel";
 import { JobProperties } from "../objects";
-import { DatabaseObjectStoreDetail, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 export declare const UNIQUE_JOB_PROPERTIES: [];
-export type Job = Object<JobProperties, "job_id">;
-export interface JobStore extends ObjectStore<JobProperties, "job_id"> {
+export type Job = prequel.stores.Object<JobProperties, "job_id">;
+export interface JobStore extends prequel.stores.ObjectStore<JobProperties, "job_id"> {
 }
-export declare class VolatileJobStore extends VolatileObjectStore<JobProperties, "job_id"> {
+export declare class VolatileJobStore extends prequel.stores.VolatileObjectStore<JobProperties, "job_id"> {
     constructor();
 }
 export declare const Job: autoguard.guards.IntersectionGuard<[{
@@ -20,6 +20,6 @@ export declare const Job: autoguard.guards.IntersectionGuard<[{
     ended_utc: number | null;
     expires_utc: number | null;
 }]>;
-export declare class DatabaseJobStore extends DatabaseObjectStore<JobProperties, "job_id"> {
-    constructor(detail: DatabaseObjectStoreDetail, table: string);
+export declare class DatabaseJobStore extends prequel.stores.DatabaseObjectStore<JobProperties, "job_id"> {
+    constructor(detail: prequel.stores.DatabaseObjectStoreDetail, table: string);
 }

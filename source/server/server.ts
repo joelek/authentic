@@ -1,4 +1,5 @@
 import * as autoguard from "@joelek/autoguard/dist/lib-server";
+import * as prequel from "@joelek/prequel";
 import * as libcrypto from "crypto";
 import * as libhttp from "http";
 import * as libnet from "net";
@@ -11,7 +12,6 @@ import { RoleStore, VolatileRoleStore } from "./stores/role";
 import { Session, SessionStore, VolatileSessionStore } from "./stores/session";
 import { UserStore, VolatileUserStore } from "./stores/user";
 import { UserRoleStore, VolatileUserRoleStore } from "./stores/user_role";
-import * as utils from "./utils";
 import { Validator } from "./validator";
 
 const NULL_SESSION: Nullable<Session> = {
@@ -215,11 +215,11 @@ export class Server {
 	}
 
 	protected generateCode(length: number): string {
-		return utils.generateDigitId(length);
+		return prequel.ids.generateDigitId(length);
 	}
 
 	protected generateTicket(length: number): string {
-		return utils.generateHexId(length);
+		return prequel.ids.generateHexId(length);
 	}
 
 	protected getApiState(session: Session): api.State {

@@ -1,11 +1,11 @@
 import * as autoguard from "@joelek/autoguard";
+import * as prequel from "@joelek/prequel";
 import { RoleProperties } from "../objects";
-import { DatabaseObjectStoreDetail, DatabaseObjectStore, Object, ObjectStore, VolatileObjectStore } from "./store";
 export declare const UNIQUE_ROLE_PROPERTIES: ["name"];
-export type Role = Object<RoleProperties, "role_id">;
-export interface RoleStore extends ObjectStore<RoleProperties, "role_id"> {
+export type Role = prequel.stores.Object<RoleProperties, "role_id">;
+export interface RoleStore extends prequel.stores.ObjectStore<RoleProperties, "role_id"> {
 }
-export declare class VolatileRoleStore extends VolatileObjectStore<RoleProperties, "role_id"> {
+export declare class VolatileRoleStore extends prequel.stores.VolatileObjectStore<RoleProperties, "role_id"> {
     constructor();
 }
 export declare const Role: autoguard.guards.IntersectionGuard<[{
@@ -15,6 +15,6 @@ export declare const Role: autoguard.guards.IntersectionGuard<[{
     updated_utc: number;
     name: string;
 }]>;
-export declare class DatabaseRoleStore extends DatabaseObjectStore<RoleProperties, "role_id"> {
-    constructor(detail: DatabaseObjectStoreDetail, table: string);
+export declare class DatabaseRoleStore extends prequel.stores.DatabaseObjectStore<RoleProperties, "role_id"> {
+    constructor(detail: prequel.stores.DatabaseObjectStoreDetail, table: string);
 }
