@@ -1,12 +1,12 @@
 {
 	"bin": {},
 	"dependencies": {
-		"@joelek/autoguard": "github:joelek/autoguard#master",
+		"@joelek/autoguard": "github:joelek/autoguard#semver:^5.16",
 		"@joelek/bonsai": "github:joelek/bonsai#master",
-		"@joelek/prequel": "github:joelek/prequel#master"
+		"@joelek/prequel": "github:joelek/prequel#semver:^0.1"
 	},
 	"devDependencies": {
-		"@joelek/wtf": "github:joelek/wtf#semver:^1.3",
+		"@joelek/wtf": "github:joelek/wtf#semver:^1.4",
 		"@types/node": "^22",
 		"typescript": "^4"
 	},
