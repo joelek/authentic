@@ -2,7 +2,7 @@
 	"bin": {},
 	"dependencies": {
 		"@joelek/autoguard": "github:joelek/autoguard#semver:^5.16",
-		"@joelek/bonsai": "github:joelek/bonsai#master",
+		"@joelek/bonsai": "github:joelek/bonsai#semver:^0.10",
 		"@joelek/prequel": "github:joelek/prequel#semver:^0.1"
 	},
 	"devDependencies": {
