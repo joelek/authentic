@@ -365,7 +365,11 @@ export class Server {
 				addresses.push(socket_address.address);
 			}
 		}
-		addresses.push((request.socket().address() as libnet.AddressInfo).address);
+		let remote_address = request.socket().remoteAddress;
+		if (remote_address == null) {
+			throw 500;
+		}
+		addresses.push(remote_address);
 		for (let address of addresses.reverse()) {
 			if (!this.trusted_proxies.includes(address)) {
 				return address;
