@@ -135,7 +135,7 @@ CREATE TABLE origins (
 	origin_id VARCHAR(32) PRIMARY KEY NOT NULL,
 	created_utc BIGINT NOT NULL,
 	updated_utc BIGINT NOT NULL,
-	address VARCHAR(31) NOT NULL,
+	address VARCHAR(63) NOT NULL,
 	expires_utc BIGINT NOT NULL,
 	wait_until_utc BIGINT NOT NULL,
 	UNIQUE INDEX address (address),

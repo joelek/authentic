@@ -4,9 +4,6 @@ export function normalizeIPv6(ip: string): string {
 	if (!libnet.isIPv6(ip)) {
 		throw new Error(`Expected "${ip}" to be a valid IPv6 address!`);
 	}
-	if (ip.startsWith("[") && ip.endsWith("]")) {
-		ip = ip.slice(1, -1);
-	}
 	let groups = new Array<string>();
 	let position = ip.indexOf("::");
 	if (position >= 0) {
@@ -19,7 +16,7 @@ export function normalizeIPv6(ip: string): string {
 	} else {
 		groups.push(...ip.split(":"));
 	}
-	let normalizedIp = `[${groups.map((group) => group.padStart(4, "0")).join(":").toLowerCase()}]`;
+	let normalizedIp = groups.map((group) => group.padStart(4, "0")).join(":").toLowerCase();
 	return normalizedIp;
 };
 
