@@ -26,7 +26,7 @@ export function normalizeToIPv6(address: string): string {
 		return normalizeIPv6(ip);
 	}
 	if (libnet.isIPv4(ip)) {
-		return normalizeIPv6(ip === "127.0.0.1" ? "::1" : `::ffff:${address}`);
+		return normalizeIPv6(ip === "127.0.0.1" ? "::1" : `::ffff:${ip}`);
 	}
 	throw new Error(`Expected "${address}" to be a valid IPv4 or IPv6 address!`);
 };
