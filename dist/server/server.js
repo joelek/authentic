@@ -293,7 +293,7 @@ class Server {
                 if (socket_address == null) {
                     throw 400;
                 }
-                addresses.push(socket_address.address);
+                addresses.push(ips.normalizeToIPv6(socket_address.address));
             }
         }
         let remote_address = request.socket().remoteAddress;
@@ -303,7 +303,7 @@ class Server {
         addresses.push(remote_address);
         for (let address of addresses.reverse()) {
             let trusted_proxy = this.trusted_proxies.find((trusted_proxy) => {
-                return ips.normalizeToIPv6(trusted_proxy) === ips.normalizeToIPv6(address);
+                return trusted_proxy === address;
             });
             if (trusted_proxy == null) {
                 return address;
@@ -1043,7 +1043,7 @@ class Server {
         this.roles = options?.roles ?? new role_1.VolatileRoleStore();
         this.user_roles = options?.user_roles ?? new user_role_1.VolatileUserRoleStore();
         this.cookie = options?.cookie ?? "session";
-        this.trusted_proxies = options?.trusted_proxies?.slice() ?? [];
+        this.trusted_proxies = options?.trusted_proxies?.slice().map((trusted_proxy) => ips.normalizeToIPv6(trusted_proxy)) ?? [];
         this.session_validity_minutes = options?.session_validity_minutes ?? 20;
         this.authenticated_session_validity_days = options?.authenticated_session_validity_days ?? 14;
         this.origin_validity_minutes = options?.origin_validity_minutes ?? 60 * 24;
