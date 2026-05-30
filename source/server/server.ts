@@ -4,6 +4,7 @@ import * as libcrypto from "crypto";
 import * as libhttp from "http";
 import * as libnet from "net";
 import * as api from "../api/server";
+import * as ips from "./ips";
 import { Command } from "../api/server";
 import { Mailer, TestMailer } from "../email";
 import { ExpectedUnreachableCodeError, Nullable } from "../shared";
@@ -371,7 +372,10 @@ export class Server {
 		}
 		addresses.push(remote_address);
 		for (let address of addresses.reverse()) {
-			if (!this.trusted_proxies.includes(address)) {
+			let trusted_proxy = this.trusted_proxies.find((trusted_proxy) => {
+				return ips.normalizeToIPv6(trusted_proxy) === ips.normalizeToIPv6(address);
+			});
+			if (trusted_proxy == null) {
 				return address;
 			}
 		}
