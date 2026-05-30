@@ -6,6 +6,7 @@ const prequel = require("@joelek/prequel");
 const libcrypto = require("crypto");
 const libnet = require("net");
 const api = require("../api/server");
+const ips = require("./ips");
 const email_1 = require("../email");
 const shared_1 = require("../shared");
 const origin_1 = require("./stores/origin");
@@ -301,7 +302,10 @@ class Server {
         }
         addresses.push(remote_address);
         for (let address of addresses.reverse()) {
-            if (!this.trusted_proxies.includes(address)) {
+            let trusted_proxy = this.trusted_proxies.find((trusted_proxy) => {
+                return ips.normalizeToIPv6(trusted_proxy) === ips.normalizeToIPv6(address);
+            });
+            if (trusted_proxy == null) {
                 return address;
             }
         }
