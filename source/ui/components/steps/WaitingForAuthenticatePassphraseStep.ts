@@ -15,8 +15,9 @@ export function WaitingForAuthenticatePassphraseStep(managers: Managers, attribu
 	let state = managers.backend.getState();
 	let { type, reason } = state.compute((state) => api.WaitingForAuthenticatePassphraseState.is(state) ? state : { type: undefined, reason: undefined } as Partial<api.WaitingForAuthenticatePassphraseState>);
 	let value = stateify("");
+	let show_password = stateify(false);
 	let input = FormInput(managers, {
-		type: "password",
+		type: show_password.compute((show_password) => show_password ? "text" : "password"),
 		enabled: managers.backend.getEditable(),
 		placeholder: managers.translation.getTranslation("PASSPHRASE_PLACEHOLDER"),
 		onkeyup: (event) => {
