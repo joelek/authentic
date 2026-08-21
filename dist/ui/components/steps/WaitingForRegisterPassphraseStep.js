@@ -15,7 +15,7 @@ function WaitingForRegisterPassphraseStep(managers, attributes) {
     let { type, reason } = state.compute((state) => api.WaitingForRegisterPassphraseState.is(state) ? state : { type: undefined, reason: undefined });
     let value = (0, bonsai_1.stateify)("");
     let input = (0, FormInput_1.FormInput)(managers, {
-        type: "password",
+        type: managers.state.passwords.compute((passwords) => passwords === "show" ? "text" : "password"),
         enabled: managers.backend.getEditable(),
         placeholder: managers.translation.getTranslation("PASSPHRASE_PLACEHOLDER"),
         onkeyup: (event) => {

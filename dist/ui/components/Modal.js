@@ -88,8 +88,14 @@ document.head.appendChild(bonsai_1.html.style({}, `
 		display: grid;
 		grid-auto-flow: column;
 		gap: 12px;
-		justify-content: end;
+		justify-content: space-between;
 		padding: 12px;
+	}
+
+	.${CLASS_NAME}__foot-content {
+		display: grid;
+		grid-auto-flow: column;
+		gap: 12px;
 	}
 
 	.${CLASS_NAME}__scroll {
@@ -166,7 +172,28 @@ function Modal(managers, attributes) {
         class: [`${CLASS_NAME}__content`]
     }, (0, AuthenticatedStep_1.AuthenticatedStep)(managers, {}), (0, WaitingForCommandStep_1.WaitingForCommandStep)(managers, {}), (0, WaitingForAuthenticateEmailStep_1.WaitingForAuthenticateEmailStep)(managers, {}), (0, WaitingForAuthenticatePassphraseStep_1.WaitingForAuthenticatePassphraseStep)(managers, {}), (0, WaitingForAuthenticateCodeStep_1.WaitingForAuthenticateCodeStep)(managers, {}), (0, WaitingForAuthenticateUsernameStep_1.WaitingForAuthenticateUsernameStep)(managers, {}), (0, WaitingForRecoverEmailStep_1.WaitingForRecoverEmailStep)(managers, {}), (0, WaitingForRecoverPassphraseStep_1.WaitingForRecoverPassphraseStep)(managers, {}), (0, WaitingForRecoverCodeStep_1.WaitingForRecoverCodeStep)(managers, {}), (0, WaitingForRecoverUsernameStep_1.WaitingForRecoverUsernameStep)(managers, {}), (0, WaitingForRegisterEmailStep_1.WaitingForRegisterEmailStep)(managers, {}), (0, WaitingForRegisterPassphraseStep_1.WaitingForRegisterPassphraseStep)(managers, {}), (0, WaitingForRegisterCodeStep_1.WaitingForRegisterCodeStep)(managers, {}), (0, WaitingForRegisterUsernameStep_1.WaitingForRegisterUsernameStep)(managers, {})))), (0, Block_1.Block)("div", {
         class: [`${CLASS_NAME}__foot`]
-    }, (0, RestartButton_1.RestartButton)(managers, {}), (0, FormSelect_1.FormSelect)(managers, {
+    }, (0, Block_1.Block)("div", {
+        class: [`${CLASS_NAME}__foot-content`]
+    }, (0, RestartButton_1.RestartButton)(managers, {})), (0, Block_1.Block)("div", {
+        class: [`${CLASS_NAME}__foot-content`]
+    }, (0, FormSelect_1.FormSelect)(managers, {
+        groups: [
+            {
+                title: managers.translation.getTranslation("PASSPHRASES"),
+                options: [
+                    {
+                        title: managers.translation.getTranslation("HIDE"),
+                        option: "hide"
+                    },
+                    {
+                        title: managers.translation.getTranslation("SHOW"),
+                        option: "show"
+                    }
+                ]
+            }
+        ],
+        value: managers.state.passwords
+    }), (0, FormSelect_1.FormSelect)(managers, {
         groups: [
             {
                 title: managers.translation.getTranslation("LANGUAGES"),
@@ -183,7 +210,7 @@ function Modal(managers, attributes) {
             }
         ],
         value: managers.translation.getLanguage()
-    })))))));
+    }))))))));
 }
 exports.Modal = Modal;
 ;

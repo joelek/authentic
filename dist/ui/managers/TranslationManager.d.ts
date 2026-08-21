@@ -269,6 +269,18 @@ declare const TRANSLATIONS: {
         en: string;
         sv: string;
     };
+    PASSPHRASES: {
+        en: string;
+        sv: string;
+    };
+    SHOW: {
+        en: string;
+        sv: string;
+    };
+    HIDE: {
+        en: string;
+        sv: string;
+    };
 };
 type Translations = typeof TRANSLATIONS;
 type TranslationsKey = keyof Translations;

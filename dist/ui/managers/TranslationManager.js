@@ -320,6 +320,18 @@ const TRANSLATIONS = {
     "LANGUAGE_SV": {
         en: "Swedish",
         sv: "Svenska"
+    },
+    "PASSPHRASES": {
+        en: "Passwords",
+        sv: "Lösenord"
+    },
+    "SHOW": {
+        en: "Show",
+        sv: "Visa"
+    },
+    "HIDE": {
+        en: "Hide",
+        sv: "Dölj"
     }
 };
 class TranslationManager {
