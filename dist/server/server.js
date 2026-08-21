@@ -293,7 +293,7 @@ class Server {
                 if (socket_address == null) {
                     throw 400;
                 }
-                addresses.push(ips.normalizeToIPv6(socket_address.address));
+                addresses.push(socket_address.address);
             }
         }
         let remote_address = request.socket().remoteAddress;
@@ -301,6 +301,7 @@ class Server {
             throw 500;
         }
         addresses.push(remote_address);
+        addresses = addresses.map((address) => ips.normalizeToIPv6(address));
         for (let address of addresses.reverse()) {
             let trusted_proxy = this.trusted_proxies.find((trusted_proxy) => {
                 return trusted_proxy === address;
