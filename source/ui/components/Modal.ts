@@ -20,6 +20,7 @@ import { Language } from "../../api/client";
 import { FormSelect } from "./form/FormSelect";
 import { ModalTitle } from "./titles/ModalTitle";
 import { RestartButton } from "./buttons/RestartButton";
+import { HideShow } from "../managers";
 
 const CLASS_NAME = "authentic-modal";
 
@@ -89,8 +90,14 @@ document.head.appendChild(html.style({}, `
 		display: grid;
 		grid-auto-flow: column;
 		gap: 12px;
-		justify-content: end;
+		justify-content: space-between;
 		padding: 12px;
+	}
+
+	.${CLASS_NAME}__foot-content {
+		display: grid;
+		grid-auto-flow: column;
+		gap: 12px;
 	}
 
 	.${CLASS_NAME}__scroll {
@@ -206,25 +213,51 @@ export function Modal(managers: Managers, attributes: Modal) {
 						Block("div", {
 							class: [`${CLASS_NAME}__foot`]
 						},
-							RestartButton(managers, {}),
-							FormSelect<Language>(managers, {
-								groups: [
-									{
-										title: managers.translation.getTranslation("LANGUAGES"),
-										options: [
-											{
-												title: managers.translation.getTranslation("LANGUAGE_EN"),
-												option: "en"
-											},
-											{
-												title: managers.translation.getTranslation("LANGUAGE_SV"),
-												option: "sv"
-											}
-										]
-									}
-								],
-								value: managers.translation.getLanguage()
-							})
+							Block("div", {
+								class: [`${CLASS_NAME}__foot-content`]
+							},
+								RestartButton(managers, {}),
+							),
+							Block("div", {
+								class: [`${CLASS_NAME}__foot-content`]
+							},
+								FormSelect<HideShow>(managers, {
+									groups: [
+										{
+											title: managers.translation.getTranslation("PASSPHRASES"),
+											options: [
+												{
+													title: managers.translation.getTranslation("HIDE"),
+													option: "hide"
+												},
+												{
+													title: managers.translation.getTranslation("SHOW"),
+													option: "show"
+												}
+											]
+										}
+									],
+									value: managers.state.passwords
+								}),
+								FormSelect<Language>(managers, {
+									groups: [
+										{
+											title: managers.translation.getTranslation("LANGUAGES"),
+											options: [
+												{
+													title: managers.translation.getTranslation("LANGUAGE_EN"),
+													option: "en"
+												},
+												{
+													title: managers.translation.getTranslation("LANGUAGE_SV"),
+													option: "sv"
+												}
+											]
+										}
+									],
+									value: managers.translation.getLanguage()
+								})
+							)
 						)
 					)
 				)
