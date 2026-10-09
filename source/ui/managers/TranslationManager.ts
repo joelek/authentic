@@ -285,16 +285,16 @@ const TRANSLATIONS = {
 		sv: "Börja om"
 	},
 	"REGISTER_ACCOUNT": {
-		en: "Register",
-		sv: "Registrera"
+		en: "Create account",
+		sv: "Skapa konto"
 	},
 	"AUTHENTICATE_ACCOUNT": {
 		en: "Log in",
 		sv: "Logga in"
 	},
 	"RECOVER_ACCOUNT": {
-		en: "Reset password",
-		sv: "Återställ lösenord"
+		en: "Change password",
+		sv: "Byt lösenord"
 	},
 	"CONTINUE": {
 		en: "Continue",
