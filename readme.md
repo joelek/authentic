@@ -368,6 +368,4 @@ NB: This project targets TypeScript 4 in strict mode.
 
 ## Roadmap
 
-* Consider adding registration keys.
 * Add functionality for creating and updating database tables.
-* Add hide/show toggle button for password fields.
