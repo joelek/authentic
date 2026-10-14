@@ -189,6 +189,7 @@ export class SMTPMailer implements Mailer {
 							state = "WAITING_FOR_EHLO_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
+							reject(lines);
 						}
 						return;
 					}
@@ -198,6 +199,7 @@ export class SMTPMailer implements Mailer {
 							state = "WAITING_FOR_AUTH_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
+							reject(lines);
 						}
 						return;
 					}
@@ -207,6 +209,7 @@ export class SMTPMailer implements Mailer {
 							state = "WAITING_FOR_MAIL_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
+							reject(lines);
 						}
 						return;
 					}
@@ -216,6 +219,7 @@ export class SMTPMailer implements Mailer {
 							state = "WAITING_FOR_RCPT_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
+							reject(lines);
 						}
 						return;
 					}
@@ -225,6 +229,7 @@ export class SMTPMailer implements Mailer {
 							state = "WAITING_FOR_DATA_REPLY";
 						} else {
 							socket.write("QUIT\r\n");
+							reject(lines);
 						}
 						return;
 					}
@@ -277,6 +282,7 @@ export class SMTPMailer implements Mailer {
 							state = "WAITING_FOR_FINALIZATION";
 						} else {
 							socket.write("QUIT\r\n");
+							reject(lines);
 						}
 						return;
 					}
@@ -287,6 +293,7 @@ export class SMTPMailer implements Mailer {
 							resolve();
 						} else {
 							socket.write("QUIT\r\n");
+							reject(lines);
 						}
 						return;
 					}
