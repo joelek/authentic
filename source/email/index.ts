@@ -319,7 +319,11 @@ export class SMTPMailer implements Mailer {
 			});
 			let socket = net_socket as libnet.Socket;
 			let state: State = "WAITING_FOR_GREETING";
+			let timeout = setTimeout(() => {
+				reject(new Error(`Expected TCP connection to succeed within 10 seconds!`));
+			}, 10 * 1000);
 			net_socket.once("connect", () => {
+				clearTimeout(timeout);
 				let ondata: (data: Buffer) => void = (buffer) => {
 					let lines = buffer.toString("ascii").split("\r\n");
 					console.log(state, lines);
