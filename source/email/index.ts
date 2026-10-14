@@ -34,10 +34,11 @@ export function split(string: string, max_length: number): Array<string> {
 	return parts;
 };
 
-export function performTLSHandshake(net_socket: libnet.Socket): Promise<libtls.TLSSocket> {
+export function performTLSHandshake(net_socket: libnet.Socket, servername: string): Promise<libtls.TLSSocket> {
 	return new Promise((resolve, reject) => {
 		let tls_socket = libtls.connect({
 			socket: net_socket,
+			servername: servername,
 			rejectUnauthorized: true
 		});
 		let timeout = setTimeout(() => {
@@ -345,7 +346,7 @@ export class SMTPMailer implements Mailer {
 					if (state === "WAITING_FOR_STARTTLS_REPLY") {
 						if (lines[0].startsWith("220")) {
 							socket.off("data", ondata);
-							performTLSHandshake(socket)
+							performTLSHandshake(socket, this.options.smtp.hostname)
 								.then((tls_socket) => {
 									tls_socket.write(`EHLO mail.example.com\r\n`);
 									state = "WAITING_FOR_EHLO_REPLY";
