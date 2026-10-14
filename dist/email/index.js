@@ -27,10 +27,11 @@ function split(string, max_length) {
 }
 exports.split = split;
 ;
-function performTLSHandshake(net_socket) {
+function performTLSHandshake(net_socket, servername) {
     return new Promise((resolve, reject) => {
         let tls_socket = libtls.connect({
             socket: net_socket,
+            servername: servername,
             rejectUnauthorized: true
         });
         let timeout = setTimeout(() => {
@@ -142,6 +143,15 @@ class SMTPMailer {
         }
         return "IMPLICIT";
     }
+    getLoginMethods(lines) {
+        let methods = new Array();
+        for (let line of lines) {
+            if (line.startsWith("250-AUTH ")) {
+                methods.push(...line.slice("250-AUTH ".length).split(" "));
+            }
+        }
+        return methods;
+    }
     finishSending(state, options, tls_socket) {
         let to = this.getTo(options);
         let from = this.getFrom(options);
@@ -154,8 +164,19 @@ class SMTPMailer {
                 console.log(state, lines);
                 if (state === "WAITING_FOR_EHLO_REPLY") {
                     if (lines[0].startsWith("250")) {
-                        socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.smtp.username + "\0" + this.options.smtp.password).toString("base64")}\r\n`);
-                        state = "WAITING_FOR_AUTH_REPLY";
+                        let methods = this.getLoginMethods(lines);
+                        if (methods.includes("PLAIN")) {
+                            socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.smtp.username + "\0" + this.options.smtp.password).toString("base64")}\r\n`);
+                            state = "WAITING_FOR_AUTH_PLAIN_REPLY";
+                        }
+                        else if (methods.includes("LOGIN")) {
+                            socket.write(`AUTH LOGIN\r\n`);
+                            state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+                        }
+                        else {
+                            socket.write("QUIT\r\n");
+                            reject(new Error(`Expected a supported authentication method!`));
+                        }
                     }
                     else {
                         socket.write("QUIT\r\n");
@@ -163,8 +184,33 @@ class SMTPMailer {
                     }
                     return;
                 }
-                if (state === "WAITING_FOR_AUTH_REPLY") {
+                if (state === "WAITING_FOR_AUTH_PLAIN_REPLY") {
                     if (lines[0].startsWith("235")) {
+                        socket.write(`MAIL FROM: <${from.address}>\r\n`);
+                        state = "WAITING_FOR_MAIL_REPLY";
+                    }
+                    else {
+                        socket.write("QUIT\r\n");
+                        reject(lines);
+                    }
+                    return;
+                }
+                if (state === "WAITING_FOR_AUTH_LOGIN_REPLY") {
+                    if (lines[0].startsWith("334")) {
+                        if (lines[0] === `334 ${Buffer.from("Username:").toString("base64")}`) {
+                            socket.write(`${Buffer.from(this.options.smtp.username).toString("base64")}\r\n`);
+                            state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+                        }
+                        else if (lines[0] === `334 ${Buffer.from("Password:").toString("base64")}`) {
+                            socket.write(`${Buffer.from(this.options.smtp.password).toString("base64")}\r\n`);
+                            state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+                        }
+                        else {
+                            socket.write("QUIT\r\n");
+                            reject(new Error(`Expected a supported authentication method!`));
+                        }
+                    }
+                    else if (lines[0].startsWith("235")) {
                         socket.write(`MAIL FROM: <${from.address}>\r\n`);
                         state = "WAITING_FOR_MAIL_REPLY";
                     }
@@ -277,7 +323,11 @@ class SMTPMailer {
             });
             let socket = net_socket;
             let state = "WAITING_FOR_GREETING";
+            let timeout = setTimeout(() => {
+                reject(new Error(`Expected TCP connection to succeed within 10 seconds!`));
+            }, 10 * 1000);
             net_socket.once("connect", () => {
+                clearTimeout(timeout);
                 let ondata = (buffer) => {
                     let lines = buffer.toString("ascii").split("\r\n");
                     console.log(state, lines);
@@ -306,7 +356,7 @@ class SMTPMailer {
                     if (state === "WAITING_FOR_STARTTLS_REPLY") {
                         if (lines[0].startsWith("220")) {
                             socket.off("data", ondata);
-                            performTLSHandshake(socket)
+                            performTLSHandshake(socket, this.options.smtp.hostname)
                                 .then((tls_socket) => {
                                 tls_socket.write(`EHLO mail.example.com\r\n`);
                                 state = "WAITING_FOR_EHLO_REPLY";
