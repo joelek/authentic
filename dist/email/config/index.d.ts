@@ -5,6 +5,11 @@ export type Attachment = autoguard.guards.Object<{
     "mime": autoguard.guards.String;
     "data": autoguard.guards.Binary;
 }, {}>;
+export declare const STMPTLSOption: autoguard.serialization.MessageGuard<STMPTLSOption>;
+export type STMPTLSOption = autoguard.guards.Union<[
+    autoguard.guards.StringLiteral<"IMPLICIT">,
+    autoguard.guards.StringLiteral<"EXPLICIT">
+]>;
 export declare const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions>;
 export type MailerOptions = autoguard.guards.Object<{
     "smtp": autoguard.guards.Object<{
@@ -12,7 +17,9 @@ export type MailerOptions = autoguard.guards.Object<{
         "port": autoguard.guards.Number;
         "username": autoguard.guards.String;
         "password": autoguard.guards.String;
-    }, {}>;
+    }, {
+        "tls": autoguard.guards.Reference<STMPTLSOption>;
+    }>;
 }, {
     "defaults": autoguard.guards.Object<{}, {
         "to_address": autoguard.guards.String;
@@ -30,12 +37,14 @@ export declare namespace Autoguard {
             mime: string;
             data: Uint8Array;
         }>;
+        STMPTLSOption: autoguard.guards.ReferenceGuard<"IMPLICIT" | "EXPLICIT">;
         MailerOptions: autoguard.guards.ReferenceGuard<{
             smtp: {
                 hostname: string;
                 port: number;
                 username: string;
                 password: string;
+                tls?: "IMPLICIT" | "EXPLICIT" | undefined;
             };
             defaults?: {
                 to_address?: string | undefined;

@@ -1,7 +1,14 @@
-import { Attachment, MailerOptions } from "./config";
-export type State = "WAITING_FOR_GREETING" | "WAITING_FOR_EHLO_REPLY" | "WAITING_FOR_AUTH_REPLY" | "WAITING_FOR_MAIL_REPLY" | "WAITING_FOR_RCPT_REPLY" | "WAITING_FOR_DATA_REPLY" | "WAITING_FOR_FINALIZATION" | "FINISHED";
+/// <reference types="node" />
+/// <reference types="node" />
+import * as libnet from "net";
+import * as libtls from "tls";
+import { Attachment, MailerOptions, STMPTLSOption } from "./config";
+export declare const IMPLICIT_TLS_PORT = 465;
+export declare const EXPLICIT_TLS_PORT = 587;
+export type State = "WAITING_FOR_GREETING" | "WAITING_FOR_EHLO_REPLY" | "WAITING_FOR_STARTTLS_REPLY" | "WAITING_FOR_AUTH_REPLY" | "WAITING_FOR_MAIL_REPLY" | "WAITING_FOR_RCPT_REPLY" | "WAITING_FOR_DATA_REPLY" | "WAITING_FOR_FINALIZATION" | "FINISHED";
 export declare function encode(string: string): string;
 export declare function split(string: string, max_length: number): Array<string>;
+export declare function performTLSHandshake(net_socket: libnet.Socket): Promise<libtls.TLSSocket>;
 export interface Mailer {
     send(options: {
         subject: string;
@@ -44,6 +51,18 @@ export declare class MissingReplyAddressError extends Error {
     constructor();
     toString(): string;
 }
+export type SendOptions = {
+    subject: string;
+    message: string;
+    to_address?: string;
+    to_name?: string;
+    from_address?: string;
+    from_name?: string;
+    reply_address?: string;
+    reply_name?: string;
+    attachments?: Array<Attachment>;
+    html?: boolean;
+};
 export declare class SMTPMailer implements Mailer {
     protected options: MailerOptions;
     protected generateMessageIDAddress(from_address: string): string;
@@ -68,17 +87,10 @@ export declare class SMTPMailer implements Mailer {
         address: string;
         name?: string;
     };
+    protected getTlsOption(): STMPTLSOption;
+    protected finishSending(state: State, options: SendOptions, tls_socket: libtls.TLSSocket): Promise<void>;
+    protected sendExplicit(options: SendOptions): Promise<void>;
+    protected sendImplicit(options: SendOptions): Promise<void>;
     constructor(options: MailerOptions);
-    send(options: {
-        subject: string;
-        message: string;
-        to_address?: string;
-        to_name?: string;
-        from_address?: string;
-        from_name?: string;
-        reply_address?: string;
-        reply_name?: string;
-        attachments?: Array<Attachment>;
-        html?: boolean;
-    }): Promise<void>;
+    send(options: SendOptions): Promise<void>;
 }
