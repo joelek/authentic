@@ -11,7 +11,8 @@ export type State =
 	"WAITING_FOR_GREETING" |
 	"WAITING_FOR_EHLO_REPLY" |
 	"WAITING_FOR_STARTTLS_REPLY" |
-	"WAITING_FOR_AUTH_REPLY" |
+	"WAITING_FOR_AUTH_PLAIN_REPLY" |
+	"WAITING_FOR_AUTH_LOGIN_REPLY" |
 	"WAITING_FOR_MAIL_REPLY" |
 	"WAITING_FOR_RCPT_REPLY" |
 	"WAITING_FOR_DATA_REPLY" |
@@ -192,6 +193,16 @@ export class SMTPMailer implements Mailer {
 		return "IMPLICIT";
 	}
 
+	protected getLoginMethods(lines: Array<string>): Array<string> {
+		let methods = new Array<string>();
+		for (let line of lines) {
+			if (line.startsWith("250-AUTH ")) {
+				methods.push(...line.slice("250-AUTH ".length).split(" "));
+			}
+		}
+		return methods;
+	}
+
 	protected finishSending(state: State, options: SendOptions, tls_socket: libtls.TLSSocket): Promise<void> {
 		let to = this.getTo(options);
 		let from = this.getFrom(options);
@@ -204,16 +215,46 @@ export class SMTPMailer implements Mailer {
 				console.log(state, lines);
 				if (state === "WAITING_FOR_EHLO_REPLY") {
 					if (lines[0].startsWith("250")) {
-						socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.smtp.username + "\0" + this.options.smtp.password).toString("base64")}\r\n`);
-						state = "WAITING_FOR_AUTH_REPLY";
+						let methods = this.getLoginMethods(lines);
+						if (methods.includes("PLAIN")) {
+							socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.smtp.username + "\0" + this.options.smtp.password).toString("base64")}\r\n`);
+							state = "WAITING_FOR_AUTH_PLAIN_REPLY";
+						} else if (methods.includes("LOGIN")) {
+							socket.write(`AUTH LOGIN\r\n`);
+							state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+						} else {
+							socket.write("QUIT\r\n");
+							reject(new Error(`Expected a supported authentication method!`));
+						}
 					} else {
 						socket.write("QUIT\r\n");
 						reject(lines);
 					}
 					return;
 				}
-				if (state === "WAITING_FOR_AUTH_REPLY") {
+				if (state === "WAITING_FOR_AUTH_PLAIN_REPLY") {
 					if (lines[0].startsWith("235")) {
+						socket.write(`MAIL FROM: <${from.address}>\r\n`);
+						state = "WAITING_FOR_MAIL_REPLY";
+					} else {
+						socket.write("QUIT\r\n");
+						reject(lines);
+					}
+					return;
+				}
+				if (state === "WAITING_FOR_AUTH_LOGIN_REPLY") {
+					if (lines[0].startsWith("334")) {
+						if (lines[0] === `334 ${Buffer.from("Username:").toString("base64")}`) {
+							socket.write(`${Buffer.from(this.options.smtp.username).toString("base64")}\r\n`);
+							state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+						} else if (lines[0] === `334 ${Buffer.from("Password:").toString("base64")}`) {
+							socket.write(`${Buffer.from(this.options.smtp.password).toString("base64")}\r\n`);
+							state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+						} else {
+							socket.write("QUIT\r\n");
+							reject(new Error(`Expected a supported authentication method!`));
+						}
+					} else if (lines[0].startsWith("235")) {
 						socket.write(`MAIL FROM: <${from.address}>\r\n`);
 						state = "WAITING_FOR_MAIL_REPLY";
 					} else {
