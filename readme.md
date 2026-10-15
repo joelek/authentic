@@ -369,3 +369,4 @@ NB: This project targets TypeScript 4 in strict mode.
 ## Roadmap
 
 * Add functionality for creating and updating database tables.
+* Add FQDN to mailer.
