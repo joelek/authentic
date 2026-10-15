@@ -5,7 +5,7 @@ export class ChunkFormatError extends Error {
 		super();
 	}
 
-	toString(): string {
+	get message(): string {
 		return `Expected a chunk with a valid format!`;
 	};
 };

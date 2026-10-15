@@ -97,7 +97,7 @@ export class MissingToAddressError extends Error {
 		super();
 	}
 
-	toString(): string {
+	get message(): string {
 		return `Expected to address to be specified!`;
 	}
 };
@@ -107,7 +107,7 @@ export class MissingFromAddressError extends Error {
 		super();
 	}
 
-	toString(): string {
+	get message(): string {
 		return `Expected from address to be specified!`;
 	}
 };
@@ -117,7 +117,7 @@ export class MissingReplyAddressError extends Error {
 		super();
 	}
 
-	toString(): string {
+	get message(): string {
 		return `Expected reply address to be specified!`;
 	}
 };

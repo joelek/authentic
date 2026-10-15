@@ -3,7 +3,7 @@ export class ExpectedUnreachableCodeError extends Error {
 		super();
 	}
 
-	toString(): string {
+	get message(): string {
 		return `Expected code to be unreachable!`;
 	}
 };
