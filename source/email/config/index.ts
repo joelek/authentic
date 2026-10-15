@@ -31,6 +31,7 @@ export const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions> 
 		"username": autoguard.guards.String,
 		"password": autoguard.guards.String
 	}, {
+		"timeout_seconds": new autoguard.guards.IntegerGuard(1, 60),
 		"tls": autoguard.guards.Reference.of(() => STMPTLSOption)
 	})
 }, {
@@ -51,6 +52,7 @@ export type MailerOptions = autoguard.guards.Object<{
 		"username": autoguard.guards.String,
 		"password": autoguard.guards.String
 	}, {
+		"timeout_seconds": autoguard.guards.Integer,
 		"tls": autoguard.guards.Reference<STMPTLSOption>
 	}>
 }, {
