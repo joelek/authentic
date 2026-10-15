@@ -1,6 +1,6 @@
 export declare class ExpectedUnreachableCodeError extends Error {
     constructor();
-    toString(): string;
+    get message(): string;
 }
 export type NullableKeys<A> = {
     [B in keyof A]: null extends A[B] ? B : never;

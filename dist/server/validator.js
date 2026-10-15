@@ -6,7 +6,7 @@ class ChunkFormatError extends Error {
     constructor() {
         super();
     }
-    toString() {
+    get message() {
         return `Expected a chunk with a valid format!`;
     }
     ;

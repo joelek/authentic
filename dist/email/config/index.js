@@ -16,6 +16,7 @@ exports.MailerOptions = autoguard.guards.Object.of({
         "username": autoguard.guards.String,
         "password": autoguard.guards.String
     }, {
+        "timeout_seconds": new autoguard.guards.IntegerGuard(1, 60),
         "tls": autoguard.guards.Reference.of(() => exports.STMPTLSOption)
     })
 }, {

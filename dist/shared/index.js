@@ -5,7 +5,7 @@ class ExpectedUnreachableCodeError extends Error {
     constructor() {
         super();
     }
-    toString() {
+    get message() {
         return `Expected code to be unreachable!`;
     }
 }

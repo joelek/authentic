@@ -9,4 +9,4 @@ async function run() {
     });
 }
 ;
-run();
+run().catch((error) => console.log("got error", error));

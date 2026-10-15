@@ -18,6 +18,7 @@ export type MailerOptions = autoguard.guards.Object<{
         "username": autoguard.guards.String;
         "password": autoguard.guards.String;
     }, {
+        "timeout_seconds": autoguard.guards.Integer;
         "tls": autoguard.guards.Reference<STMPTLSOption>;
     }>;
 }, {
@@ -44,6 +45,7 @@ export declare namespace Autoguard {
                 port: number;
                 username: string;
                 password: string;
+                timeout_seconds?: number | undefined;
                 tls?: "IMPLICIT" | "EXPLICIT" | undefined;
             };
             defaults?: {

@@ -1,5 +1,7 @@
 /// <reference types="node" />
 /// <reference types="node" />
+/// <reference types="node" />
+/// <reference types="node" />
 import * as libnet from "net";
 import * as libtls from "tls";
 import { Attachment, MailerOptions, STMPTLSOption } from "./config";
@@ -8,7 +10,7 @@ export declare const EXPLICIT_TLS_PORT = 587;
 export type State = "WAITING_FOR_GREETING" | "WAITING_FOR_EHLO_REPLY" | "WAITING_FOR_STARTTLS_REPLY" | "WAITING_FOR_AUTH_PLAIN_REPLY" | "WAITING_FOR_AUTH_LOGIN_REPLY" | "WAITING_FOR_MAIL_REPLY" | "WAITING_FOR_RCPT_REPLY" | "WAITING_FOR_DATA_REPLY" | "WAITING_FOR_FINALIZATION" | "FINISHED";
 export declare function encode(string: string): string;
 export declare function split(string: string, max_length: number): Array<string>;
-export declare function performTLSHandshake(net_socket: libnet.Socket, servername: string): Promise<libtls.TLSSocket>;
+export declare function performTLSHandshake(net_socket: libnet.Socket, servername: string, timeout_seconds: number): Promise<libtls.TLSSocket>;
 export interface Mailer {
     send(options: {
         subject: string;
@@ -41,16 +43,43 @@ export declare class TestMailer implements Mailer {
 export declare function loadConfig(config: string): MailerOptions;
 export declare class MissingToAddressError extends Error {
     constructor();
-    toString(): string;
+    get message(): string;
 }
 export declare class MissingFromAddressError extends Error {
     constructor();
-    toString(): string;
+    get message(): string;
 }
 export declare class MissingReplyAddressError extends Error {
     constructor();
-    toString(): string;
+    get message(): string;
 }
+export declare class ConnectionTimeoutError extends Error {
+    protected timeout_seconds: number;
+    constructor(timeout_seconds: number);
+    get message(): string;
+}
+export declare class HandshakeTimeoutError extends Error {
+    protected timeout_seconds: number;
+    constructor(timeout_seconds: number);
+    get message(): string;
+}
+export declare class UnexpectedResponseError extends Error {
+    protected state: State;
+    protected lines: Array<string>;
+    constructor(state: State, lines: Array<string>);
+    get message(): string;
+}
+export declare class UnexpectedStateError extends Error {
+    protected state: State;
+    constructor(state: State);
+    get message(): string;
+}
+export declare class UnsupportedAuthenticationMethodError extends Error {
+    protected methods: Array<string>;
+    constructor(methods: Array<string>);
+    get message(): string;
+}
+export type OnDataCallback = (data: Buffer) => void;
 export type SendOptions = {
     subject: string;
     message: string;
@@ -89,7 +118,7 @@ export declare class SMTPMailer implements Mailer {
     };
     protected getTlsOption(): STMPTLSOption;
     protected getLoginMethods(lines: Array<string>): Array<string>;
-    protected finishSending(state: State, options: SendOptions, tls_socket: libtls.TLSSocket): Promise<void>;
+    protected finishSending(options: SendOptions, tls_socket: libtls.TLSSocket, state: State): Promise<void>;
     protected sendExplicit(options: SendOptions): Promise<void>;
     protected sendImplicit(options: SendOptions): Promise<void>;
     constructor(options: MailerOptions);

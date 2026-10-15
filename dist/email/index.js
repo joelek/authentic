@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SMTPMailer = exports.MissingReplyAddressError = exports.MissingFromAddressError = exports.MissingToAddressError = exports.loadConfig = exports.TestMailer = exports.performTLSHandshake = exports.split = exports.encode = exports.EXPLICIT_TLS_PORT = exports.IMPLICIT_TLS_PORT = void 0;
+exports.SMTPMailer = exports.UnsupportedAuthenticationMethodError = exports.UnexpectedStateError = exports.UnexpectedResponseError = exports.HandshakeTimeoutError = exports.ConnectionTimeoutError = exports.MissingReplyAddressError = exports.MissingFromAddressError = exports.MissingToAddressError = exports.loadConfig = exports.TestMailer = exports.performTLSHandshake = exports.split = exports.encode = exports.EXPLICIT_TLS_PORT = exports.IMPLICIT_TLS_PORT = void 0;
 const libcrypto = require("crypto");
 const libfs = require("fs");
 const libnet = require("net");
@@ -27,7 +27,7 @@ function split(string, max_length) {
 }
 exports.split = split;
 ;
-function performTLSHandshake(net_socket, servername) {
+function performTLSHandshake(net_socket, servername, timeout_seconds) {
     return new Promise((resolve, reject) => {
         let tls_socket = libtls.connect({
             socket: net_socket,
@@ -35,8 +35,12 @@ function performTLSHandshake(net_socket, servername) {
             rejectUnauthorized: true
         });
         let timeout = setTimeout(() => {
-            reject(new Error(`Expected TLS connection to succeed within 10 seconds!`));
-        }, 10 * 1000);
+            tls_socket.destroy(new HandshakeTimeoutError(timeout_seconds));
+        }, timeout_seconds * 1000);
+        tls_socket.once("error", (error) => {
+            clearTimeout(timeout);
+            reject(error);
+        });
         tls_socket.once("secureConnect", () => {
             clearTimeout(timeout);
             resolve(tls_socket);
@@ -65,7 +69,7 @@ class MissingToAddressError extends Error {
     constructor() {
         super();
     }
-    toString() {
+    get message() {
         return `Expected to address to be specified!`;
     }
 }
@@ -75,7 +79,7 @@ class MissingFromAddressError extends Error {
     constructor() {
         super();
     }
-    toString() {
+    get message() {
         return `Expected from address to be specified!`;
     }
 }
@@ -85,11 +89,73 @@ class MissingReplyAddressError extends Error {
     constructor() {
         super();
     }
-    toString() {
+    get message() {
         return `Expected reply address to be specified!`;
     }
 }
 exports.MissingReplyAddressError = MissingReplyAddressError;
+;
+class ConnectionTimeoutError extends Error {
+    timeout_seconds;
+    constructor(timeout_seconds) {
+        super();
+        this.timeout_seconds = timeout_seconds;
+    }
+    get message() {
+        return `Expected TCP connection to succeed within ${this.timeout_seconds} seconds!`;
+    }
+}
+exports.ConnectionTimeoutError = ConnectionTimeoutError;
+;
+class HandshakeTimeoutError extends Error {
+    timeout_seconds;
+    constructor(timeout_seconds) {
+        super();
+        this.timeout_seconds = timeout_seconds;
+    }
+    get message() {
+        return `Expected TLS handshake to complete within ${this.timeout_seconds} seconds!`;
+    }
+}
+exports.HandshakeTimeoutError = HandshakeTimeoutError;
+;
+class UnexpectedResponseError extends Error {
+    state;
+    lines;
+    constructor(state, lines) {
+        super();
+        this.state = state;
+        this.lines = lines;
+    }
+    get message() {
+        return `Expected a different response for state ${this.state}!`;
+    }
+}
+exports.UnexpectedResponseError = UnexpectedResponseError;
+;
+class UnexpectedStateError extends Error {
+    state;
+    constructor(state) {
+        super();
+        this.state = state;
+    }
+    get message() {
+        return `Expected a different state than "${this.state}"!`;
+    }
+}
+exports.UnexpectedStateError = UnexpectedStateError;
+;
+class UnsupportedAuthenticationMethodError extends Error {
+    methods;
+    constructor(methods) {
+        super();
+        this.methods = methods;
+    }
+    get message() {
+        return `Expected a supported authentication method!`;
+    }
+}
+exports.UnsupportedAuthenticationMethodError = UnsupportedAuthenticationMethodError;
 ;
 class SMTPMailer {
     options;
@@ -152,268 +218,292 @@ class SMTPMailer {
         }
         return methods;
     }
-    finishSending(state, options, tls_socket) {
+    finishSending(options, tls_socket, state) {
         let to = this.getTo(options);
         let from = this.getFrom(options);
         let reply = this.getReply(options);
         let attachments = options.attachments ?? [];
         return new Promise((resolve, reject) => {
-            let socket = tls_socket;
             let ondata = (buffer) => {
-                let lines = buffer.toString("ascii").split("\r\n");
-                console.log(state, lines);
-                if (state === "WAITING_FOR_EHLO_REPLY") {
-                    if (lines[0].startsWith("250")) {
-                        let methods = this.getLoginMethods(lines);
-                        if (methods.includes("PLAIN")) {
-                            socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.smtp.username + "\0" + this.options.smtp.password).toString("base64")}\r\n`);
-                            state = "WAITING_FOR_AUTH_PLAIN_REPLY";
-                        }
-                        else if (methods.includes("LOGIN")) {
-                            socket.write(`AUTH LOGIN\r\n`);
-                            state = "WAITING_FOR_AUTH_LOGIN_REPLY";
-                        }
-                        else {
-                            socket.write("QUIT\r\n");
-                            reject(new Error(`Expected a supported authentication method!`));
-                        }
-                    }
-                    else {
-                        socket.write("QUIT\r\n");
-                        reject(lines);
-                    }
-                    return;
-                }
-                if (state === "WAITING_FOR_AUTH_PLAIN_REPLY") {
-                    if (lines[0].startsWith("235")) {
-                        socket.write(`MAIL FROM: <${from.address}>\r\n`);
-                        state = "WAITING_FOR_MAIL_REPLY";
-                    }
-                    else {
-                        socket.write("QUIT\r\n");
-                        reject(lines);
-                    }
-                    return;
-                }
-                if (state === "WAITING_FOR_AUTH_LOGIN_REPLY") {
-                    if (lines[0].startsWith("334")) {
-                        if (lines[0] === `334 ${Buffer.from("Username:").toString("base64")}`) {
-                            socket.write(`${Buffer.from(this.options.smtp.username).toString("base64")}\r\n`);
-                            state = "WAITING_FOR_AUTH_LOGIN_REPLY";
-                        }
-                        else if (lines[0] === `334 ${Buffer.from("Password:").toString("base64")}`) {
-                            socket.write(`${Buffer.from(this.options.smtp.password).toString("base64")}\r\n`);
-                            state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+                try {
+                    let lines = buffer.toString("ascii").split("\r\n");
+                    console.log(state, lines);
+                    if (state === "WAITING_FOR_EHLO_REPLY") {
+                        if (lines[0].startsWith("250")) {
+                            let methods = this.getLoginMethods(lines);
+                            if (methods.includes("PLAIN")) {
+                                tls_socket.write(`AUTH PLAIN ${Buffer.from("\0" + this.options.smtp.username + "\0" + this.options.smtp.password).toString("base64")}\r\n`);
+                                state = "WAITING_FOR_AUTH_PLAIN_REPLY";
+                            }
+                            else if (methods.includes("LOGIN")) {
+                                tls_socket.write(`AUTH LOGIN\r\n`);
+                                state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+                            }
+                            else {
+                                throw new UnsupportedAuthenticationMethodError(methods);
+                            }
                         }
                         else {
-                            socket.write("QUIT\r\n");
-                            reject(new Error(`Expected a supported authentication method!`));
+                            throw new UnexpectedResponseError(state, lines);
                         }
                     }
-                    else if (lines[0].startsWith("235")) {
-                        socket.write(`MAIL FROM: <${from.address}>\r\n`);
-                        state = "WAITING_FOR_MAIL_REPLY";
-                    }
-                    else {
-                        socket.write("QUIT\r\n");
-                        reject(lines);
-                    }
-                    return;
-                }
-                if (state === "WAITING_FOR_MAIL_REPLY") {
-                    if (lines[0].startsWith("250")) {
-                        socket.write(`RCPT TO: <${to.address}>\r\n`);
-                        state = "WAITING_FOR_RCPT_REPLY";
-                    }
-                    else {
-                        socket.write("QUIT\r\n");
-                        reject(lines);
-                    }
-                    return;
-                }
-                if (state === "WAITING_FOR_RCPT_REPLY") {
-                    if (lines[0].startsWith("250")) {
-                        socket.write(`DATA\r\n`);
-                        state = "WAITING_FOR_DATA_REPLY";
-                    }
-                    else {
-                        socket.write("QUIT\r\n");
-                        reject(lines);
-                    }
-                    return;
-                }
-                if (state === "WAITING_FOR_DATA_REPLY") {
-                    if (lines[0].startsWith("354")) {
-                        let boundary = libcrypto.randomBytes(16).toString("hex");
-                        let lines = [
-                            `MIME-Version: 1.0`,
-                            `Date: ${new Date().toUTCString()}`,
-                            `Message-ID: <${this.generateMessageIDAddress(from.address)}>`
-                        ];
-                        if (typeof from.name !== "undefined") {
-                            lines.push(`From: ${encode(from.name)} <${from.address}>`);
+                    else if (state === "WAITING_FOR_AUTH_PLAIN_REPLY") {
+                        if (lines[0].startsWith("235")) {
+                            tls_socket.write(`MAIL FROM: <${from.address}>\r\n`);
+                            state = "WAITING_FOR_MAIL_REPLY";
                         }
                         else {
-                            lines.push(`From: <${from.address}>`);
+                            throw new UnexpectedResponseError(state, lines);
                         }
-                        if (typeof to.name !== "undefined") {
-                            lines.push(`To: ${encode(to.name)} <${to.address}>`);
+                    }
+                    else if (state === "WAITING_FOR_AUTH_LOGIN_REPLY") {
+                        if (lines[0].startsWith("334")) {
+                            if (lines[0] === `334 ${Buffer.from("Username:").toString("base64")}`) {
+                                tls_socket.write(`${Buffer.from(this.options.smtp.username).toString("base64")}\r\n`);
+                                state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+                            }
+                            else if (lines[0] === `334 ${Buffer.from("Password:").toString("base64")}`) {
+                                tls_socket.write(`${Buffer.from(this.options.smtp.password).toString("base64")}\r\n`);
+                                state = "WAITING_FOR_AUTH_LOGIN_REPLY";
+                            }
+                            else {
+                                throw new UnexpectedResponseError(state, lines);
+                            }
+                        }
+                        else if (lines[0].startsWith("235")) {
+                            tls_socket.write(`MAIL FROM: <${from.address}>\r\n`);
+                            state = "WAITING_FOR_MAIL_REPLY";
                         }
                         else {
-                            lines.push(`To: <${to.address}>`);
+                            throw new UnexpectedResponseError(state, lines);
                         }
-                        if (typeof reply.name !== "undefined") {
-                            lines.push(`Reply-To: ${encode(reply.name)} <${reply.address}>`);
+                    }
+                    else if (state === "WAITING_FOR_MAIL_REPLY") {
+                        if (lines[0].startsWith("250")) {
+                            tls_socket.write(`RCPT TO: <${to.address}>\r\n`);
+                            state = "WAITING_FOR_RCPT_REPLY";
                         }
                         else {
-                            lines.push(`Reply-To: <${reply.address}>`);
+                            throw new UnexpectedResponseError(state, lines);
                         }
-                        lines.push(`Subject: ${encode(options.subject)}`);
-                        lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
-                        lines.push(``);
-                        lines.push(`--${boundary}`);
-                        lines.push(`Content-Type: ${options.html === true ? "text/html" : "text/plain"}; charset=utf-8`);
-                        lines.push(`Content-Transfer-Encoding: base64`);
-                        lines.push(``);
-                        lines.push(...split(Buffer.from(options.message).toString("base64"), 76));
-                        for (let attachment of attachments) {
+                    }
+                    else if (state === "WAITING_FOR_RCPT_REPLY") {
+                        if (lines[0].startsWith("250")) {
+                            tls_socket.write(`DATA\r\n`);
+                            state = "WAITING_FOR_DATA_REPLY";
+                        }
+                        else {
+                            throw new UnexpectedResponseError(state, lines);
+                        }
+                    }
+                    else if (state === "WAITING_FOR_DATA_REPLY") {
+                        if (lines[0].startsWith("354")) {
+                            let boundary = libcrypto.randomBytes(16).toString("hex");
+                            let lines = [
+                                `MIME-Version: 1.0`,
+                                `Date: ${new Date().toUTCString()}`,
+                                `Message-ID: <${this.generateMessageIDAddress(from.address)}>`
+                            ];
+                            if (typeof from.name !== "undefined") {
+                                lines.push(`From: ${encode(from.name)} <${from.address}>`);
+                            }
+                            else {
+                                lines.push(`From: <${from.address}>`);
+                            }
+                            if (typeof to.name !== "undefined") {
+                                lines.push(`To: ${encode(to.name)} <${to.address}>`);
+                            }
+                            else {
+                                lines.push(`To: <${to.address}>`);
+                            }
+                            if (typeof reply.name !== "undefined") {
+                                lines.push(`Reply-To: ${encode(reply.name)} <${reply.address}>`);
+                            }
+                            else {
+                                lines.push(`Reply-To: <${reply.address}>`);
+                            }
+                            lines.push(`Subject: ${encode(options.subject)}`);
+                            lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
                             lines.push(``);
                             lines.push(`--${boundary}`);
-                            lines.push(`Content-Type: ${attachment.mime}; name=${attachment.filename}`);
+                            lines.push(`Content-Type: ${options.html === true ? "text/html" : "text/plain"}; charset=utf-8`);
                             lines.push(`Content-Transfer-Encoding: base64`);
-                            lines.push(`Content-Disposition: attachment; filename=${attachment.filename}`);
                             lines.push(``);
-                            lines.push(...split(Buffer.from(attachment.data).toString("base64"), 76));
+                            lines.push(...split(Buffer.from(options.message).toString("base64"), 76));
+                            for (let attachment of attachments) {
+                                lines.push(``);
+                                lines.push(`--${boundary}`);
+                                lines.push(`Content-Type: ${attachment.mime}; name=${attachment.filename}`);
+                                lines.push(`Content-Transfer-Encoding: base64`);
+                                lines.push(`Content-Disposition: attachment; filename=${attachment.filename}`);
+                                lines.push(``);
+                                lines.push(...split(Buffer.from(attachment.data).toString("base64"), 76));
+                            }
+                            lines.push(``);
+                            lines.push(`--${boundary}--`);
+                            lines.push(`.`);
+                            for (let line of lines) {
+                                tls_socket.write(`${line}\r\n`);
+                            }
+                            state = "WAITING_FOR_FINALIZATION";
                         }
-                        lines.push(``);
-                        lines.push(`--${boundary}--`);
-                        lines.push(`.`);
-                        for (let line of lines) {
-                            socket.write(`${line}\r\n`);
+                        else {
+                            throw new UnexpectedResponseError(state, lines);
                         }
-                        state = "WAITING_FOR_FINALIZATION";
+                    }
+                    else if (state === "WAITING_FOR_FINALIZATION") {
+                        if (lines[0].startsWith("250")) {
+                            state = "FINISHED";
+                            tls_socket.off("data", ondata);
+                            tls_socket.write("QUIT\r\n");
+                            resolve();
+                        }
+                        else {
+                            throw new UnexpectedResponseError(state, lines);
+                        }
                     }
                     else {
-                        socket.write("QUIT\r\n");
-                        reject(lines);
+                        throw new UnexpectedStateError(state);
                     }
-                    return;
                 }
-                if (state === "WAITING_FOR_FINALIZATION") {
-                    if (lines[0].startsWith("250")) {
-                        state = "FINISHED";
-                        socket.write("QUIT\r\n");
-                        resolve();
-                    }
-                    else {
-                        socket.write("QUIT\r\n");
-                        reject(lines);
-                    }
-                    return;
+                catch (error) {
+                    tls_socket.off("data", ondata);
+                    tls_socket.write("QUIT\r\n");
+                    tls_socket.destroy();
+                    // NOTE: Handles ondata errors.
+                    reject(error);
                 }
             };
-            socket.on("data", ondata);
+            tls_socket.on("data", ondata);
         });
     }
     sendExplicit(options) {
+        let timeout_seconds = this.options.smtp.timeout_seconds ?? 10;
+        let state = "WAITING_FOR_GREETING";
         return new Promise((resolve, reject) => {
             let net_socket = libnet.connect({
                 host: this.options.smtp.hostname,
                 port: this.options.smtp.port
             });
-            let socket = net_socket;
-            let state = "WAITING_FOR_GREETING";
             let timeout = setTimeout(() => {
-                reject(new Error(`Expected TCP connection to succeed within 10 seconds!`));
-            }, 10 * 1000);
+                net_socket.destroy(new ConnectionTimeoutError(timeout_seconds));
+            }, timeout_seconds * 1000);
+            net_socket.once("error", (error) => {
+                clearTimeout(timeout);
+                // NOTE: Handles host not being reachable as well as host being reachable but port being closed.
+                reject(error);
+            });
             net_socket.once("connect", () => {
                 clearTimeout(timeout);
                 let ondata = (buffer) => {
-                    let lines = buffer.toString("ascii").split("\r\n");
-                    console.log(state, lines);
-                    if (state === "WAITING_FOR_GREETING") {
-                        if (lines[0].startsWith("220")) {
-                            socket.write(`EHLO mail.example.com\r\n`);
-                            state = "WAITING_FOR_EHLO_REPLY";
-                        }
-                        else {
-                            socket.write("QUIT\r\n");
-                            reject(lines);
-                        }
-                        return;
-                    }
-                    if (state === "WAITING_FOR_EHLO_REPLY") {
-                        if (lines[0].startsWith("250")) {
-                            socket.write(`STARTTLS\r\n`);
-                            state = "WAITING_FOR_STARTTLS_REPLY";
-                        }
-                        else {
-                            socket.write("QUIT\r\n");
-                            reject(lines);
-                        }
-                        return;
-                    }
-                    if (state === "WAITING_FOR_STARTTLS_REPLY") {
-                        if (lines[0].startsWith("220")) {
-                            socket.off("data", ondata);
-                            performTLSHandshake(socket, this.options.smtp.hostname)
-                                .then((tls_socket) => {
-                                tls_socket.write(`EHLO mail.example.com\r\n`);
+                    try {
+                        let lines = buffer.toString("ascii").split("\r\n");
+                        console.log(state, lines);
+                        if (state === "WAITING_FOR_GREETING") {
+                            if (lines[0].startsWith("220")) {
+                                net_socket.write(`EHLO mail.example.com\r\n`);
                                 state = "WAITING_FOR_EHLO_REPLY";
-                                resolve(this.finishSending(state, options, tls_socket));
-                            })
-                                .catch((error) => {
-                                reject(error);
-                            });
+                            }
+                            else {
+                                throw new UnexpectedResponseError(state, lines);
+                            }
+                        }
+                        else if (state === "WAITING_FOR_EHLO_REPLY") {
+                            if (lines[0].startsWith("250")) {
+                                net_socket.write(`STARTTLS\r\n`);
+                                state = "WAITING_FOR_STARTTLS_REPLY";
+                            }
+                            else {
+                                throw new UnexpectedResponseError(state, lines);
+                            }
+                        }
+                        else if (state === "WAITING_FOR_STARTTLS_REPLY") {
+                            if (lines[0].startsWith("220")) {
+                                net_socket.off("data", ondata);
+                                performTLSHandshake(net_socket, this.options.smtp.hostname, timeout_seconds)
+                                    .then((tls_socket) => {
+                                    tls_socket.write(`EHLO mail.example.com\r\n`);
+                                    state = "WAITING_FOR_EHLO_REPLY";
+                                    resolve(this.finishSending(options, tls_socket, state));
+                                })
+                                    .catch((error) => {
+                                    // NOTE: Handles TLS handshake not completing successfully.
+                                    reject(error);
+                                });
+                            }
+                            else {
+                                throw new UnexpectedResponseError(state, lines);
+                            }
                         }
                         else {
-                            socket.write("QUIT\r\n");
-                            reject(lines);
+                            throw new UnexpectedStateError(state);
                         }
-                        return;
+                    }
+                    catch (error) {
+                        net_socket.off("data", ondata);
+                        net_socket.write("QUIT\r\n");
+                        net_socket.destroy();
+                        // NOTE: Handles ondata errors.
+                        reject(error);
                     }
                 };
-                socket.on("data", ondata);
-            });
-            socket.on("error", (error) => {
-                reject(error);
+                net_socket.on("data", ondata);
             });
         });
     }
     sendImplicit(options) {
+        let timeout_seconds = this.options.smtp.timeout_seconds ?? 10;
+        let state = "WAITING_FOR_GREETING";
         return new Promise((resolve, reject) => {
-            let tls_socket = libtls.connect({
+            let net_socket = libnet.connect({
                 host: this.options.smtp.hostname,
                 port: this.options.smtp.port
             });
-            let socket = tls_socket;
-            let state = "WAITING_FOR_GREETING";
             let timeout = setTimeout(() => {
-                reject(new Error(`Expected TLS connection to succeed within 10 seconds!`));
-            }, 10 * 1000);
-            tls_socket.once("secureConnect", () => {
+                net_socket.destroy(new ConnectionTimeoutError(timeout_seconds));
+            }, timeout_seconds * 1000);
+            net_socket.once("error", (error) => {
                 clearTimeout(timeout);
-                let ondata = (buffer) => {
-                    let lines = buffer.toString("ascii").split("\r\n");
-                    console.log(state, lines);
-                    if (state === "WAITING_FOR_GREETING") {
-                        if (lines[0].startsWith("220")) {
-                            socket.off("data", ondata);
-                            socket.write(`EHLO mail.example.com\r\n`);
-                            state = "WAITING_FOR_EHLO_REPLY";
-                            resolve(this.finishSending(state, options, tls_socket));
-                        }
-                        else {
-                            socket.write("QUIT\r\n");
-                            reject(lines);
-                        }
-                        return;
-                    }
-                };
-                socket.on("data", ondata);
-            });
-            socket.on("error", (error) => {
+                // NOTE: Handles host not being reachable as well as host being reachable but port being closed.
                 reject(error);
+            });
+            net_socket.once("connect", async () => {
+                clearTimeout(timeout);
+                performTLSHandshake(net_socket, this.options.smtp.hostname, timeout_seconds)
+                    .then((tls_socket) => {
+                    let ondata = (buffer) => {
+                        try {
+                            let lines = buffer.toString("ascii").split("\r\n");
+                            console.log(state, lines);
+                            if (state === "WAITING_FOR_GREETING") {
+                                if (lines[0].startsWith("220")) {
+                                    tls_socket.off("data", ondata);
+                                    tls_socket.write(`EHLO mail.example.com\r\n`);
+                                    state = "WAITING_FOR_EHLO_REPLY";
+                                    resolve(this.finishSending(options, tls_socket, state));
+                                }
+                                else {
+                                    throw new UnexpectedResponseError(state, lines);
+                                }
+                            }
+                            else {
+                                throw new UnexpectedStateError(state);
+                            }
+                        }
+                        catch (error) {
+                            tls_socket.off("data", ondata);
+                            tls_socket.write("QUIT\r\n");
+                            tls_socket.destroy();
+                            // NOTE: Handles ondata errors.
+                            reject(error);
+                        }
+                    };
+                    tls_socket.on("data", ondata);
+                })
+                    .catch((error) => {
+                    // NOTE: Handles TLS handshake not completing successfully.
+                    reject(error);
+                });
             });
         });
     }

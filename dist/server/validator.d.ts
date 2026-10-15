@@ -2,7 +2,7 @@
 /// <reference types="node" />
 export declare class ChunkFormatError extends Error {
     constructor();
-    toString(): string;
+    get message(): string;
 }
 export declare class Validator {
     protected cost: number;
