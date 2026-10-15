@@ -394,6 +394,7 @@ export class SMTPMailer implements Mailer {
 							state = "FINISHED";
 							tls_socket.off("data", ondata);
 							tls_socket.write("QUIT\r\n");
+							tls_socket.destroy();
 							resolve();
 						} else {
 							throw new UnexpectedResponseError(state, lines);
