@@ -10,6 +10,12 @@ export type STMPTLSOption = autoguard.guards.Union<[
     autoguard.guards.StringLiteral<"IMPLICIT">,
     autoguard.guards.StringLiteral<"EXPLICIT">
 ]>;
+export declare const Mailbox: autoguard.serialization.MessageGuard<Mailbox>;
+export type Mailbox = autoguard.guards.Object<{
+    "address": autoguard.guards.String;
+}, {
+    "name": autoguard.guards.String;
+}>;
 export declare const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions>;
 export type MailerOptions = autoguard.guards.Object<{
     "smtp": autoguard.guards.Object<{
@@ -23,12 +29,26 @@ export type MailerOptions = autoguard.guards.Object<{
     }>;
 }, {
     "defaults": autoguard.guards.Object<{}, {
-        "to_address": autoguard.guards.String;
-        "to_name": autoguard.guards.String;
-        "from_address": autoguard.guards.String;
-        "from_name": autoguard.guards.String;
-        "reply_address": autoguard.guards.String;
-        "reply_name": autoguard.guards.String;
+        "to": autoguard.guards.Union<[
+            autoguard.guards.Reference<Mailbox>,
+            autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+        ]>;
+        "from": autoguard.guards.Union<[
+            autoguard.guards.Reference<Mailbox>,
+            autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+        ]>;
+        "reply": autoguard.guards.Union<[
+            autoguard.guards.Reference<Mailbox>,
+            autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+        ]>;
+        "cc": autoguard.guards.Union<[
+            autoguard.guards.Reference<Mailbox>,
+            autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+        ]>;
+        "bcc": autoguard.guards.Union<[
+            autoguard.guards.Reference<Mailbox>,
+            autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+        ]>;
     }>;
 }>;
 export declare namespace Autoguard {
@@ -39,6 +59,10 @@ export declare namespace Autoguard {
             data: Uint8Array;
         }>;
         STMPTLSOption: autoguard.guards.ReferenceGuard<"IMPLICIT" | "EXPLICIT">;
+        Mailbox: autoguard.guards.ReferenceGuard<{
+            address: string;
+            name?: string | undefined;
+        }>;
         MailerOptions: autoguard.guards.ReferenceGuard<{
             smtp: {
                 hostname: string;
@@ -49,12 +73,41 @@ export declare namespace Autoguard {
                 tls?: "IMPLICIT" | "EXPLICIT" | undefined;
             };
             defaults?: {
-                to_address?: string | undefined;
-                to_name?: string | undefined;
-                from_address?: string | undefined;
-                from_name?: string | undefined;
-                reply_address?: string | undefined;
-                reply_name?: string | undefined;
+                to?: {
+                    address: string;
+                    name?: string | undefined;
+                } | autoguard.guards.Array<{
+                    address: string;
+                    name?: string | undefined;
+                }> | undefined;
+                from?: {
+                    address: string;
+                    name?: string | undefined;
+                } | autoguard.guards.Array<{
+                    address: string;
+                    name?: string | undefined;
+                }> | undefined;
+                reply?: {
+                    address: string;
+                    name?: string | undefined;
+                } | autoguard.guards.Array<{
+                    address: string;
+                    name?: string | undefined;
+                }> | undefined;
+                cc?: {
+                    address: string;
+                    name?: string | undefined;
+                } | autoguard.guards.Array<{
+                    address: string;
+                    name?: string | undefined;
+                }> | undefined;
+                bcc?: {
+                    address: string;
+                    name?: string | undefined;
+                } | autoguard.guards.Array<{
+                    address: string;
+                    name?: string | undefined;
+                }> | undefined;
             } | undefined;
         }>;
     };

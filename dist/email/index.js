@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SMTPMailer = exports.UnsupportedAuthenticationMethodError = exports.UnexpectedStateError = exports.UnexpectedResponseError = exports.HandshakeTimeoutError = exports.ConnectionTimeoutError = exports.MissingReplyAddressError = exports.MissingFromAddressError = exports.MissingToAddressError = exports.loadConfig = exports.TestMailer = exports.performTLSHandshake = exports.split = exports.encode = exports.EXPLICIT_TLS_PORT = exports.IMPLICIT_TLS_PORT = void 0;
+exports.SMTPMailer = exports.UnsupportedAuthenticationMethodError = exports.UnexpectedStateError = exports.UnexpectedResponseError = exports.HandshakeTimeoutError = exports.ConnectionTimeoutError = exports.MissingReplyAddressError = exports.MissingFromAddressError = exports.MissingToAddressError = exports.loadConfig = exports.TestMailer = exports.performTLSHandshake = exports.split = exports.getUniqueMailboxes = exports.encodeMailboxes = exports.encodeMailbox = exports.encode = exports.EXPLICIT_TLS_PORT = exports.IMPLICIT_TLS_PORT = void 0;
 const libcrypto = require("crypto");
 const libfs = require("fs");
 const libnet = require("net");
@@ -17,6 +17,35 @@ function encode(string) {
     }
 }
 exports.encode = encode;
+;
+function encodeMailbox(mailbox) {
+    if (mailbox.name != null) {
+        return `${encode(mailbox.name)} <${mailbox.address}>`;
+    }
+    else {
+        return `<${mailbox.address}>`;
+    }
+}
+exports.encodeMailbox = encodeMailbox;
+;
+function encodeMailboxes(mailboxes) {
+    return mailboxes.map(encodeMailbox).join(", ");
+}
+exports.encodeMailboxes = encodeMailboxes;
+;
+function getUniqueMailboxes(mailboxes) {
+    let addresses = new Set();
+    return mailboxes.filter((mailbox) => {
+        if (addresses.has(mailbox.address)) {
+            return false;
+        }
+        else {
+            addresses.add(mailbox.address);
+            return true;
+        }
+    });
+}
+exports.getUniqueMailboxes = getUniqueMailboxes;
 ;
 function split(string, max_length) {
     let parts = [];
@@ -163,38 +192,17 @@ class SMTPMailer {
         let id = libcrypto.randomBytes(16).toString("hex");
         return `${id}@${from_address.slice(from_address.indexOf("@") + 1)}`;
     }
-    getTo(options) {
-        let address = options.to_address ?? this.options.defaults?.to_address;
-        let name = options.to_name ?? this.options.defaults?.to_name;
-        if (address == null) {
-            throw new MissingToAddressError();
+    getMailboxes(value) {
+        let mailboxes = new Array();
+        if (value != null) {
+            if (Array.isArray(value)) {
+                mailboxes.push(...value);
+            }
+            else {
+                mailboxes.push(value);
+            }
         }
-        return {
-            address,
-            name
-        };
-    }
-    getFrom(options) {
-        let address = options.from_address ?? this.options.defaults?.from_address;
-        let name = options.from_name ?? this.options.defaults?.from_name;
-        if (address == null) {
-            throw new MissingFromAddressError();
-        }
-        return {
-            address,
-            name
-        };
-    }
-    getReply(options) {
-        let address = options.reply_address ?? this.options.defaults?.reply_address;
-        let name = options.reply_name ?? this.options.defaults?.reply_name;
-        if (address == null) {
-            throw new MissingReplyAddressError();
-        }
-        return {
-            address,
-            name
-        };
+        return getUniqueMailboxes(mailboxes);
     }
     getTlsOption() {
         let smtp = this.options.smtp;
@@ -219,11 +227,25 @@ class SMTPMailer {
         return methods;
     }
     finishSending(options, tls_socket, state) {
-        let to = this.getTo(options);
-        let from = this.getFrom(options);
-        let reply = this.getReply(options);
+        let to = this.getMailboxes(options.to ?? this.options.defaults?.to);
+        if (to.length === 0) {
+            throw new MissingToAddressError();
+        }
+        let from = this.getMailboxes(options.from ?? this.options.defaults?.from);
+        if (from.length === 0) {
+            throw new MissingFromAddressError();
+        }
+        let reply = this.getMailboxes(options.reply ?? this.options.defaults?.reply);
+        if (reply.length === 0) {
+            throw new MissingReplyAddressError();
+        }
+        let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
+        let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
         let attachments = options.attachments ?? [];
+        let sender = from[0];
+        let recipients = getUniqueMailboxes([...to, ...cc, ...bcc]);
         return new Promise((resolve, reject) => {
+            let recipient_index = 0;
             let ondata = (buffer) => {
                 try {
                     let lines = buffer.toString("ascii").split("\r\n");
@@ -249,7 +271,7 @@ class SMTPMailer {
                     }
                     else if (state === "WAITING_FOR_AUTH_PLAIN_REPLY") {
                         if (lines[0].startsWith("235")) {
-                            tls_socket.write(`MAIL FROM: <${from.address}>\r\n`);
+                            tls_socket.write(`MAIL FROM: <${sender.address}>\r\n`);
                             state = "WAITING_FOR_MAIL_REPLY";
                         }
                         else {
@@ -271,7 +293,7 @@ class SMTPMailer {
                             }
                         }
                         else if (lines[0].startsWith("235")) {
-                            tls_socket.write(`MAIL FROM: <${from.address}>\r\n`);
+                            tls_socket.write(`MAIL FROM: <${sender.address}>\r\n`);
                             state = "WAITING_FOR_MAIL_REPLY";
                         }
                         else {
@@ -280,8 +302,15 @@ class SMTPMailer {
                     }
                     else if (state === "WAITING_FOR_MAIL_REPLY") {
                         if (lines[0].startsWith("250")) {
-                            tls_socket.write(`RCPT TO: <${to.address}>\r\n`);
-                            state = "WAITING_FOR_RCPT_REPLY";
+                            let recipient = recipients.at(recipient_index++);
+                            if (recipient != null) {
+                                tls_socket.write(`RCPT TO: <${recipient.address}>\r\n`);
+                                state = "WAITING_FOR_RCPT_REPLY";
+                            }
+                            else {
+                                tls_socket.write(`DATA\r\n`);
+                                state = "WAITING_FOR_DATA_REPLY";
+                            }
                         }
                         else {
                             throw new UnexpectedResponseError(state, lines);
@@ -289,8 +318,15 @@ class SMTPMailer {
                     }
                     else if (state === "WAITING_FOR_RCPT_REPLY") {
                         if (lines[0].startsWith("250")) {
-                            tls_socket.write(`DATA\r\n`);
-                            state = "WAITING_FOR_DATA_REPLY";
+                            let recipient = recipients.at(recipient_index++);
+                            if (recipient != null) {
+                                tls_socket.write(`RCPT TO: <${recipient.address}>\r\n`);
+                                state = "WAITING_FOR_RCPT_REPLY";
+                            }
+                            else {
+                                tls_socket.write(`DATA\r\n`);
+                                state = "WAITING_FOR_DATA_REPLY";
+                            }
                         }
                         else {
                             throw new UnexpectedResponseError(state, lines);
@@ -302,25 +338,19 @@ class SMTPMailer {
                             let lines = [
                                 `MIME-Version: 1.0`,
                                 `Date: ${new Date().toUTCString()}`,
-                                `Message-ID: <${this.generateMessageIDAddress(from.address)}>`
+                                `Message-ID: <${this.generateMessageIDAddress(sender.address)}>`
                             ];
-                            if (typeof from.name !== "undefined") {
-                                lines.push(`From: ${encode(from.name)} <${from.address}>`);
+                            if (from.length > 0) {
+                                lines.push(`From: ${encodeMailboxes(from)}`);
                             }
-                            else {
-                                lines.push(`From: <${from.address}>`);
+                            if (to.length > 0) {
+                                lines.push(`To: ${encodeMailboxes(to)}`);
                             }
-                            if (typeof to.name !== "undefined") {
-                                lines.push(`To: ${encode(to.name)} <${to.address}>`);
+                            if (reply.length > 0) {
+                                lines.push(`Reply-To: ${encodeMailboxes(reply)}`);
                             }
-                            else {
-                                lines.push(`To: <${to.address}>`);
-                            }
-                            if (typeof reply.name !== "undefined") {
-                                lines.push(`Reply-To: ${encode(reply.name)} <${reply.address}>`);
-                            }
-                            else {
-                                lines.push(`Reply-To: <${reply.address}>`);
+                            if (cc.length > 0) {
+                                lines.push(`Cc: ${encodeMailboxes(cc)}`);
                             }
                             lines.push(`Subject: ${encode(options.subject)}`);
                             lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
