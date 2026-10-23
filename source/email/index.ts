@@ -254,21 +254,22 @@ export class SMTPMailer implements Mailer {
 	}
 
 	protected finishSending(options: SendOptions, tls_socket: libtls.TLSSocket, state: State): Promise<void> {
-		let to = this.getMailboxes(options.to);
+		let to = this.getMailboxes(options.to ?? this.options.defaults?.to);
 		if (to.length === 0) {
 			throw new MissingToAddressError();
 		}
-		let from = this.getMailboxes(options.from);
+		let from = this.getMailboxes(options.from ?? this.options.defaults?.from);
 		if (from.length === 0) {
 			throw new MissingFromAddressError();
 		}
-		let reply = this.getMailboxes(options.reply);
+		let reply = this.getMailboxes(options.reply ?? this.options.defaults?.reply);
 		if (reply.length === 0) {
 			throw new MissingReplyAddressError();
 		}
-		let cc = this.getMailboxes(options.cc);
-		let bcc = this.getMailboxes(options.bcc);
+		let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
+		let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
 		let attachments = options.attachments ?? [];
+
 		let sender = from[0];
 		let recipients = getUniqueMailboxes([...to, ...cc, ...bcc]);
 		return new Promise((resolve, reject) => {
