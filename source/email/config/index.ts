@@ -59,6 +59,10 @@ export const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions> 
 		"reply": autoguard.guards.Union.of(
 			autoguard.guards.Reference.of(() => Mailbox),
 			autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Mailbox))
+		),
+		"cc": autoguard.guards.Union.of(
+			autoguard.guards.Reference.of(() => Mailbox),
+			autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Mailbox))
 		)
 	})
 });
@@ -84,6 +88,10 @@ export type MailerOptions = autoguard.guards.Object<{
 			autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
 		]>,
 		"reply": autoguard.guards.Union<[
+			autoguard.guards.Reference<Mailbox>,
+			autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+		]>,
+		"cc": autoguard.guards.Union<[
 			autoguard.guards.Reference<Mailbox>,
 			autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
 		]>

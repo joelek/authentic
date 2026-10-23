@@ -203,6 +203,7 @@ export type SendOptions = {
 	to?: Mailbox | Array<Mailbox>,
 	from?: Mailbox | Array<Mailbox>,
 	reply?: Mailbox | Array<Mailbox>,
+	cc?: Mailbox | Array<Mailbox>,
 	attachments?: Array<Attachment>;
 	html?: boolean;
 };
@@ -264,9 +265,10 @@ export class SMTPMailer implements Mailer {
 		if (reply.length === 0) {
 			throw new MissingReplyAddressError();
 		}
+		let cc = this.getMailboxes(options.cc);
 		let attachments = options.attachments ?? [];
 		let sender = from[0];
-		let recipients = [...to];
+		let recipients = getUniqueMailboxes([...to, ...cc]);
 		return new Promise((resolve, reject) => {
 			let recipient_index = 0;
 			let ondata: OnDataCallback = (buffer) => {
@@ -354,6 +356,9 @@ export class SMTPMailer implements Mailer {
 							}
 							if (reply.length > 0) {
 								lines.push(`Reply-To: ${encodeMailboxes(reply)}`);
+							}
+							if (cc.length > 0) {
+								lines.push(`Cc: ${encodeMailboxes(cc)}`);
 							}
 							lines.push(`Subject: ${encode(options.subject)}`);
 							lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
