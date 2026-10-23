@@ -57,35 +57,13 @@ export function performTLSHandshake(net_socket: libnet.Socket, servername: strin
 };
 
 export interface Mailer {
-	send(options: {
-		subject: string,
-		message: string,
-		to_address?: string,
-		to_name?: string;
-		from_address?: string,
-		from_name?: string;
-		reply_address?: string,
-		reply_name?: string;
-		attachments?: Array<Attachment>;
-		html?: boolean;
-	}): Promise<void>;
+	send(options: SendOptions): Promise<void>;
 };
 
 export class TestMailer implements Mailer {
 	constructor() {}
 
-	async send(options: {
-		subject: string,
-		message: string,
-		to_address?: string,
-		to_name?: string;
-		from_address?: string,
-		from_name?: string;
-		reply_address?: string,
-		reply_name?: string;
-		attachments?: Array<Attachment>;
-		html?: boolean;
-	}): Promise<void> {
+	async send(options: SendOptions): Promise<void> {
 		console.log(options);
 	}
 };
