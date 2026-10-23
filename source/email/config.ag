@@ -26,6 +26,7 @@ guard MailerOptions: {
 		to?: Mailbox | Mailbox[],
 		from?: Mailbox | Mailbox[],
 		reply?: Mailbox | Mailbox[],
-		cc?: Mailbox | Mailbox[]
+		cc?: Mailbox | Mailbox[],
+		bcc?: Mailbox | Mailbox[]
 	}
 };

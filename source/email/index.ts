@@ -204,6 +204,7 @@ export type SendOptions = {
 	from?: Mailbox | Array<Mailbox>,
 	reply?: Mailbox | Array<Mailbox>,
 	cc?: Mailbox | Array<Mailbox>,
+	bcc?: Mailbox | Array<Mailbox>,
 	attachments?: Array<Attachment>;
 	html?: boolean;
 };
@@ -266,9 +267,10 @@ export class SMTPMailer implements Mailer {
 			throw new MissingReplyAddressError();
 		}
 		let cc = this.getMailboxes(options.cc);
+		let bcc = this.getMailboxes(options.bcc);
 		let attachments = options.attachments ?? [];
 		let sender = from[0];
-		let recipients = getUniqueMailboxes([...to, ...cc]);
+		let recipients = getUniqueMailboxes([...to, ...cc, ...bcc]);
 		return new Promise((resolve, reject) => {
 			let recipient_index = 0;
 			let ondata: OnDataCallback = (buffer) => {
