@@ -80,6 +80,13 @@ export function performTLSHandshake(net_socket: libnet.Socket, servername: strin
 	});
 };
 
+export type SendOptions = MailerOptions["defaults"] & {
+	subject: string,
+	message: string,
+	attachments?: Array<Attachment>;
+	html?: boolean;
+};
+
 export interface Mailer {
 	send(options: SendOptions): Promise<void>;
 };
@@ -197,18 +204,6 @@ export class UnsupportedAuthenticationMethodError extends Error {
 
 export type OnDataCallback = (data: Buffer) => void;
 
-export type SendOptions = {
-	subject: string,
-	message: string,
-	to?: Mailbox | Array<Mailbox>,
-	from?: Mailbox | Array<Mailbox>,
-	reply?: Mailbox | Array<Mailbox>,
-	cc?: Mailbox | Array<Mailbox>,
-	bcc?: Mailbox | Array<Mailbox>,
-	attachments?: Array<Attachment>;
-	html?: boolean;
-};
-
 export class SMTPMailer implements Mailer {
 	protected options: MailerOptions;
 
@@ -269,7 +264,6 @@ export class SMTPMailer implements Mailer {
 		let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
 		let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
 		let attachments = options.attachments ?? [];
-
 		let sender = from[0];
 		let recipients = getUniqueMailboxes([...to, ...cc, ...bcc]);
 		return new Promise((resolve, reject) => {
