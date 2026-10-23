@@ -35,6 +35,10 @@ export function encodeMailbox(mailbox: Mailbox): string {
 	}
 };
 
+export function encodeMailboxes(mailboxes: Array<Mailbox>): string {
+	return mailboxes.map(encodeMailbox).join(", ");
+};
+
 export function split(string: string, max_length: number): Array<string> {
 	let parts = [] as Array<string>;
 	for (let index = 0; index < string.length; index += max_length) {
