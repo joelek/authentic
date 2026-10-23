@@ -24,6 +24,18 @@ export type STMPTLSOption = autoguard.guards.Union<[
 	autoguard.guards.StringLiteral<"EXPLICIT">
 ]>;
 
+export const Mailbox: autoguard.serialization.MessageGuard<Mailbox> = autoguard.guards.Object.of({
+	"address": autoguard.guards.String
+}, {
+	"name": autoguard.guards.String
+});
+
+export type Mailbox = autoguard.guards.Object<{
+	"address": autoguard.guards.String
+}, {
+	"name": autoguard.guards.String
+}>;
+
 export const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions> = autoguard.guards.Object.of({
 	"smtp": autoguard.guards.Object.of({
 		"hostname": autoguard.guards.String,
@@ -70,6 +82,7 @@ export namespace Autoguard {
 	export const Guards = {
 		"Attachment": autoguard.guards.Reference.of(() => Attachment),
 		"STMPTLSOption": autoguard.guards.Reference.of(() => STMPTLSOption),
+		"Mailbox": autoguard.guards.Reference.of(() => Mailbox),
 		"MailerOptions": autoguard.guards.Reference.of(() => MailerOptions)
 	};
 

@@ -8,6 +8,11 @@ guard STMPTLSOption:
 	"IMPLICIT" |
 	"EXPLICIT";
 
+guard Mailbox: {
+	address: string,
+	name?: string
+};
+
 guard MailerOptions: {
 	smtp: {
 		hostname: string,

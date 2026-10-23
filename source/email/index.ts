@@ -2,7 +2,7 @@ import * as libcrypto from "crypto";
 import * as libfs from "fs";
 import * as libnet from "net";
 import * as libtls from "tls";
-import { Attachment, MailerOptions, STMPTLSOption } from "./config";
+import { Attachment, Mailbox, MailerOptions, STMPTLSOption } from "./config";
 
 export const IMPLICIT_TLS_PORT = 465;
 export const EXPLICIT_TLS_PORT = 587;
@@ -194,7 +194,7 @@ export class SMTPMailer implements Mailer {
 		return `${id}@${from_address.slice(from_address.indexOf("@") + 1)}`;
 	}
 
-	protected getTo(options: { to_address?: string; to_name?: string; }): { address: string; name?: string; } {
+	protected getTo(options: { to_address?: string; to_name?: string; }): Mailbox {
 		let address = options.to_address ?? this.options.defaults?.to_address;
 		let name = options.to_name ?? this.options.defaults?.to_name;
 		if (address == null) {
@@ -206,7 +206,7 @@ export class SMTPMailer implements Mailer {
 		};
 	}
 
-	protected getFrom(options: { from_address?: string; from_name?: string; }): { address: string; name?: string; } {
+	protected getFrom(options: { from_address?: string; from_name?: string; }): Mailbox {
 		let address = options.from_address ?? this.options.defaults?.from_address;
 		let name = options.from_name ?? this.options.defaults?.from_name;
 		if (address == null) {
@@ -218,7 +218,7 @@ export class SMTPMailer implements Mailer {
 		};
 	}
 
-	protected getReply(options: { reply_address?: string; reply_name?: string; }): { address: string; name?: string; } {
+	protected getReply(options: { reply_address?: string; reply_name?: string; }): Mailbox {
 		let address = options.reply_address ?? this.options.defaults?.reply_address;
 		let name = options.reply_name ?? this.options.defaults?.reply_name;
 		if (address == null) {
