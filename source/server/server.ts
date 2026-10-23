@@ -1028,7 +1028,9 @@ export class Server {
 		await this.mailer.send({
 			subject: subject,
 			message: message,
-			to_address: to_address,
+			to: {
+				address: to_address
+			},
 			html: html
 		});
 	}

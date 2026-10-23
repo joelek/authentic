@@ -48,12 +48,18 @@ export const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions> 
 	})
 }, {
 	"defaults": autoguard.guards.Object.of({}, {
-		"to_address": autoguard.guards.String,
-		"to_name": autoguard.guards.String,
-		"from_address": autoguard.guards.String,
-		"from_name": autoguard.guards.String,
-		"reply_address": autoguard.guards.String,
-		"reply_name": autoguard.guards.String
+		"to": autoguard.guards.Union.of(
+			autoguard.guards.Reference.of(() => Mailbox),
+			autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Mailbox))
+		),
+		"from": autoguard.guards.Union.of(
+			autoguard.guards.Reference.of(() => Mailbox),
+			autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Mailbox))
+		),
+		"reply": autoguard.guards.Union.of(
+			autoguard.guards.Reference.of(() => Mailbox),
+			autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Mailbox))
+		)
 	})
 });
 
@@ -69,12 +75,18 @@ export type MailerOptions = autoguard.guards.Object<{
 	}>
 }, {
 	"defaults": autoguard.guards.Object<{}, {
-		"to_address": autoguard.guards.String,
-		"to_name": autoguard.guards.String,
-		"from_address": autoguard.guards.String,
-		"from_name": autoguard.guards.String,
-		"reply_address": autoguard.guards.String,
-		"reply_name": autoguard.guards.String
+		"to": autoguard.guards.Union<[
+			autoguard.guards.Reference<Mailbox>,
+			autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+		]>,
+		"from": autoguard.guards.Union<[
+			autoguard.guards.Reference<Mailbox>,
+			autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+		]>,
+		"reply": autoguard.guards.Union<[
+			autoguard.guards.Reference<Mailbox>,
+			autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
+		]>
 	}>
 }>;
 

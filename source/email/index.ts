@@ -39,6 +39,18 @@ export function encodeMailboxes(mailboxes: Array<Mailbox>): string {
 	return mailboxes.map(encodeMailbox).join(", ");
 };
 
+export function getUniqueMailboxes(mailboxes: Array<Mailbox>): Array<Mailbox> {
+	let addresses = new Set<string>();
+	return mailboxes.filter((mailbox) => {
+		if (addresses.has(mailbox.address)) {
+			return false;
+		} else {
+			addresses.add(mailbox.address);
+			return true;
+		}
+	});
+};
+
 export function split(string: string, max_length: number): Array<string> {
 	let parts = [] as Array<string>;
 	for (let index = 0; index < string.length; index += max_length) {
@@ -188,12 +200,9 @@ export type OnDataCallback = (data: Buffer) => void;
 export type SendOptions = {
 	subject: string,
 	message: string,
-	to_address?: string,
-	to_name?: string;
-	from_address?: string,
-	from_name?: string;
-	reply_address?: string,
-	reply_name?: string;
+	to?: Mailbox | Array<Mailbox>,
+	from?: Mailbox | Array<Mailbox>,
+	reply?: Mailbox | Array<Mailbox>,
 	attachments?: Array<Attachment>;
 	html?: boolean;
 };
@@ -206,43 +215,16 @@ export class SMTPMailer implements Mailer {
 		return `${id}@${from_address.slice(from_address.indexOf("@") + 1)}`;
 	}
 
-	protected getTo(options: { to_address?: string; to_name?: string; }): Array<Mailbox> {
-		let address = options.to_address ?? this.options.defaults?.to_address;
-		let name = options.to_name ?? this.options.defaults?.to_name;
+	protected getMailboxes(value: Mailbox | Array<Mailbox> | undefined): Array<Mailbox> {
 		let mailboxes = new Array<Mailbox>();
-		if (address != null) {
-			mailboxes.push({
-				address,
-				name
-			});
+		if (value != null) {
+			if (Array.isArray(value)) {
+				mailboxes.push(...value);
+			} else {
+				mailboxes.push(value);
+			}
 		}
-		return mailboxes;
-	}
-
-	protected getFrom(options: { from_address?: string; from_name?: string; }): Array<Mailbox> {
-		let address = options.from_address ?? this.options.defaults?.from_address;
-		let name = options.from_name ?? this.options.defaults?.from_name;
-		let mailboxes = new Array<Mailbox>();
-		if (address != null) {
-			mailboxes.push({
-				address,
-				name
-			});
-		}
-		return mailboxes;
-	}
-
-	protected getReply(options: { reply_address?: string; reply_name?: string; }): Array<Mailbox> {
-		let address = options.reply_address ?? this.options.defaults?.reply_address;
-		let name = options.reply_name ?? this.options.defaults?.reply_name;
-		let mailboxes = new Array<Mailbox>();
-		if (address != null) {
-			mailboxes.push({
-				address,
-				name
-			});
-		}
-		return mailboxes;
+		return getUniqueMailboxes(mailboxes);
 	}
 
 	protected getTlsOption(): STMPTLSOption {
@@ -270,15 +252,15 @@ export class SMTPMailer implements Mailer {
 	}
 
 	protected finishSending(options: SendOptions, tls_socket: libtls.TLSSocket, state: State): Promise<void> {
-		let to = this.getTo(options);
+		let to = this.getMailboxes(options.to);
 		if (to.length === 0) {
 			throw new MissingToAddressError();
 		}
-		let from = this.getFrom(options);
+		let from = this.getMailboxes(options.from);
 		if (from.length === 0) {
 			throw new MissingFromAddressError();
 		}
-		let reply = this.getReply(options);
+		let reply = this.getMailboxes(options.reply);
 		if (reply.length === 0) {
 			throw new MissingReplyAddressError();
 		}
