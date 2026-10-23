@@ -27,6 +27,14 @@ export function encode(string: string): string {
 	}
 };
 
+export function encodeMailbox(mailbox: Mailbox): string {
+	if (mailbox.name != null) {
+		return `${encode(mailbox.name)} <${mailbox.address}>`;
+	} else {
+		return `<${mailbox.address}>`;
+	}
+};
+
 export function split(string: string, max_length: number): Array<string> {
 	let parts = [] as Array<string>;
 	for (let index = 0; index < string.length; index += max_length) {
@@ -325,21 +333,9 @@ export class SMTPMailer implements Mailer {
 								`Date: ${new Date().toUTCString()}`,
 								`Message-ID: <${this.generateMessageIDAddress(from.address)}>`
 							];
-							if (typeof from.name !== "undefined") {
-								lines.push(`From: ${encode(from.name)} <${from.address}>`);
-							} else {
-								lines.push(`From: <${from.address}>`);
-							}
-							if (typeof to.name !== "undefined") {
-								lines.push(`To: ${encode(to.name)} <${to.address}>`);
-							} else {
-								lines.push(`To: <${to.address}>`);
-							}
-							if (typeof reply.name !== "undefined") {
-								lines.push(`Reply-To: ${encode(reply.name)} <${reply.address}>`);
-							} else {
-								lines.push(`Reply-To: <${reply.address}>`);
-							}
+							lines.push(`From: ${encodeMailbox(from)}`);
+							lines.push(`To: ${encodeMailbox(to)}`);
+							lines.push(`Reply-To: ${encodeMailbox(reply)}`);
 							lines.push(`Subject: ${encode(options.subject)}`);
 							lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
 							lines.push(``);
