@@ -332,6 +332,9 @@ export class SMTPMailer implements Mailer {
 								`Date: ${new Date().toUTCString()}`,
 								`Message-ID: <${this.generateMessageIDAddress(sender.address)}>`
 							];
+							if ((from.length === 1 && sender.address !== from[0].address) || from.length > 1) {
+								lines.push(`Sender: ${encodeMailbox(sender)}`);
+							}
 							if (from.length > 0) {
 								lines.push(`From: ${encodeMailboxes(from)}`);
 							}
