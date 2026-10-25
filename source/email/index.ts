@@ -51,6 +51,23 @@ export function getUniqueMailboxes(mailboxes: Array<Mailbox>): Array<Mailbox> {
 	});
 };
 
+export function generateMessageIDAddress(address: string): string {
+	let id = libcrypto.randomBytes(16).toString("hex");
+	return `${id}@${address.slice(address.indexOf("@") + 1)}`;
+};
+
+export function getMailboxes(value: Mailbox | Array<Mailbox> | undefined): Array<Mailbox> {
+	let mailboxes = new Array<Mailbox>();
+	if (value != null) {
+		if (Array.isArray(value)) {
+			mailboxes.push(...value);
+		} else {
+			mailboxes.push(value);
+		}
+	}
+	return getUniqueMailboxes(mailboxes);
+};
+
 export function split(string: string, max_length: number): Array<string> {
 	let parts = [] as Array<string>;
 	for (let index = 0; index < string.length; index += max_length) {
@@ -201,35 +218,18 @@ export type OnDataCallback = (data: Buffer) => void;
 export class SMTPMailer implements Mailer {
 	protected options: MailerOptions;
 
-	protected generateMessageIDAddress(from_address: string): string {
-		let id = libcrypto.randomBytes(16).toString("hex");
-		return `${id}@${from_address.slice(from_address.indexOf("@") + 1)}`;
-	}
-
-	protected getMailboxes(value: Mailbox | Array<Mailbox> | undefined): Array<Mailbox> {
-		let mailboxes = new Array<Mailbox>();
-		if (value != null) {
-			if (Array.isArray(value)) {
-				mailboxes.push(...value);
-			} else {
-				mailboxes.push(value);
-			}
-		}
-		return getUniqueMailboxes(mailboxes);
-	}
-
 	protected getCompleteSendOptions(options: SendOptions): CompleteSendOptions {
-		let to = this.getMailboxes(options.to ?? this.options.defaults?.to);
+		let to = getMailboxes(options.to ?? this.options.defaults?.to);
 		if (to.length === 0) {
 			throw new MissingToAddressError();
 		}
-		let from = this.getMailboxes(options.from ?? this.options.defaults?.from);
+		let from = getMailboxes(options.from ?? this.options.defaults?.from);
 		if (from.length === 0) {
 			throw new MissingFromAddressError();
 		}
-		let reply = this.getMailboxes(options.reply ?? this.options.defaults?.reply);
-		let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
-		let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
+		let reply = getMailboxes(options.reply ?? this.options.defaults?.reply);
+		let cc = getMailboxes(options.cc ?? this.options.defaults?.cc);
+		let bcc = getMailboxes(options.bcc ?? this.options.defaults?.bcc);
 		let sender = options.sender ?? from[0];
 		let subject = options.subject;
 		let message = options.message;
@@ -352,7 +352,7 @@ export class SMTPMailer implements Mailer {
 							let lines = [
 								`MIME-Version: 1.0`,
 								`Date: ${new Date().toUTCString()}`,
-								`Message-ID: <${this.generateMessageIDAddress(options.sender.address)}>`
+								`Message-ID: <${generateMessageIDAddress(options.sender.address)}>`
 							];
 							if ((options.from.length === 1 && options.sender.address !== options.from[0].address) || options.from.length > 1) {
 								lines.push(`Sender: ${encodeMailbox(options.sender)}`);
