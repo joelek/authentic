@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SMTPMailer = exports.UnsupportedAuthenticationMethodError = exports.UnexpectedStateError = exports.UnexpectedResponseError = exports.HandshakeTimeoutError = exports.ConnectionTimeoutError = exports.MissingFromAddressError = exports.MissingToAddressError = exports.loadConfig = exports.TestMailer = exports.performTLSHandshake = exports.split = exports.getUniqueMailboxes = exports.encodeMailboxes = exports.encodeMailbox = exports.encode = exports.EXPLICIT_TLS_PORT = exports.IMPLICIT_TLS_PORT = void 0;
+exports.SMTPMailer = exports.UnsupportedAuthenticationMethodError = exports.UnexpectedStateError = exports.UnexpectedResponseError = exports.HandshakeTimeoutError = exports.ConnectionTimeoutError = exports.MissingFromAddressError = exports.MissingToAddressError = exports.loadConfig = exports.TestMailer = exports.performTLSHandshake = exports.split = exports.getMailboxes = exports.generateMessageIDAddress = exports.getUniqueMailboxes = exports.encodeMailboxes = exports.encodeMailbox = exports.encode = exports.EXPLICIT_TLS_PORT = exports.IMPLICIT_TLS_PORT = void 0;
 const libcrypto = require("crypto");
 const libfs = require("fs");
 const libnet = require("net");
@@ -46,6 +46,26 @@ function getUniqueMailboxes(mailboxes) {
     });
 }
 exports.getUniqueMailboxes = getUniqueMailboxes;
+;
+function generateMessageIDAddress(address) {
+    let id = libcrypto.randomBytes(16).toString("hex");
+    return `${id}@${address.slice(address.indexOf("@") + 1)}`;
+}
+exports.generateMessageIDAddress = generateMessageIDAddress;
+;
+function getMailboxes(value) {
+    let mailboxes = new Array();
+    if (value != null) {
+        if (Array.isArray(value)) {
+            mailboxes.push(...value);
+        }
+        else {
+            mailboxes.push(value);
+        }
+    }
+    return getUniqueMailboxes(mailboxes);
+}
+exports.getMailboxes = getMailboxes;
 ;
 function split(string, max_length) {
     let parts = [];
@@ -178,34 +198,18 @@ exports.UnsupportedAuthenticationMethodError = UnsupportedAuthenticationMethodEr
 ;
 class SMTPMailer {
     options;
-    generateMessageIDAddress(from_address) {
-        let id = libcrypto.randomBytes(16).toString("hex");
-        return `${id}@${from_address.slice(from_address.indexOf("@") + 1)}`;
-    }
-    getMailboxes(value) {
-        let mailboxes = new Array();
-        if (value != null) {
-            if (Array.isArray(value)) {
-                mailboxes.push(...value);
-            }
-            else {
-                mailboxes.push(value);
-            }
-        }
-        return getUniqueMailboxes(mailboxes);
-    }
     getCompleteSendOptions(options) {
-        let to = this.getMailboxes(options.to ?? this.options.defaults?.to);
+        let to = getMailboxes(options.to ?? this.options.defaults?.to);
         if (to.length === 0) {
             throw new MissingToAddressError();
         }
-        let from = this.getMailboxes(options.from ?? this.options.defaults?.from);
+        let from = getMailboxes(options.from ?? this.options.defaults?.from);
         if (from.length === 0) {
             throw new MissingFromAddressError();
         }
-        let reply = this.getMailboxes(options.reply ?? this.options.defaults?.reply);
-        let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
-        let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
+        let reply = getMailboxes(options.reply ?? this.options.defaults?.reply);
+        let cc = getMailboxes(options.cc ?? this.options.defaults?.cc);
+        let bcc = getMailboxes(options.bcc ?? this.options.defaults?.bcc);
         let sender = options.sender ?? from[0];
         let subject = options.subject;
         let message = options.message;
@@ -342,7 +346,7 @@ class SMTPMailer {
                             let lines = [
                                 `MIME-Version: 1.0`,
                                 `Date: ${new Date().toUTCString()}`,
-                                `Message-ID: <${this.generateMessageIDAddress(options.sender.address)}>`
+                                `Message-ID: <${generateMessageIDAddress(options.sender.address)}>`
                             ];
                             if ((options.from.length === 1 && options.sender.address !== options.from[0].address) || options.from.length > 1) {
                                 lines.push(`Sender: ${encodeMailbox(options.sender)}`);

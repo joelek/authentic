@@ -12,6 +12,8 @@ export declare function encode(string: string): string;
 export declare function encodeMailbox(mailbox: Mailbox): string;
 export declare function encodeMailboxes(mailboxes: Array<Mailbox>): string;
 export declare function getUniqueMailboxes(mailboxes: Array<Mailbox>): Array<Mailbox>;
+export declare function generateMessageIDAddress(address: string): string;
+export declare function getMailboxes(value: Mailbox | Array<Mailbox> | undefined): Array<Mailbox>;
 export declare function split(string: string, max_length: number): Array<string>;
 export declare function performTLSHandshake(net_socket: libnet.Socket, servername: string, timeout_seconds: number): Promise<libtls.TLSSocket>;
 export type SendOptions = MailerOptions["defaults"] & {
@@ -68,8 +70,6 @@ export declare class UnsupportedAuthenticationMethodError extends Error {
 export type OnDataCallback = (data: Buffer) => void;
 export declare class SMTPMailer implements Mailer {
     protected options: MailerOptions;
-    protected generateMessageIDAddress(from_address: string): string;
-    protected getMailboxes(value: Mailbox | Array<Mailbox> | undefined): Array<Mailbox>;
     protected getCompleteSendOptions(options: SendOptions): CompleteSendOptions;
     protected getTlsOption(): STMPTLSOption;
     protected getLoginMethods(lines: Array<string>): Array<string>;
