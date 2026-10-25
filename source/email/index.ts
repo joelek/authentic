@@ -87,6 +87,10 @@ export type SendOptions = MailerOptions["defaults"] & {
 	html?: boolean;
 };
 
+export type CompleteSendOptions = {
+	[A in keyof SendOptions]-?: (undefined | Mailbox | Mailbox[]) extends SendOptions[A] ? Mailbox[] : SendOptions[A];
+};
+
 export interface Mailer {
 	send(options: SendOptions): Promise<void>;
 };
@@ -214,6 +218,37 @@ export class SMTPMailer implements Mailer {
 		return getUniqueMailboxes(mailboxes);
 	}
 
+	protected getCompleteSendOptions(options: SendOptions): CompleteSendOptions {
+		let to = this.getMailboxes(options.to ?? this.options.defaults?.to);
+		if (to.length === 0) {
+			throw new MissingToAddressError();
+		}
+		let from = this.getMailboxes(options.from ?? this.options.defaults?.from);
+		if (from.length === 0) {
+			throw new MissingFromAddressError();
+		}
+		let reply = this.getMailboxes(options.reply ?? this.options.defaults?.reply);
+		let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
+		let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
+		let sender = options.sender ?? from[0];
+		let subject = options.subject;
+		let message = options.message;
+		let attachments = options.attachments ?? [];
+		let html = options.html ?? false;
+		return {
+			to,
+			from,
+			reply,
+			cc,
+			bcc,
+			sender,
+			subject,
+			message,
+			attachments,
+			html
+		};
+	}
+
 	protected getTlsOption(): STMPTLSOption {
 		let smtp = this.options.smtp;
 		if (smtp.tls != null) {
@@ -238,21 +273,8 @@ export class SMTPMailer implements Mailer {
 		return methods;
 	}
 
-	protected finishSending(options: SendOptions, tls_socket: libtls.TLSSocket, state: State): Promise<void> {
-		let to = this.getMailboxes(options.to ?? this.options.defaults?.to);
-		if (to.length === 0) {
-			throw new MissingToAddressError();
-		}
-		let from = this.getMailboxes(options.from ?? this.options.defaults?.from);
-		if (from.length === 0) {
-			throw new MissingFromAddressError();
-		}
-		let reply = this.getMailboxes(options.reply ?? this.options.defaults?.reply);
-		let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
-		let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
-		let attachments = options.attachments ?? [];
-		let sender = options.sender ?? from[0];
-		let recipients = getUniqueMailboxes([...to, ...cc, ...bcc]);
+	protected finishSending(options: CompleteSendOptions, tls_socket: libtls.TLSSocket, state: State): Promise<void> {
+		let recipients = getUniqueMailboxes([...options.to, ...options.cc, ...options.bcc]);
 		return new Promise((resolve, reject) => {
 			let recipient_index = 0;
 			let ondata: OnDataCallback = (buffer) => {
@@ -276,7 +298,7 @@ export class SMTPMailer implements Mailer {
 						}
 					} else if (state === "WAITING_FOR_AUTH_PLAIN_REPLY") {
 						if (lines[0].startsWith("235")) {
-							tls_socket.write(`MAIL FROM: <${sender.address}>\r\n`);
+							tls_socket.write(`MAIL FROM: <${options.sender.address}>\r\n`);
 							state = "WAITING_FOR_MAIL_REPLY";
 						} else {
 							throw new UnexpectedResponseError(state, lines);
@@ -293,7 +315,7 @@ export class SMTPMailer implements Mailer {
 								throw new UnexpectedResponseError(state, lines);
 							}
 						} else if (lines[0].startsWith("235")) {
-							tls_socket.write(`MAIL FROM: <${sender.address}>\r\n`);
+							tls_socket.write(`MAIL FROM: <${options.sender.address}>\r\n`);
 							state = "WAITING_FOR_MAIL_REPLY";
 						} else {
 							throw new UnexpectedResponseError(state, lines);
@@ -330,22 +352,22 @@ export class SMTPMailer implements Mailer {
 							let lines = [
 								`MIME-Version: 1.0`,
 								`Date: ${new Date().toUTCString()}`,
-								`Message-ID: <${this.generateMessageIDAddress(sender.address)}>`
+								`Message-ID: <${this.generateMessageIDAddress(options.sender.address)}>`
 							];
-							if ((from.length === 1 && sender.address !== from[0].address) || from.length > 1) {
-								lines.push(`Sender: ${encodeMailbox(sender)}`);
+							if ((options.from.length === 1 && options.sender.address !== options.from[0].address) || options.from.length > 1) {
+								lines.push(`Sender: ${encodeMailbox(options.sender)}`);
 							}
-							if (from.length > 0) {
-								lines.push(`From: ${encodeMailboxes(from)}`);
+							if (options.from.length > 0) {
+								lines.push(`From: ${encodeMailboxes(options.from)}`);
 							}
-							if (to.length > 0) {
-								lines.push(`To: ${encodeMailboxes(to)}`);
+							if (options.to.length > 0) {
+								lines.push(`To: ${encodeMailboxes(options.to)}`);
 							}
-							if (reply.length > 0) {
-								lines.push(`Reply-To: ${encodeMailboxes(reply)}`);
+							if (options.reply.length > 0) {
+								lines.push(`Reply-To: ${encodeMailboxes(options.reply)}`);
 							}
-							if (cc.length > 0) {
-								lines.push(`Cc: ${encodeMailboxes(cc)}`);
+							if (options.cc.length > 0) {
+								lines.push(`Cc: ${encodeMailboxes(options.cc)}`);
 							}
 							lines.push(`Subject: ${encode(options.subject)}`);
 							lines.push(`Content-Type: multipart/mixed; boundary=${boundary}`);
@@ -355,7 +377,7 @@ export class SMTPMailer implements Mailer {
 							lines.push(`Content-Transfer-Encoding: base64`);
 							lines.push(``);
 							lines.push(...split(Buffer.from(options.message).toString("base64"), 76));
-							for (let attachment of attachments) {
+							for (let attachment of options.attachments) {
 								lines.push(``);
 								lines.push(`--${boundary}`);
 								lines.push(`Content-Type: ${attachment.mime}; name=${attachment.filename}`);
@@ -399,7 +421,7 @@ export class SMTPMailer implements Mailer {
 		});
 	}
 
-	protected sendExplicit(options: SendOptions): Promise<void> {
+	protected sendExplicit(options: CompleteSendOptions): Promise<void> {
 		let timeout_seconds = this.options.smtp.timeout_seconds ?? 10;
 		let state: State = "WAITING_FOR_GREETING";
 		return new Promise((resolve, reject) => {
@@ -467,7 +489,7 @@ export class SMTPMailer implements Mailer {
 		});
 	}
 
-	protected sendImplicit(options: SendOptions): Promise<void> {
+	protected sendImplicit(options: CompleteSendOptions): Promise<void> {
 		let timeout_seconds = this.options.smtp.timeout_seconds ?? 10;
 		let state: State = "WAITING_FOR_GREETING";
 		return new Promise((resolve, reject) => {
@@ -533,12 +555,13 @@ export class SMTPMailer implements Mailer {
 		};
 	}
 
+
 	send(options: SendOptions): Promise<void> {
 		let tls = this.getTlsOption();
 		if (tls === "IMPLICIT") {
-			return this.sendImplicit(options);
+			return this.sendImplicit(this.getCompleteSendOptions(options));
 		} else {
-			return this.sendExplicit(options);
+			return this.sendExplicit(this.getCompleteSendOptions(options));
 		}
 	};
 };
