@@ -251,7 +251,7 @@ export class SMTPMailer implements Mailer {
 		let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
 		let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
 		let attachments = options.attachments ?? [];
-		let sender = from[0];
+		let sender = options.sender ?? from[0];
 		let recipients = getUniqueMailboxes([...to, ...cc, ...bcc]);
 		return new Promise((resolve, reject) => {
 			let recipient_index = 0;

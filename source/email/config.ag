@@ -23,6 +23,7 @@ guard MailerOptions: {
 		tls?: STMPTLSOption
 	},
 	defaults?: {
+		sender?: Mailbox,
 		to?: Mailbox | Mailbox[],
 		from?: Mailbox | Mailbox[],
 		reply?: Mailbox | Mailbox[],

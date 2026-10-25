@@ -48,6 +48,7 @@ export const MailerOptions: autoguard.serialization.MessageGuard<MailerOptions> 
 	})
 }, {
 	"defaults": autoguard.guards.Object.of({}, {
+		"sender": autoguard.guards.Reference.of(() => Mailbox),
 		"to": autoguard.guards.Union.of(
 			autoguard.guards.Reference.of(() => Mailbox),
 			autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Mailbox))
@@ -83,6 +84,7 @@ export type MailerOptions = autoguard.guards.Object<{
 	}>
 }, {
 	"defaults": autoguard.guards.Object<{}, {
+		"sender": autoguard.guards.Reference<Mailbox>,
 		"to": autoguard.guards.Union<[
 			autoguard.guards.Reference<Mailbox>,
 			autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
