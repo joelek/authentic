@@ -125,16 +125,6 @@ export class MissingFromAddressError extends Error {
 	}
 };
 
-export class MissingReplyAddressError extends Error {
-	constructor() {
-		super();
-	}
-
-	get message(): string {
-		return `Expected reply address to be specified!`;
-	}
-};
-
 export class ConnectionTimeoutError extends Error {
 	protected timeout_seconds: number;
 
@@ -258,9 +248,6 @@ export class SMTPMailer implements Mailer {
 			throw new MissingFromAddressError();
 		}
 		let reply = this.getMailboxes(options.reply ?? this.options.defaults?.reply);
-		if (reply.length === 0) {
-			throw new MissingReplyAddressError();
-		}
 		let cc = this.getMailboxes(options.cc ?? this.options.defaults?.cc);
 		let bcc = this.getMailboxes(options.bcc ?? this.options.defaults?.bcc);
 		let attachments = options.attachments ?? [];
