@@ -81,8 +81,8 @@ export function performTLSHandshake(net_socket: libnet.Socket, servername: strin
 };
 
 export type SendOptions = MailerOptions["defaults"] & {
-	subject: string,
-	message: string,
+	subject: string;
+	message: string;
 	attachments?: Array<Attachment>;
 	html?: boolean;
 };
