@@ -29,6 +29,7 @@ export type MailerOptions = autoguard.guards.Object<{
     }>;
 }, {
     "defaults": autoguard.guards.Object<{}, {
+        "sender": autoguard.guards.Reference<Mailbox>;
         "to": autoguard.guards.Union<[
             autoguard.guards.Reference<Mailbox>,
             autoguard.guards.Array<autoguard.guards.Reference<Mailbox>>
@@ -73,6 +74,10 @@ export declare namespace Autoguard {
                 tls?: "IMPLICIT" | "EXPLICIT" | undefined;
             };
             defaults?: {
+                sender?: {
+                    address: string;
+                    name?: string | undefined;
+                } | undefined;
                 to?: {
                     address: string;
                     name?: string | undefined;

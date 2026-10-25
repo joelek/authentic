@@ -20,6 +20,9 @@ export type SendOptions = MailerOptions["defaults"] & {
     attachments?: Array<Attachment>;
     html?: boolean;
 };
+export type CompleteSendOptions = {
+    [A in keyof SendOptions]-?: (undefined | Mailbox | Mailbox[]) extends SendOptions[A] ? Mailbox[] : SendOptions[A];
+};
 export interface Mailer {
     send(options: SendOptions): Promise<void>;
 }
@@ -33,10 +36,6 @@ export declare class MissingToAddressError extends Error {
     get message(): string;
 }
 export declare class MissingFromAddressError extends Error {
-    constructor();
-    get message(): string;
-}
-export declare class MissingReplyAddressError extends Error {
     constructor();
     get message(): string;
 }
@@ -71,11 +70,12 @@ export declare class SMTPMailer implements Mailer {
     protected options: MailerOptions;
     protected generateMessageIDAddress(from_address: string): string;
     protected getMailboxes(value: Mailbox | Array<Mailbox> | undefined): Array<Mailbox>;
+    protected getCompleteSendOptions(options: SendOptions): CompleteSendOptions;
     protected getTlsOption(): STMPTLSOption;
     protected getLoginMethods(lines: Array<string>): Array<string>;
-    protected finishSending(options: SendOptions, tls_socket: libtls.TLSSocket, state: State): Promise<void>;
-    protected sendExplicit(options: SendOptions): Promise<void>;
-    protected sendImplicit(options: SendOptions): Promise<void>;
+    protected finishSending(options: CompleteSendOptions, tls_socket: libtls.TLSSocket, state: State): Promise<void>;
+    protected sendExplicit(options: CompleteSendOptions): Promise<void>;
+    protected sendImplicit(options: CompleteSendOptions): Promise<void>;
     constructor(options: MailerOptions);
     send(options: SendOptions): Promise<void>;
 }

@@ -26,6 +26,7 @@ exports.MailerOptions = autoguard.guards.Object.of({
     })
 }, {
     "defaults": autoguard.guards.Object.of({}, {
+        "sender": autoguard.guards.Reference.of(() => exports.Mailbox),
         "to": autoguard.guards.Union.of(autoguard.guards.Reference.of(() => exports.Mailbox), autoguard.guards.Array.of(autoguard.guards.Reference.of(() => exports.Mailbox))),
         "from": autoguard.guards.Union.of(autoguard.guards.Reference.of(() => exports.Mailbox), autoguard.guards.Array.of(autoguard.guards.Reference.of(() => exports.Mailbox))),
         "reply": autoguard.guards.Union.of(autoguard.guards.Reference.of(() => exports.Mailbox), autoguard.guards.Array.of(autoguard.guards.Reference.of(() => exports.Mailbox))),
